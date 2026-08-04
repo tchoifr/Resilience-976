@@ -1,0 +1,34 @@
+[
+  {
+    "id": "resource_cyclone",
+    "title": "Cyclone",
+    "domain": "behaviors",
+    "description": "Comprendre les risques météorologiques à Mayotte et retrouver les documents locaux de la préfecture.",
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "resource_inondation",
+    "title": "Fortes pluies et inondation",
+    "domain": "housing",
+    "description": "Identifier les bons réflexes en cas de fortes pluies, routes impraticables ou perturbation des services essentiels.",
+    "sourceIds": ["source_prefecture_mayotte", "source_gouvernement_risques"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "resource_alerts",
+    "title": "Alertes et informations officielles",
+    "domain": "energy_communication",
+    "description": "Connaître les canaux fiables pour suivre les consignes diffusées par les autorités.",
+    "sourceIds": ["source_fr_alert", "source_prefecture_mayotte"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "resource_kit",
+    "title": "Kit d’urgence",
+    "domain": "water_food",
+    "description": "Préparer un kit 72h accessible, vérifié régulièrement et adapté au foyer.",
+    "sourceIds": ["source_gouvernement_risques", "source_croix_rouge"],
+    "validationStatus": "to_validate"
+  }
+]

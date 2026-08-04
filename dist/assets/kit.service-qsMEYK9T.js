@@ -1,0 +1,1 @@
+function t(e,u){const r=u[e.field];switch(e.operator){case">":return Number(r)>Number(e.value);case">=":return Number(r)>=Number(e.value);case"<":return Number(r)<Number(e.value);case"<=":return Number(r)<=Number(e.value);case"=":return r===e.value;case"!=":return r!==e.value}}function s(e,u){return e.filter(r=>r.conditions.every(a=>t(a,u)))}export{s as g};

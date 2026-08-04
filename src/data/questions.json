@@ -1,0 +1,386 @@
+[
+  {
+    "id": "household_01",
+    "domain": "household",
+    "text": "Votre foyer connaît-il les personnes à protéger en priorité en cas d’événement majeur ?",
+    "help": "Pensez aux enfants, personnes âgées, personnes isolées, animaux et besoins particuliers.",
+    "required": true,
+    "weight": 3,
+    "criticality": "medium",
+    "answers": [
+      { "id": "none", "label": "Non, rien n’est encore défini", "score": 0 },
+      { "id": "partial", "label": "Partiellement, mais ce n’est pas clair pour tous", "score": 50 },
+      { "id": "ready", "label": "Oui, les besoins principaux sont identifiés", "score": 100 }
+    ],
+    "actionIds": ["action_family_plan"],
+    "sourceIds": ["source_prefecture_mayotte"]
+  },
+  {
+    "id": "household_02",
+    "domain": "household",
+    "text": "Avez-vous un point de regroupement familial connu de tous ?",
+    "help": "Choisissez un lieu simple à retrouver si les communications sont perturbées.",
+    "required": true,
+    "weight": 3,
+    "criticality": "high",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Oui, mais il n’est pas connu de tous", "score": 50 },
+      { "id": "ready", "label": "Oui, il est connu et facile à rejoindre", "score": 100 }
+    ],
+    "actionIds": ["action_family_plan"],
+    "sourceIds": ["source_gouvernement_risques"]
+  },
+  {
+    "id": "household_03",
+    "domain": "household",
+    "text": "Les numéros utiles sont-ils accessibles hors téléphone portable ?",
+    "help": "Un papier plastifié ou une copie dans le kit peut aider en cas de batterie vide.",
+    "required": true,
+    "weight": 3,
+    "criticality": "medium",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Quelques numéros seulement", "score": 50 },
+      { "id": "ready", "label": "Oui, les contacts essentiels sont disponibles", "score": 100 }
+    ],
+    "actionIds": ["action_contacts"],
+    "sourceIds": ["source_gouvernement_risques"]
+  },
+  {
+    "id": "household_04",
+    "domain": "household",
+    "text": "Une personne proche sait-elle comment vous joindre ou vous aider si besoin ?",
+    "help": "L’objectif est d’éviter qu’un foyer reste isolé après un événement.",
+    "required": true,
+    "weight": 2,
+    "criticality": "medium",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Oui, mais sans organisation précise", "score": 50 },
+      { "id": "ready", "label": "Oui, un contact est clairement identifié", "score": 100 }
+    ],
+    "actionIds": ["action_check_neighbors"],
+    "sourceIds": ["source_croix_rouge"]
+  },
+  {
+    "id": "housing_01",
+    "domain": "housing",
+    "text": "Votre logement dispose-t-il d’une zone de repli identifiée ?",
+    "help": "Il peut s’agir d’une pièce plus sûre selon les consignes officielles en vigueur.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Peut-être, mais ce n’est pas validé", "score": 50 },
+      { "id": "ready", "label": "Oui, elle est connue du foyer", "score": 100 }
+    ],
+    "actionIds": ["action_repli_zone"],
+    "sourceIds": ["source_prefecture_mayotte"]
+  },
+  {
+    "id": "housing_02",
+    "domain": "housing",
+    "text": "Les ouvertures et objets extérieurs sont-ils sécurisables rapidement ?",
+    "help": "Les objets mobiles peuvent devenir dangereux par vent fort.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Partiellement", "score": 50 },
+      { "id": "ready", "label": "Oui, une procédure simple existe", "score": 100 }
+    ],
+    "actionIds": ["action_secure_openings", "action_clear_exterior"],
+    "sourceIds": ["source_prefecture_mayotte"]
+  },
+  {
+    "id": "housing_03",
+    "domain": "housing",
+    "text": "Savez-vous quoi faire si une évacuation est demandée par les autorités ?",
+    "help": "Le service ne donne pas d’ordre d’évacuation ; il aide à préparer le foyer.",
+    "required": true,
+    "weight": 5,
+    "criticality": "critical",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Je connais quelques consignes", "score": 50 },
+      { "id": "ready", "label": "Oui, le foyer sait quoi faire", "score": 100 }
+    ],
+    "actionIds": ["action_official_sources", "action_emergency_bag"],
+    "sourceIds": ["source_prefecture_mayotte", "source_gouvernement_risques"]
+  },
+  {
+    "id": "housing_04",
+    "domain": "housing",
+    "text": "Votre logement dispose-t-il d’un minimum d’éclairage utilisable sans électricité ?",
+    "help": "Évitez de dépendre uniquement de l’éclairage du téléphone.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Oui, mais en quantité limitée", "score": 50 },
+      { "id": "ready", "label": "Oui, plusieurs moyens sont disponibles", "score": 100 }
+    ],
+    "actionIds": ["action_light"],
+    "sourceIds": ["source_gouvernement_risques"]
+  },
+  {
+    "id": "water_food_01",
+    "domain": "water_food",
+    "text": "Disposez-vous d’une réserve d’eau adaptée à votre foyer ?",
+    "help": "Les quantités exactes doivent être validées avec les recommandations officielles en vigueur.",
+    "required": true,
+    "weight": 5,
+    "criticality": "critical",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Partiellement", "score": 50 },
+      { "id": "ready", "label": "Oui, la réserve est préparée", "score": 100 }
+    ],
+    "actionIds": ["action_water_reserve"],
+    "sourceIds": ["source_gouvernement_risques"]
+  },
+  {
+    "id": "water_food_02",
+    "domain": "water_food",
+    "text": "Avez-vous une réserve alimentaire simple à conserver ?",
+    "help": "Privilégiez les aliments habituels du foyer et faciles à préparer.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Un peu, mais sans contrôle", "score": 50 },
+      { "id": "ready", "label": "Oui, une réserve est suivie", "score": 100 }
+    ],
+    "actionIds": ["action_food_reserve"],
+    "sourceIds": ["source_gouvernement_risques"]
+  },
+  {
+    "id": "water_food_03",
+    "domain": "water_food",
+    "text": "Vérifiez-vous les dates et la rotation des réserves ?",
+    "help": "Une réserve utile doit rester consommable et adaptée au foyer.",
+    "required": true,
+    "weight": 3,
+    "criticality": "medium",
+    "answers": [
+      { "id": "none", "label": "Jamais", "score": 0 },
+      { "id": "partial", "label": "Parfois", "score": 50 },
+      { "id": "ready", "label": "Oui, régulièrement", "score": 100 }
+    ],
+    "actionIds": ["action_food_reserve", "action_water_reserve"],
+    "sourceIds": ["source_croix_rouge"]
+  },
+  {
+    "id": "water_food_04",
+    "domain": "water_food",
+    "text": "Les besoins alimentaires particuliers du foyer sont-ils anticipés ?",
+    "help": "Pensez aux nourrissons, allergies connues, régimes indispensables ou animaux.",
+    "required": true,
+    "weight": 3,
+    "criticality": "medium",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "En partie", "score": 50 },
+      { "id": "ready", "label": "Oui, ils sont pris en compte", "score": 100 }
+    ],
+    "actionIds": ["action_children_items", "action_pet_plan"],
+    "sourceIds": ["source_croix_rouge"]
+  },
+  {
+    "id": "energy_communication_01",
+    "domain": "energy_communication",
+    "text": "Avez-vous un moyen fiable de recevoir les informations officielles ?",
+    "help": "Le téléphone seul peut ne pas suffire en cas de coupure réseau ou batterie.",
+    "required": true,
+    "weight": 5,
+    "criticality": "critical",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Un seul moyen", "score": 50 },
+      { "id": "ready", "label": "Oui, plusieurs moyens sont prévus", "score": 100 }
+    ],
+    "actionIds": ["action_radio", "action_official_sources"],
+    "sourceIds": ["source_fr_alert", "source_prefecture_mayotte"]
+  },
+  {
+    "id": "energy_communication_02",
+    "domain": "energy_communication",
+    "text": "Disposez-vous de batteries ou moyens de recharge de secours ?",
+    "help": "L’objectif est de garder un minimum de communication et d’information.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Oui, mais rarement rechargés", "score": 50 },
+      { "id": "ready", "label": "Oui, c’est prêt et vérifié", "score": 100 }
+    ],
+    "actionIds": ["action_power_bank"],
+    "sourceIds": ["source_gouvernement_risques"]
+  },
+  {
+    "id": "energy_communication_03",
+    "domain": "energy_communication",
+    "text": "Votre foyer sait-il où trouver les consignes officielles locales ?",
+    "help": "Préparez les canaux fiables avant la crise.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Une personne le sait", "score": 50 },
+      { "id": "ready", "label": "Oui, tout le foyer connaît les canaux", "score": 100 }
+    ],
+    "actionIds": ["action_official_sources"],
+    "sourceIds": ["source_prefecture_mayotte", "source_fr_alert"]
+  },
+  {
+    "id": "energy_communication_04",
+    "domain": "energy_communication",
+    "text": "Avez-vous testé votre organisation en cas de coupure d’électricité ?",
+    "help": "Un test simple permet de détecter ce qui manque.",
+    "required": true,
+    "weight": 3,
+    "criticality": "medium",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Une fois, sans suivi", "score": 50 },
+      { "id": "ready", "label": "Oui, régulièrement", "score": 100 }
+    ],
+    "actionIds": ["action_test_plan", "action_light", "action_power_bank"],
+    "sourceIds": ["source_croix_rouge"]
+  },
+  {
+    "id": "health_documents_01",
+    "domain": "health_documents",
+    "text": "Les documents importants sont-ils regroupés et protégés ?",
+    "help": "Pensez aux copies utiles, sans stocker d’informations sensibles dans l’application.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Quelques documents seulement", "score": 50 },
+      { "id": "ready", "label": "Oui, les copies utiles sont protégées", "score": 100 }
+    ],
+    "actionIds": ["action_docs"],
+    "sourceIds": ["source_gouvernement_risques"]
+  },
+  {
+    "id": "health_documents_02",
+    "domain": "health_documents",
+    "text": "Les traitements essentiels du foyer sont-ils anticipés sans détail médical stocké ici ?",
+    "help": "Notez uniquement une action de préparation, pas de données médicales dans l’application.",
+    "required": true,
+    "weight": 5,
+    "criticality": "critical",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Partiellement", "score": 50 },
+      { "id": "ready", "label": "Oui, avec avis professionnel si nécessaire", "score": 100 }
+    ],
+    "actionIds": ["action_medicine_plan"],
+    "sourceIds": ["source_croix_rouge"]
+  },
+  {
+    "id": "health_documents_03",
+    "domain": "health_documents",
+    "text": "Disposez-vous d’une trousse de premiers secours connue du foyer ?",
+    "help": "Son contenu doit être vérifié et adapté aux recommandations validées.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Oui, mais elle n’est pas vérifiée", "score": 50 },
+      { "id": "ready", "label": "Oui, elle est disponible et vérifiée", "score": 100 }
+    ],
+    "actionIds": ["action_first_aid"],
+    "sourceIds": ["source_croix_rouge"]
+  },
+  {
+    "id": "health_documents_04",
+    "domain": "health_documents",
+    "text": "Savez-vous comment protéger les informations utiles sans les exposer en ligne ?",
+    "help": "Le MVP ne demande ni nom, ni adresse, ni document personnel.",
+    "required": true,
+    "weight": 3,
+    "criticality": "medium",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "En partie", "score": 50 },
+      { "id": "ready", "label": "Oui, les copies sont gérées hors application", "score": 100 }
+    ],
+    "actionIds": ["action_docs"],
+    "sourceIds": ["source_gouvernement_risques"]
+  },
+  {
+    "id": "behaviors_01",
+    "domain": "behaviors",
+    "text": "Connaissez-vous les bons réflexes avant un cyclone ou une forte pluie ?",
+    "help": "Vérifiez toujours les consignes officielles locales au moment de l’événement.",
+    "required": true,
+    "weight": 5,
+    "criticality": "critical",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Quelques réflexes", "score": 50 },
+      { "id": "ready", "label": "Oui, les consignes sont connues", "score": 100 }
+    ],
+    "actionIds": ["action_official_sources", "action_test_plan"],
+    "sourceIds": ["source_prefecture_mayotte"]
+  },
+  {
+    "id": "behaviors_02",
+    "domain": "behaviors",
+    "text": "Le foyer sait-il quoi faire pendant une alerte officielle ?",
+    "help": "L’application aide à se préparer mais ne diffuse pas d’alerte en temps réel.",
+    "required": true,
+    "weight": 5,
+    "criticality": "critical",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Une partie du foyer seulement", "score": 50 },
+      { "id": "ready", "label": "Oui, chacun connaît les consignes", "score": 100 }
+    ],
+    "actionIds": ["action_family_plan", "action_official_sources"],
+    "sourceIds": ["source_fr_alert", "source_prefecture_mayotte"]
+  },
+  {
+    "id": "behaviors_03",
+    "domain": "behaviors",
+    "text": "Avez-vous déjà fait un exercice simple de préparation en famille ?",
+    "help": "Un exercice court aide à transformer une intention en réflexe.",
+    "required": true,
+    "weight": 3,
+    "criticality": "medium",
+    "answers": [
+      { "id": "none", "label": "Jamais", "score": 0 },
+      { "id": "partial", "label": "Une fois", "score": 50 },
+      { "id": "ready", "label": "Oui, avec mise à jour", "score": 100 }
+    ],
+    "actionIds": ["action_test_plan"],
+    "sourceIds": ["source_croix_rouge"]
+  },
+  {
+    "id": "behaviors_04",
+    "domain": "behaviors",
+    "text": "Après un événement, savez-vous comment vérifier les dangers avant de reprendre vos habitudes ?",
+    "help": "Attendez les consignes officielles et évitez les zones dangereuses.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      { "id": "none", "label": "Non", "score": 0 },
+      { "id": "partial", "label": "Partiellement", "score": 50 },
+      { "id": "ready", "label": "Oui, les réflexes sont connus", "score": 100 }
+    ],
+    "actionIds": ["action_official_sources", "action_check_neighbors"],
+    "sourceIds": ["source_gouvernement_risques"]
+  }
+]

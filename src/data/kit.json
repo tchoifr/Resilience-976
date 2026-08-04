@@ -1,0 +1,82 @@
+[
+  {
+    "id": "kit_base_water",
+    "label": "Réserve d’eau selon recommandation officielle validée",
+    "category": "water_food",
+    "conditions": [],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_base_food",
+    "label": "Aliments simples et habituels du foyer",
+    "category": "water_food",
+    "conditions": [],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_base_radio",
+    "label": "Moyen de recevoir les informations officielles",
+    "category": "communication",
+    "conditions": [],
+    "sourceIds": ["source_fr_alert", "source_prefecture_mayotte"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_base_light",
+    "label": "Lampe et énergie de secours",
+    "category": "energy",
+    "conditions": [],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_base_first_aid",
+    "label": "Trousse de premiers secours vérifiée",
+    "category": "health",
+    "conditions": [],
+    "sourceIds": ["source_croix_rouge"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_base_documents",
+    "label": "Copies utiles des documents, protégées hors application",
+    "category": "documents",
+    "conditions": [],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_children",
+    "label": "Éléments adaptés aux enfants",
+    "category": "household",
+    "conditions": [{ "field": "children", "operator": ">", "value": 0 }],
+    "sourceIds": ["source_croix_rouge"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_elderly",
+    "label": "Éléments utiles aux personnes âgées ou dépendantes",
+    "category": "household",
+    "conditions": [{ "field": "elderly", "operator": ">", "value": 0 }],
+    "sourceIds": ["source_croix_rouge"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_special_needs",
+    "label": "Organisation spécifique pour besoins particuliers",
+    "category": "household",
+    "conditions": [{ "field": "specialNeeds", "operator": "=", "value": true }],
+    "sourceIds": ["source_croix_rouge"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_pets",
+    "label": "Nécessaire pour les animaux du foyer",
+    "category": "household",
+    "conditions": [{ "field": "pets", "operator": ">", "value": 0 }],
+    "sourceIds": ["source_croix_rouge"],
+    "validationStatus": "to_validate"
+  }
+]

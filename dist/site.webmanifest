@@ -1,0 +1,18 @@
+{
+  "name": "Resilience 976",
+  "short_name": "Resilience 976",
+  "description": "Diagnostic de preparation, plan d'actions, checklist, kit d'urgence et PDF.",
+  "lang": "fr",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F7FA",
+  "theme_color": "#006D77",
+  "icons": [
+    {
+      "src": "/icons/logo-resilience.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

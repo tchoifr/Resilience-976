@@ -1,0 +1,102 @@
+import type {
+  AssessmentAnswers,
+  AssessmentResult,
+  PriorityCandidate,
+  ScoreLevel,
+} from '../types/assessment'
+import type { Criticality, Question } from '../types/question'
+import { domainLabels } from '../types/question'
+
+export const criticalityFactor: Record<Criticality, number> = {
+  low: 1,
+  medium: 1.25,
+  high: 1.6,
+  critical: 2,
+}
+
+export function getScoreLevel(score: number): ScoreLevel {
+  if (score <= 39) {
+    return {
+      id: 'insufficient',
+      label: 'Préparation insuffisante',
+      message: 'Plusieurs éléments essentiels doivent être traités en priorité.',
+    }
+  }
+
+  if (score <= 59) {
+    return {
+      id: 'fragile',
+      label: 'Préparation fragile',
+      message: 'Des bases existent, mais des vulnérabilités importantes subsistent.',
+    }
+  }
+
+  if (score <= 79) {
+    return {
+      id: 'good',
+      label: 'Bien préparé',
+      message: 'Le foyer dispose d’une base solide à renforcer.',
+    }
+  }
+
+  return {
+    id: 'very_good',
+    label: 'Très bien préparé',
+    message: 'Maintenir et vérifier régulièrement les bonnes pratiques.',
+  }
+}
+
+export function calculateAssessment(
+  questions: Question[],
+  answers: AssessmentAnswers,
+): AssessmentResult {
+  const domains = new Map<Question['domain'], { sum: number; weight: number }>()
+  const priorities: PriorityCandidate[] = []
+
+  for (const question of questions) {
+    const answerId = answers[question.id]
+    const option = question.answers.find((answer) => answer.id === answerId)
+
+    if (!option) {
+      continue
+    }
+
+    const weighted = option.score * question.weight
+    const current = domains.get(question.domain) ?? { sum: 0, weight: 0 }
+    current.sum += weighted
+    current.weight += question.weight
+    domains.set(question.domain, current)
+
+    if (option.score < 100) {
+      priorities.push({
+        questionId: question.id,
+        domain: question.domain,
+        actionIds: question.actionIds,
+        priority: (100 - option.score) * question.weight * criticalityFactor[question.criticality],
+        answerScore: option.score,
+        criticality: question.criticality,
+      })
+    }
+  }
+
+  const domainScores = [...domains.entries()].map(([id, value]) => ({
+    id,
+    label: domainLabels[id],
+    score: Math.round(value.sum / value.weight),
+    answeredWeight: value.weight,
+  }))
+
+  const globalScore =
+    domainScores.length === 0
+      ? 0
+      : Math.round(
+          domainScores.reduce((sum, domain) => sum + domain.score, 0) / domainScores.length,
+        )
+
+  return {
+    globalScore,
+    level: getScoreLevel(globalScore),
+    domainScores,
+    priorities: priorities.sort((a, b) => b.priority - a.priority),
+  }
+}

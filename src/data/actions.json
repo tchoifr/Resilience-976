@@ -1,0 +1,268 @@
+[
+  {
+    "id": "action_family_plan",
+    "title": "Préparer un plan familial simple",
+    "priorityBand": "now",
+    "effort": "medium",
+    "why": "Un plan connu de tous réduit les hésitations quand les communications sont difficiles.",
+    "instructions": [
+      "Désigner un point de regroupement facile à mémoriser.",
+      "Partager les rôles simples entre adultes et aidants.",
+      "Vérifier que chaque personne sait quoi faire en cas de consigne officielle."
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_contacts",
+    "title": "Noter les contacts essentiels hors téléphone",
+    "priorityBand": "week",
+    "effort": "low",
+    "why": "Une batterie vide ou un téléphone perdu peut rendre les numéros inaccessibles.",
+    "instructions": [
+      "Lister les contacts proches et services utiles sur un support papier.",
+      "Conserver une copie dans le kit.",
+      "Mettre la liste à jour à chaque changement important."
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_check_neighbors",
+    "title": "Identifier un relais de proximité",
+    "priorityBand": "week",
+    "effort": "low",
+    "why": "La solidarité de voisinage aide à repérer rapidement les personnes isolées.",
+    "instructions": [
+      "Choisir une personne de confiance à proximité.",
+      "Partager uniquement les informations utiles et consenties.",
+      "Prévoir un mode de vérification simple après un événement."
+    ],
+    "sourceIds": ["source_croix_rouge"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_repli_zone",
+    "title": "Identifier une zone de repli dans le logement",
+    "priorityBand": "now",
+    "effort": "medium",
+    "why": "Une zone connue à l’avance évite de chercher une solution dans l’urgence.",
+    "instructions": [
+      "Identifier une zone plus sûre selon les consignes officielles.",
+      "Expliquer ce choix au foyer.",
+      "Ne pas utiliser cette action comme consigne d’évacuation."
+    ],
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_secure_openings",
+    "title": "Prévoir la sécurisation des ouvertures",
+    "priorityBand": "week",
+    "effort": "medium",
+    "why": "Des ouvertures préparées peuvent limiter les dommages et les dangers.",
+    "instructions": [
+      "Vérifier portes, fenêtres et protections existantes.",
+      "Préparer les gestes faisables rapidement.",
+      "Demander un avis professionnel pour les travaux ou risques importants."
+    ],
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_clear_exterior",
+    "title": "Ranger les objets extérieurs mobiles",
+    "priorityBand": "now",
+    "effort": "low",
+    "why": "Les objets mobiles peuvent devenir dangereux par vent fort.",
+    "instructions": [
+      "Lister les objets à rentrer ou attacher.",
+      "Prévoir où les stocker.",
+      "Agir avant que les conditions ne se dégradent."
+    ],
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_water_reserve",
+    "title": "Préparer une réserve d’eau",
+    "priorityBand": "now",
+    "effort": "medium",
+    "why": "Une coupure d’eau peut survenir après un événement majeur.",
+    "instructions": [
+      "Vérifier la recommandation officielle en vigueur.",
+      "Adapter la réserve à la composition du foyer.",
+      "Contrôler régulièrement la rotation des réserves."
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_food_reserve",
+    "title": "Préparer une réserve alimentaire simple",
+    "priorityBand": "week",
+    "effort": "medium",
+    "why": "Des aliments adaptés au foyer aident à tenir pendant une perturbation temporaire.",
+    "instructions": [
+      "Choisir des aliments connus du foyer.",
+      "Éviter les produits difficiles à préparer sans énergie.",
+      "Planifier une rotation régulière."
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_light",
+    "title": "Préparer un éclairage de secours",
+    "priorityBand": "now",
+    "effort": "low",
+    "why": "Un éclairage autonome facilite les gestes essentiels en cas de coupure.",
+    "instructions": [
+      "Regrouper lampes et piles ou batteries.",
+      "Vérifier leur fonctionnement.",
+      "Éviter de dépendre uniquement du téléphone."
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_radio",
+    "title": "Prévoir un moyen d’information officiel",
+    "priorityBand": "now",
+    "effort": "low",
+    "why": "Les informations officielles restent prioritaires pendant une crise.",
+    "instructions": [
+      "Identifier les canaux officiels locaux.",
+      "Prévoir un moyen qui ne dépend pas uniquement d’internet.",
+      "Tester le moyen choisi avant la saison à risque."
+    ],
+    "sourceIds": ["source_fr_alert", "source_prefecture_mayotte"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_power_bank",
+    "title": "Charger et vérifier les batteries de secours",
+    "priorityBand": "week",
+    "effort": "low",
+    "why": "Une réserve d’énergie prolonge l’accès aux informations et contacts utiles.",
+    "instructions": [
+      "Charger les batteries externes.",
+      "Ranger les câbles compatibles.",
+      "Prévoir une vérification régulière."
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_official_sources",
+    "title": "Enregistrer les sources officielles",
+    "priorityBand": "now",
+    "effort": "low",
+    "why": "Les consignes peuvent évoluer ; les sources officielles doivent rester la référence.",
+    "instructions": [
+      "Identifier les sites et canaux locaux fiables.",
+      "Les conserver dans le téléphone et sur support papier si utile.",
+      "Vérifier les informations avant de les partager."
+    ],
+    "sourceIds": ["source_prefecture_mayotte", "source_fr_alert"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_docs",
+    "title": "Protéger les copies utiles des documents",
+    "priorityBand": "week",
+    "effort": "medium",
+    "why": "Des copies accessibles peuvent faciliter les démarches après un événement.",
+    "instructions": [
+      "Identifier les documents utiles sans les saisir dans l’application.",
+      "Conserver des copies protégées de l’eau.",
+      "Vérifier les droits et la confidentialité des copies."
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_medicine_plan",
+    "title": "Anticiper les traitements essentiels hors application",
+    "priorityBand": "now",
+    "effort": "medium",
+    "why": "Certains besoins de santé ne doivent pas être improvisés pendant une crise.",
+    "instructions": [
+      "Ne pas saisir de détails médicaux dans l’application.",
+      "Demander conseil à un professionnel si nécessaire.",
+      "Prévoir une organisation compatible avec les recommandations validées."
+    ],
+    "sourceIds": ["source_croix_rouge"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_first_aid",
+    "title": "Vérifier la trousse de premiers secours",
+    "priorityBand": "week",
+    "effort": "low",
+    "why": "Une trousse connue et vérifiée évite de chercher le matériel au mauvais moment.",
+    "instructions": [
+      "Regrouper les éléments validés pour le foyer.",
+      "Vérifier dates, propreté et accessibilité.",
+      "Expliquer son emplacement au foyer."
+    ],
+    "sourceIds": ["source_croix_rouge"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_children_items",
+    "title": "Ajouter les besoins enfants au kit",
+    "priorityBand": "week",
+    "effort": "medium",
+    "why": "Les enfants peuvent avoir besoin d’éléments spécifiques et rassurants.",
+    "instructions": [
+      "Lister les besoins adaptés à l’âge.",
+      "Prévoir des éléments familiers si possible.",
+      "Faire valider les quantités avant publication."
+    ],
+    "sourceIds": ["source_croix_rouge"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_pet_plan",
+    "title": "Prévoir les besoins des animaux",
+    "priorityBand": "week",
+    "effort": "medium",
+    "why": "Les animaux font partie du foyer et doivent être anticipés.",
+    "instructions": [
+      "Lister alimentation, transport et identification.",
+      "Prévoir un rangement accessible.",
+      "Vérifier les contraintes des lieux d’accueil si nécessaire."
+    ],
+    "sourceIds": ["source_croix_rouge"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_emergency_bag",
+    "title": "Regrouper un sac prêt à emporter",
+    "priorityBand": "now",
+    "effort": "medium",
+    "why": "Un sac préparé réduit le stress si un départ est demandé par les autorités.",
+    "instructions": [
+      "Regrouper les éléments indispensables validés.",
+      "Le placer dans un endroit accessible.",
+      "Le revoir à chaque changement de saison ou de composition du foyer."
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_test_plan",
+    "title": "Faire un exercice de préparation",
+    "priorityBand": "week",
+    "effort": "low",
+    "why": "Un exercice court révèle les oublis avant une situation réelle.",
+    "instructions": [
+      "Simuler une coupure courte d’électricité ou de communication.",
+      "Vérifier l’accès au kit, aux contacts et aux sources.",
+      "Corriger un point faible après l’exercice."
+    ],
+    "sourceIds": ["source_croix_rouge"],
+    "validationStatus": "to_validate"
+  }
+]

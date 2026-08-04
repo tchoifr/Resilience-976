@@ -1,0 +1,34 @@
+[
+  {
+    "id": "source_prefecture_mayotte",
+    "label": "Préfecture de Mayotte - Risques météorologiques",
+    "organization": "Services de l’État à Mayotte",
+    "url": "https://www.mayotte.gouv.fr/Actions-de-l-Etat/Prevention-des-risques-et-securite/Prevention-des-risques2/Risques-naturels/Risques-meteorologiques",
+    "consultedAt": "2026-08-04",
+    "validationStatus": "validated"
+  },
+  {
+    "id": "source_gouvernement_risques",
+    "label": "Sécurité civile - Kit d’urgence",
+    "organization": "Ministère de l’Intérieur",
+    "url": "https://www.securite-civile.interieur.gouv.fr/reagir/comment-se-preparer-face-aux-risques/kit-durgence",
+    "consultedAt": "2026-08-04",
+    "validationStatus": "validated"
+  },
+  {
+    "id": "source_fr_alert",
+    "label": "FR-Alert",
+    "organization": "Ministère de l’Intérieur",
+    "url": "https://www.fr-alert.gouv.fr/",
+    "consultedAt": "2026-08-04",
+    "validationStatus": "validated"
+  },
+  {
+    "id": "source_croix_rouge",
+    "label": "Croix-Rouge française - Sac d’urgence",
+    "organization": "Croix-Rouge française",
+    "url": "https://www.croix-rouge.fr/faire-face-au-choc-climatique-nos-propositions-pour-une-meilleure/catakit-preparer-son-sac-durgence",
+    "consultedAt": "2026-08-04",
+    "validationStatus": "validated"
+  }
+]
