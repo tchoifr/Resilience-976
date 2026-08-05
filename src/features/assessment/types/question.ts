@@ -21,12 +21,3 @@ export interface Question {
   actionIds: string[]
   sourceIds: string[]
 }
-
-export const domainLabels: Record<AssessmentDomain, string> = {
-  household: 'Mon foyer',
-  housing: 'Mon logement',
-  water_food: 'Eau et alimentation',
-  energy_communication: 'Énergie et communication',
-  health_documents: 'Santé et documents',
-  behaviors: 'Comportements',
-}

@@ -5,7 +5,7 @@ import type {
   ScoreLevel,
 } from '../types/assessment'
 import type { Criticality, Question } from '../types/question'
-import { domainLabels } from '../types/question'
+import { getDomainLabel, translate } from '@/shared/i18n/i18n.service'
 
 export const criticalityFactor: Record<Criticality, number> = {
   low: 1,
@@ -18,31 +18,31 @@ export function getScoreLevel(score: number): ScoreLevel {
   if (score <= 39) {
     return {
       id: 'insufficient',
-      label: 'Préparation insuffisante',
-      message: 'Plusieurs éléments essentiels doivent être traités en priorité.',
+      label: translate('scoreLevels.insufficient.label'),
+      message: translate('scoreLevels.insufficient.message'),
     }
   }
 
   if (score <= 59) {
     return {
       id: 'fragile',
-      label: 'Préparation fragile',
-      message: 'Des bases existent, mais des vulnérabilités importantes subsistent.',
+      label: translate('scoreLevels.fragile.label'),
+      message: translate('scoreLevels.fragile.message'),
     }
   }
 
   if (score <= 79) {
     return {
       id: 'good',
-      label: 'Bien préparé',
-      message: 'Le foyer dispose d’une base solide à renforcer.',
+      label: translate('scoreLevels.good.label'),
+      message: translate('scoreLevels.good.message'),
     }
   }
 
   return {
     id: 'very_good',
-    label: 'Très bien préparé',
-    message: 'Maintenir et vérifier régulièrement les bonnes pratiques.',
+    label: translate('scoreLevels.very_good.label'),
+    message: translate('scoreLevels.very_good.message'),
   }
 }
 
@@ -81,7 +81,7 @@ export function calculateAssessment(
 
   const domainScores = [...domains.entries()].map(([id, value]) => ({
     id,
-    label: domainLabels[id],
+    label: getDomainLabel(id),
     score: Math.round(value.sum / value.weight),
     answeredWeight: value.weight,
   }))
