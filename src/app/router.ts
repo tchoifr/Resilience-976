@@ -49,6 +49,20 @@ const router = createRouter({
       },
     },
     {
+      path: '/videos',
+      component: () => import('@/views/VideosView.vue'),
+      meta: {
+        seoKey: 'videos',
+      },
+    },
+    {
+      path: '/videos/:slug',
+      component: () => import('@/views/VideoDetailView.vue'),
+      meta: {
+        seoKey: 'videoDetail',
+      },
+    },
+    {
       path: '/mentions-legales',
       component: () => import('@/views/LegalView.vue'),
       meta: {

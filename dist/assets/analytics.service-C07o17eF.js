@@ -1,1 +1,0 @@
-import{d as n,c as r,n as s,a as e,t as l,x as o,o as i}from"./index-BuPhHGQm.js";const d=n({__name:"AppAlert",props:{title:{},variant:{default:"info"}},setup(t){return(a,c)=>(i(),r("div",{class:s(["alert",`alert--${t.variant}`]),role:"status"},[e("strong",null,l(t.title),1),e("div",null,[o(a.$slots,"default")])],2))}});function m(t){}export{d as _,m as t};

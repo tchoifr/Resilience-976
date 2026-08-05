@@ -17,6 +17,7 @@ const navLinks = [
   { to: '/checklist', labelKey: 'navigation.checklist' },
   { to: '/kit', labelKey: 'navigation.kit' },
   { to: '/ressources', labelKey: 'navigation.resources' },
+  { to: '/videos', labelKey: 'navigation.videos' },
 ]
 
 function toggleMenu() {

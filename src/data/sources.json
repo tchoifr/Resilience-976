@@ -30,5 +30,13 @@
     "url": "https://www.croix-rouge.fr/faire-face-au-choc-climatique-nos-propositions-pour-une-meilleure/catakit-preparer-son-sac-durgence",
     "consultedAt": "2026-08-04",
     "validationStatus": "validated"
+  },
+  {
+    "id": "source_dreal_normandie_videos",
+    "label": "DREAL Normandie - Vidéos pédagogiques sur les risques naturels",
+    "organization": "DREAL Normandie",
+    "url": "https://www.normandie.developpement-durable.gouv.fr/la-dreal-normandie-a-coproduit-une-serie-de-videos-a5071.html?lang=fr",
+    "consultedAt": "2026-08-05",
+    "validationStatus": "validated"
   }
 ]

@@ -72,8 +72,53 @@ export const resourceSchema = z.object({
   validationStatus: validationStatusSchema,
 })
 
+export const videoSubtitleSchema = z.object({
+  language: z.string().min(2),
+  label: z.string().min(1),
+  url: z.string().min(1),
+})
+
+export const videoQuizSchema = z.object({
+  question: z.string().min(1),
+  options: z.array(z.string().min(1)).min(2),
+  correctOptionIndex: z.number().int().min(0),
+  explanation: z.string().min(1),
+})
+
+export const videoCapsuleSchema = z
+  .object({
+    id: z.string().min(1),
+    slug: z.string().min(1),
+    title: z.string().min(1),
+    summary: z.string().min(1),
+    duration: z.string().min(1),
+    level: z.string().min(1),
+    risk: z.string().min(1),
+    audience: z.string().min(1),
+    domain: questionSchema.shape.domain,
+    videoUrl: z.string(),
+    externalVideoUrl: z.string().url().optional(),
+    externalVideoLabel: z.string().min(1).optional(),
+    thumbnailUrl: z.string().min(1),
+    subtitles: z.array(videoSubtitleSchema),
+    transcript: z.array(z.string().min(1)).min(1),
+    quiz: videoQuizSchema,
+    recommendedActionId: z.string().min(1),
+    resourceId: z.string().min(1),
+    sourceIds: z.array(z.string().min(1)),
+    revisionDate: z.string().min(1),
+    language: z.string().min(2),
+    status: z.union([validationStatusSchema, z.enum(['published', 'archived'])]),
+    order: z.number().int().positive(),
+  })
+  .refine((video) => video.quiz.correctOptionIndex < video.quiz.options.length, {
+    message: 'correctOptionIndex must point to an existing option',
+    path: ['quiz', 'correctOptionIndex'],
+  })
+
 export const questionsSchema = z.array(questionSchema).min(1)
 export const actionsSchema = z.array(actionSchema).min(1)
 export const kitSchema = z.array(kitItemSchema).min(1)
 export const sourcesSchema = z.array(sourceSchema).min(1)
 export const resourcesSchema = z.array(resourceSchema).min(1)
+export const videosSchema = z.array(videoCapsuleSchema).min(1)

@@ -1,0 +1,407 @@
+[
+  {
+    "id": "VID-01",
+    "slug": "preparer-son-logement",
+    "title": "Préparer son logement",
+    "summary": "Repérez les gestes simples pour réduire les dégâts avant un épisode dangereux. La capsule aide à vérifier les points essentiels du logement.",
+    "duration": "2 min 42",
+    "level": "Débutant",
+    "risk": "Cyclone et fortes pluies",
+    "audience": "Tous foyers",
+    "domain": "housing",
+    "videoUrl": "https://webissimo.developpement-durable.gouv.fr/IMG/mp4/dreal_vulnerabilite_sst1080p__cle0579d3.mp4",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "Vidéo DREAL Normandie : Comment réduire la vulnérabilité d’un logement aux inondations ?",
+      "Cette vidéo pédagogique explique l’intérêt d’anticiper les points faibles d’un logement exposé à l’eau et de réduire sa vulnérabilité avant la crise.",
+      "Pour Resilience 976, elle sert de support à la préparation du logement, en complément des consignes locales cyclone et fortes pluies."
+    ],
+    "quiz": {
+      "question": "Quel est le bon réflexe avant un épisode dangereux ?",
+      "options": [
+        "Vérifier les points sensibles du logement",
+        "Attendre la dernière minute",
+        "Laisser les objets dehors"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "La préparation du logement doit être anticipée et adaptée aux consignes officielles."
+    },
+    "recommendedActionId": "action_secure_openings",
+    "resourceId": "resource_cyclone",
+    "sourceIds": [
+      "source_dreal_normandie_videos",
+      "source_prefecture_mayotte"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 1,
+    "externalVideoUrl": "https://www.normandie.developpement-durable.gouv.fr/la-dreal-normandie-a-coproduit-une-serie-de-videos-a5071.html?lang=fr",
+    "externalVideoLabel": "Page officielle DREAL Normandie - Comment réduire la vulnérabilité d’un logement aux inondations ?"
+  },
+  {
+    "id": "VID-02",
+    "slug": "composer-son-kit-urgence",
+    "title": "Composer son kit d’urgence",
+    "summary": "Comprenez les familles d’objets à prévoir dans un kit de base. La capsule sert de pilote pour relier vidéo, fiche pratique et plan d’actions.",
+    "duration": "2 min 00",
+    "level": "Débutant",
+    "risk": "Isolement temporaire",
+    "audience": "Tous foyers",
+    "domain": "water_food",
+    "videoUrl": "",
+    "externalVideoUrl": "https://youtu.be/8SGtruWuabo",
+    "externalVideoLabel": "TutosRisques : Kit de sécurité - GouvernementFR",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "Vidéo GouvernementFR : TutosRisques - Kit de sécurité.",
+      "La vidéo explique comment préparer un kit de sécurité pour faire face à une situation d’urgence et rappelle les objets de première nécessité à prévoir.",
+      "La capsule Resilience 976 relie cette vidéo au kit personnalisé, à la checklist et au plan d’actions du foyer."
+    ],
+    "quiz": {
+      "question": "Que doit contenir un kit d’urgence utile ?",
+      "options": [
+        "Des éléments adaptés au foyer",
+        "Uniquement des objets électroniques",
+        "Des documents laissés séparément"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Le kit doit être adapté à la composition du foyer et rester facile à retrouver."
+    },
+    "recommendedActionId": "action_emergency_bag",
+    "resourceId": "resource_kit",
+    "sourceIds": [
+      "source_gouvernement_risques",
+      "source_prefecture_mayotte"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 2
+  },
+  {
+    "id": "VID-03",
+    "slug": "prevoir-eau-alimentation",
+    "title": "Prévoir l’eau et l’alimentation",
+    "summary": "Identifiez les réserves à préparer pour tenir en cas de coupure ou d’isolement. La capsule rappelle que les quantités doivent suivre les recommandations validées.",
+    "duration": "2 min 20",
+    "level": "Débutant",
+    "risk": "Coupure d’eau ou isolement",
+    "audience": "Tous foyers",
+    "domain": "water_food",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "La page officielle info.gouv.fr rappelle que les premières 72 heures d’une crise sont décisives.",
+      "Elle indique que le kit d’urgence doit permettre de gérer les priorités : boire, manger, avoir chaud, se soigner et rester informé.",
+      "Cette capsule s’appuie sur ce contenu pour cadrer les réserves d’eau et d’alimentation à prévoir, avec validation locale à réaliser."
+    ],
+    "quiz": {
+      "question": "Pourquoi préparer eau et alimentation à l’avance ?",
+      "options": [
+        "Pour limiter l’improvisation en cas d’isolement",
+        "Pour remplacer les consignes officielles",
+        "Pour éviter toute vérification"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "L’anticipation évite de dépendre d’achats de dernière minute."
+    },
+    "recommendedActionId": "action_water_reserve",
+    "resourceId": "resource_kit",
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 3,
+    "externalVideoUrl": "https://www.info.gouv.fr/risques/se-preparer-a-une-situation-durgence",
+    "externalVideoLabel": "Page officielle info.gouv.fr - Se préparer à une situation d’urgence"
+  },
+  {
+    "id": "VID-04",
+    "slug": "proteger-ses-documents",
+    "title": "Protéger ses documents",
+    "summary": "Listez les documents à regrouper et à protéger. La capsule aide à préparer une pochette accessible en cas de départ rapide.",
+    "duration": "2 min 15",
+    "level": "Débutant",
+    "risk": "Perte de documents",
+    "audience": "Tous foyers",
+    "domain": "health_documents",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "La page officielle info.gouv.fr mentionne les photocopies des documents essentiels dans une pochette étanche parmi les éléments du kit d’urgence.",
+      "Cette capsule traduit ce point en action pratique : regrouper les papiers importants, ordonnances et copies utiles dans un support protégé.",
+      "Les exemples précis doivent rester adaptés au foyer et validés avant publication finale."
+    ],
+    "quiz": {
+      "question": "Quel geste protège mieux les documents importants ?",
+      "options": [
+        "Les regrouper dans une pochette protégée",
+        "Les laisser dispersés",
+        "Les confier uniquement à sa mémoire"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Une pochette protégée facilite la récupération rapide des documents utiles."
+    },
+    "recommendedActionId": "action_docs",
+    "resourceId": "resource_kit",
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 4,
+    "externalVideoUrl": "https://www.info.gouv.fr/risques/se-preparer-a-une-situation-durgence",
+    "externalVideoLabel": "Page officielle info.gouv.fr - Documents essentiels dans le kit d’urgence"
+  },
+  {
+    "id": "VID-05",
+    "slug": "preparer-les-enfants",
+    "title": "Préparer les enfants",
+    "summary": "Préparez les enfants sans les inquiéter inutilement. La capsule propose une approche simple, concrète et rassurante.",
+    "duration": "2 min 35",
+    "level": "Famille",
+    "risk": "Stress et désorganisation",
+    "audience": "Foyers avec enfants",
+    "domain": "household",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "La vidéo officielle de la Sécurité civile rappelle notamment qu’en cas d’inondation, il ne faut pas aller chercher ses enfants à l’école : ils sont pris en charge par les équipes pédagogiques.",
+      "Cette capsule utilise ce point pour préparer les enfants en amont, expliquer simplement les consignes familiales et éviter les décisions improvisées pendant la crise.",
+      "Le ton doit rester rassurant et non anxiogène."
+    ],
+    "quiz": {
+      "question": "Comment aborder la préparation avec les enfants ?",
+      "options": [
+        "Avec des consignes simples et rassurantes",
+        "En évitant tout échange",
+        "En dramatisant la situation"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Une préparation claire aide les enfants à comprendre leur rôle sans créer de panique."
+    },
+    "recommendedActionId": "action_family_plan",
+    "resourceId": "resource_alerts",
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 5,
+    "externalVideoUrl": "https://www.securite-civile.interieur.gouv.fr/reagir",
+    "externalVideoLabel": "Vidéo officielle Sécurité civile - Les bons réflexes face aux risques naturels ou technologiques"
+  },
+  {
+    "id": "VID-06",
+    "slug": "aider-personne-vulnerable",
+    "title": "Aider une personne vulnérable",
+    "summary": "Anticipez les besoins particuliers dans l’entourage proche. La capsule relie préparation individuelle et entraide locale.",
+    "duration": "2 min 40",
+    "level": "Intermédiaire",
+    "risk": "Vulnérabilité accrue",
+    "audience": "Aidants et voisinage",
+    "domain": "household",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "La page officielle info.gouv.fr invite à identifier les personnes vulnérables à venir en aide dans son plan personnel de secours.",
+      "Cette capsule relie cette recommandation à l’entraide de proximité : prévoir une aide simple, consentie et activable sans collecter de données sensibles.",
+      "Elle complète le diagnostic foyer sans remplacer les dispositifs officiels ou associatifs."
+    ],
+    "quiz": {
+      "question": "Quel principe respecter pour aider une personne vulnérable ?",
+      "options": [
+        "Prévoir une aide simple et consentie",
+        "Collecter des détails médicaux",
+        "Décider sans échange"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "L’entraide doit rester proportionnée, respectueuse et préparée à l’avance."
+    },
+    "recommendedActionId": "action_check_neighbors",
+    "resourceId": "resource_alerts",
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 6,
+    "externalVideoUrl": "https://www.info.gouv.fr/risques/se-preparer-a-une-situation-durgence",
+    "externalVideoLabel": "Page officielle info.gouv.fr - Plan personnel et entraide"
+  },
+  {
+    "id": "VID-07",
+    "slug": "reagir-coupure-electricite",
+    "title": "Réagir à une coupure d’électricité",
+    "summary": "Préparez les solutions de secours pour l’éclairage, la communication et les appareils essentiels. La capsule met l’accent sur la sécurité.",
+    "duration": "2 min 25",
+    "level": "Débutant",
+    "risk": "Coupure électrique",
+    "audience": "Tous foyers",
+    "domain": "energy_communication",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "La page officielle info.gouv.fr cite les coupures d’électricité, de gaz et d’eau courante parmi les situations possibles après une catastrophe majeure.",
+      "Elle recommande notamment une radio à piles, des piles de rechange, une lampe de poche et un chargeur de téléphone portable.",
+      "Cette capsule transforme ces éléments en réflexes concrets pour anticiper une coupure d’électricité."
+    ],
+    "quiz": {
+      "question": "Que préparer avant une coupure électrique ?",
+      "options": [
+        "Une solution d’éclairage et de recharge adaptée",
+        "Des branchements improvisés",
+        "Aucune alternative"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Les solutions de secours doivent être préparées et utilisées selon les consignes de sécurité."
+    },
+    "recommendedActionId": "action_light",
+    "resourceId": "resource_alerts",
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 7,
+    "externalVideoUrl": "https://www.info.gouv.fr/risques/se-preparer-a-une-situation-durgence",
+    "externalVideoLabel": "Page officielle info.gouv.fr - Coupures et équipement de secours"
+  },
+  {
+    "id": "VID-08",
+    "slug": "reagir-coupure-eau",
+    "title": "Réagir à une coupure d’eau",
+    "summary": "Organisez les réflexes essentiels en cas d’interruption d’eau. La capsule distingue anticipation, usage raisonné et information officielle.",
+    "duration": "2 min 51",
+    "level": "Débutant",
+    "risk": "Coupure d’eau",
+    "audience": "Tous foyers",
+    "domain": "water_food",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "Vidéo GouvernementFR : TutosRisques - Inondation.",
+      "La vidéo présente les bons réflexes à adopter en cas d’inondation et rappelle l’importance de suivre les consignes officielles.",
+      "Dans Resilience 976, elle complète la capsule sur la coupure d’eau et peut aussi servir de support à un futur module dédié aux inondations."
+    ],
+    "quiz": {
+      "question": "En cas de coupure d’eau, quelle information suivre ?",
+      "options": [
+        "Les consignes officielles disponibles",
+        "Les rumeurs non vérifiées",
+        "Uniquement les habitudes personnelles"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Les consignes officielles restent la référence pour adapter les gestes."
+    },
+    "recommendedActionId": "action_water_reserve",
+    "resourceId": "resource_inondation",
+    "sourceIds": [
+      "source_gouvernement_risques",
+      "source_prefecture_mayotte"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 8,
+    "externalVideoUrl": "https://youtu.be/n-5ltuDogF4",
+    "externalVideoLabel": "TutosRisques : Inondation - GouvernementFR"
+  },
+  {
+    "id": "VID-09",
+    "slug": "reflexes-pendant-cyclone",
+    "title": "Les réflexes pendant le cyclone",
+    "summary": "Rappelez les comportements attendus pendant le passage d’un cyclone. La capsule doit rester strictement alignée avec les consignes officielles.",
+    "duration": "2 min 50",
+    "level": "Essentiel",
+    "risk": "Cyclone",
+    "audience": "Tous foyers",
+    "domain": "behaviors",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "La vidéo officielle de la Sécurité civile contient un passage sur les bons réflexes en cas de tempête.",
+      "Elle rappelle de fermer les ouvertures, d’enlever les objets pouvant devenir des projectiles, de ne pas sortir pendant l’événement et d’attendre la fin de l’alerte.",
+      "Pour Mayotte, cette capsule doit rester alignée avec les consignes cyclone diffusées par les autorités locales."
+    ],
+    "quiz": {
+      "question": "Pendant un cyclone, quelle référence suivre ?",
+      "options": [
+        "Les consignes des autorités compétentes",
+        "Les publications non sourcées",
+        "Son intuition uniquement"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Le service sensibilise, mais ne remplace pas les consignes diffusées par les autorités."
+    },
+    "recommendedActionId": "action_official_sources",
+    "resourceId": "resource_cyclone",
+    "sourceIds": [
+      "source_gouvernement_risques",
+      "source_prefecture_mayotte"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 9,
+    "externalVideoUrl": "https://www.securite-civile.interieur.gouv.fr/reagir",
+    "externalVideoLabel": "Vidéo officielle Sécurité civile - Passage tempête et bons réflexes"
+  },
+  {
+    "id": "VID-10",
+    "slug": "premieres-actions-apres-evenement",
+    "title": "Les premières actions après l’événement",
+    "summary": "Préparez le retour à la normale sans prendre de risque inutile. La capsule aide à prioriser information, sécurité et entraide.",
+    "duration": "2 min 45",
+    "level": "Essentiel",
+    "risk": "Après événement",
+    "audience": "Tous foyers",
+    "domain": "behaviors",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "La page officielle info.gouv.fr décrit les réflexes après une situation d’urgence : connaître les dommages, rester conscient des dangers encore présents et ne revenir au domicile que lorsque les pouvoirs publics l’autorisent.",
+      "Elle rappelle aussi de faire appel aux secours ou à un professionnel pour remettre en marche l’électricité ou le gaz.",
+      "Cette capsule organise ces informations en premières actions de retour à la normale."
+    ],
+    "quiz": {
+      "question": "Après un événement, que faut-il éviter ?",
+      "options": [
+        "Prendre des risques non nécessaires",
+        "S’informer auprès de sources officielles",
+        "Vérifier son entourage si c’est possible"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Le retour à la normale doit se faire progressivement et sans exposition inutile."
+    },
+    "recommendedActionId": "action_test_plan",
+    "resourceId": "resource_alerts",
+    "sourceIds": [
+      "source_gouvernement_risques",
+      "source_prefecture_mayotte"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 10,
+    "externalVideoUrl": "https://www.info.gouv.fr/risques/se-preparer-a-une-situation-durgence",
+    "externalVideoLabel": "Page officielle info.gouv.fr - Après une situation d’urgence"
+  }
+]

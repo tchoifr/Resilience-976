@@ -1,1 +1,0 @@
-import{d as r,o,c as n,t as s}from"./index-BuPhHGQm.js";const t=["href"],u=r({__name:"SourceLink",props:{source:{}},setup(e){return(c,a)=>(o(),n("a",{class:"source-link",href:e.source.url,target:"_blank",rel:"noopener noreferrer"},s(e.source.label),9,t))}});export{u as _};
