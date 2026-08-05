@@ -21,15 +21,15 @@ const customExamples = computed(() => [
 ])
 
 const checklistActions = computed<PrioritizedAction[]>(() => {
-  const recommended = getRecommendedActions(questions, actions, assessmentStore.answers)
+  const recommended = getRecommendedActions(questions.value, actions.value, assessmentStore.answers)
 
   if (recommended.length > 0) {
     return recommended
   }
 
-  return actions.slice(0, 10).map((action, index) => ({
+  return actions.value.slice(0, 10).map((action, index) => ({
     ...action,
-    priority: actions.length - index,
+    priority: actions.value.length - index,
   }))
 })
 
@@ -95,7 +95,7 @@ async function exportChecklistPdf() {
 }
 
 function firstSourceLabel(sourceIds: string[]): string {
-  const source = sourceIds.map((sourceId) => sourcesById.get(sourceId)).find(Boolean)
+  const source = sourceIds.map((sourceId) => sourcesById.value.get(sourceId)).find(Boolean)
   return source?.label ?? t('common.sourceToValidate')
 }
 

@@ -8,7 +8,7 @@ const { t } = useI18n()
 
 function getSources(sourceIds: string[]): Source[] {
   return sourceIds
-    .map((sourceId) => sourcesById.get(sourceId))
+    .map((sourceId) => sourcesById.value.get(sourceId))
     .filter((source): source is Source => source !== undefined)
 }
 </script>

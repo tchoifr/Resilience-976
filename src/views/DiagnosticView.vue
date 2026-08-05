@@ -15,13 +15,15 @@ const assessmentStore = useAssessmentStore()
 const router = useRouter()
 const { t } = useI18n()
 const questionRegion = ref<HTMLElement | null>(null)
-const firstQuestion = questions[0]
+const firstQuestion = questions.value[0]
 
 if (!firstQuestion) {
   throw new Error(t('diagnostic.noQuestionError'))
 }
 
-const currentQuestion = computed(() => questions[assessmentStore.currentIndex] ?? firstQuestion)
+const currentQuestion = computed(
+  () => questions.value[assessmentStore.currentIndex] ?? firstQuestion,
+)
 const selectedAnswer = computed({
   get: () => assessmentStore.answers[currentQuestion.value.id],
   set: (answerId: string | undefined) => {
@@ -31,13 +33,16 @@ const selectedAnswer = computed({
   },
 })
 
-const domains = computed(() => Array.from(new Set(questions.map((question) => question.domain))))
+const domains = computed(() =>
+  Array.from(new Set(questions.value.map((question) => question.domain))),
+)
 const progress = computed(() =>
   Math.round(
-    ((assessmentStore.currentIndex + (selectedAnswer.value ? 1 : 0)) / questions.length) * 100,
+    ((assessmentStore.currentIndex + (selectedAnswer.value ? 1 : 0)) / questions.value.length) *
+      100,
   ),
 )
-const isLastQuestion = computed(() => assessmentStore.currentIndex >= questions.length - 1)
+const isLastQuestion = computed(() => assessmentStore.currentIndex >= questions.value.length - 1)
 const canContinue = computed(() => !currentQuestion.value.required || Boolean(selectedAnswer.value))
 
 async function focusQuestion() {

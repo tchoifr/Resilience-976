@@ -1,0 +1,407 @@
+[
+  {
+    "id": "VID-01",
+    "slug": "preparer-son-logement",
+    "title": "Nisutayarisha harimwa nyumba",
+    "summary": "Namusike zitru rahisi za zombo wu zihidjiri vhavho. Zibumba zisaidiao juwa zi muhimu za nyumba.",
+    "duration": "2 min 42",
+    "level": "Mukini",
+    "risk": "vua davu na vua nyengi",
+    "audience": "uwadjama piya",
+    "domain": "housing",
+    "videoUrl": "https://webissimo.developpement-durable.gouv.fr/IMG/mp4/dreal_vulnerabilite_sst1080p__cle0579d3.mp4",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "video DNDSOM ya DNDSOLI : Namna jeje u tsena u fanye djitihadi harimwa zi ndziya za ndziya dagoni?",
+      "video ini yamusomoeledza dzaho ritso ngaliya taambou za gnoumba ziliyo na zitru zalo ziliyo amba iyo rangu wubaundra fetre kabla ya tadjiri.",
+      "rongowa de regika mwaka wa 961, wa para musaanda wa dagoni vhale na zi trongo za vua ngweni zakorongolwa, be de itsoka marke tsi de i rangu dagoni na zi nyasiya za vua nyengi za dagoni."
+    ],
+    "quiz": {
+      "question": "Trongo ya peu trini kaina ya shiha trini?",
+      "options": [
+        "ou piya zi trongo zendza taambu za ndziani",
+        "Namulindra harimwa li dakika ya mwiso",
+        "Zisha zitru zini"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "ilazimu ritayarishihe mupango wa nyumba ile utsimidze i amuri ya masadaka ya komo rasmi."
+    },
+    "recommendedActionId": "action_secure_openings",
+    "resourceId": "resource_cyclone",
+    "sourceIds": [
+      "source_dreal_normandie_videos",
+      "source_prefecture_mayotte"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 1,
+    "externalVideoUrl": "https://www.normandie.developpement-durable.gouv.fr/la-dreal-normandie-a-coproduit-une-serie-de-videos-a5071.html?lang=fr",
+    "externalVideoLabel": "KAVU TSENA ya Watru wa dagoni Ini - Namna jeje moriyao ndziyani y nyumba ndjema ha uja malavu?"
+  },
+  {
+    "id": "VID-02",
+    "slug": "composer-son-kit-urgence",
+    "title": "renga trusu yaho ya wuhudiya",
+    "summary": "Dalia udjama wa zitru zijama na waye djama za lalihwa. Zi trongo iyo u djahazi bole a ddridzao munyahono wa dagawo, gnosi na trongo ya fagnatera zi trongo na zi trongo za mu ankili.",
+    "duration": "2 min 00",
+    "level": "Mukini",
+    "risk": "Mukatru wa raru",
+    "audience": "uwadjama piya",
+    "domain": "water_food",
+    "videoUrl": "",
+    "externalVideoUrl": "https://youtu.be/8SGtruWuabo",
+    "externalVideoLabel": "Ritos ruks : hondre ya usalama - securiteiaEN",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "sendre ya sirkali BIFR : trongo ya pandre yatrilwawo na trongo za wandre.",
+      "Insaha y video iyo ieledza namna ya hudjiriya trongo za hu ngamidjiri (ya) za hu renga hatwari.",
+      "shumba ya rangoni mwa vhili mwandroni mwandroni, isukudza y video ini ha ndziya, ndziya na mupango wa fandziyani."
+    ],
+    "quiz": {
+      "question": "Shime muhimu ya sahani ilazimu ike na trini?",
+      "options": [
+        "zitru za dagoni",
+        "Zitru za kondrou tu",
+        "zitru zitru mbili aãdhwi"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Shime ilazimu imoesa i sa na yi miangishiyo ya moro na yilazimu yike ndziani."
+    },
+    "recommendedActionId": "action_emergency_bag",
+    "resourceId": "resource_kit",
+    "sourceIds": [
+      "source_gouvernement_risques",
+      "source_prefecture_mayotte"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 2
+  },
+  {
+    "id": "VID-03",
+    "slug": "prevoir-eau-alimentation",
+    "title": "Afagna maji na maji",
+    "summary": "Dziani zihimo uhifadhiha na zi trongo zihidjiri ha upasuhuwa. Tumba labole lisumumidzisani amba kiasi iyo yalazimu kidunga imru matiti yawo.",
+    "duration": "2 min 20",
+    "level": "Mukini",
+    "risk": "Utria maji aou uketsi",
+    "audience": "uwadjama piya",
+    "domain": "water_food",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "Muso page principal afo.gouluu. rangu aria amba sa ya handra ya rambu mbili ya taãbu utsoshindra.",
+      "izo trongo iyo i rongowa amba trongo ya madjirani i lazimu rizihira : unwa, unwa, utria harisha, wendrelea zi ankili na wendre wahifadjirishe.",
+      "shumba ini ususingidziya ha sibabu ya marongozi yanu ile andrangowe maji na zitru zalazimu zifanyishiwe, vhavho na zi trongo zawo zalazimu zifanyishihe."
+    ],
+    "quiz": {
+      "question": "Mana trini apishia maji asulisa suku?",
+      "options": [
+        "ou trongo oulazimu amba de endra djini",
+        "ha wawe ujoi mitrume harimoi zi ankili rasmi",
+        "waye ulaguwa alama za midjuza"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Mutru asukoudza harimwa zi taãbu za dakika za jana."
+    },
+    "recommendedActionId": "action_water_reserve",
+    "resourceId": "resource_kit",
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 3,
+    "externalVideoUrl": "https://www.info.gouv.fr/risques/se-preparer-a-une-situation-durgence",
+    "externalVideoLabel": "page bole bole info.gouv. dzina ya rangu- ya tayari harimwa mahuhumbu ya rendreha."
+  },
+  {
+    "id": "VID-04",
+    "slug": "proteger-ses-documents",
+    "title": "zigambu za gnoumba",
+    "summary": "Risihesha zi trongo zini ziheledzewa na zi trongo zimubalilidze. Zitru zitsimidze. Zitru zitsimidjiri zihimo dzawo haraka.",
+    "duration": "2 min 15",
+    "level": "Mukini",
+    "risk": "uwula ya zitru zitru zihimo",
+    "audience": "uwadjama piya",
+    "domain": "health_documents",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "Mufalume wa gnoumba lafo.gouv page asu rongowa trongo muhimu za watru walio harimwa stale ha sibabu ya wusidziya.",
+      "Djawabu titi lini yo saidia harimwa zi trongo zini. Zitru zini muhimu, zi amuri na nyakala zao muhimu harimwa harimwa shitrahi ya wandziya.",
+      "mifano miole ilazimu baki keme ha sibabu ya wanyahe, amoesa kabula ya marongozi yanu adjiri shahula ya mwiso."
+    ],
+    "quiz": {
+      "question": "Trongo trini bora zaidi zi ndziyao zitru muhimu za amoesa?",
+      "options": [
+        "Wawenge harimwa mukoba wa ndziani",
+        "nawayisihedze",
+        "Aheya e ha yibole yahe tu"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Utumba wa mimbani udzisa haraka zitsimidza zitru muhimu."
+    },
+    "recommendedActionId": "action_docs",
+    "resourceId": "resource_kit",
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 4,
+    "externalVideoUrl": "https://www.info.gouv.fr/risques/se-preparer-a-une-situation-durgence",
+    "externalVideoLabel": "daradja ya page infoaluv.fr, aou zi trongo za asondroufagna"
+  },
+  {
+    "id": "VID-05",
+    "slug": "preparer-les-enfants",
+    "title": "watayarisha wana",
+    "summary": "Namutayarishe wanatsa wasi washange wala kushangiha. Dumba yanu yi misomo rahisi, riangi na hu trongo keme.",
+    "duration": "2 min 35",
+    "level": "udjama",
+    "risk": "U taambou va utso kao na tsena zi ngamidjiri",
+    "audience": "makazi na wana",
+    "domain": "household",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "ha izo tsi de musherehimo wa pawa ya sirkali bole yasuhuyiya hari mwa zi trongo zahidjiri, mutru asurenge likoli amba asondro wana wahe : wa ya mudzitahadharishe na zinga za usomedjiri.",
+      "Dumba titi lini urumia trongo iyo ile pare utayarishe wanatsa wulelawu, ewa zi nyasi za dagoni, tsena ulatsaha zi nyasiya za rangu harimwa mawana dagoni.",
+      "Risina y enyesa iyo i lazimu keme na roho yanyu wala tsi ha udzitria hamu."
+    ],
+    "quiz": {
+      "question": "Namna jeje mutru alazimuopihiwe na wana?",
+      "options": [
+        "Ha mufano ako tsimidza msomo wa i trongo rahisi na elidza",
+        "wandrana harimoi ubadilishano",
+        "amwesa asowona piya hazi zaho"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Misadjitayarishe ya hu saidia wana waelewa i hazi yawo wala wasi fanye tsena."
+    },
+    "recommendedActionId": "action_family_plan",
+    "resourceId": "resource_alerts",
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 5,
+    "externalVideoUrl": "https://www.securite-civile.interieur.gouv.fr/reagir",
+    "externalVideoLabel": "Riside bwede ya shariya ha sibabu ya wadjema- Amadjiri y trongo ya wukabili mashibali ya ala au ya wulamizi."
+  },
+  {
+    "id": "VID-06",
+    "slug": "aider-personne-vulnerable",
+    "title": "u saidiya mutru atsokao amba asikwa na taambu",
+    "summary": "Dzisa yi mienga yahe harimwa yi mikabala ya karibu. Tumba la vhungina madza yi mitayarisho na shitru ya hu saidie.",
+    "duration": "2 min 40",
+    "level": "chindrani",
+    "risk": "Uraharafu Uzidi",
+    "audience": "wanyamizi na mrara",
+    "domain": "household",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "Musomo rasmi wa licofo.goaluu. dzina la rangu uhiri amba watru watso husaidia harimwa mpango wa hule.",
+      "Djawabu titi lini hiriwa mbeli la lewo harimwa musaanda wa marke, madza ari vulishiye na ufanya djibou vhale tsiandahima taambou za marike ata kawu zi trongo zemazema zapatana na waye.",
+      "Yission anmalidza zi trongo za dagoni, wala kavou zi rendrehao rasmi au za adzalia."
+    ],
+    "quiz": {
+      "question": "Ni mila trini ilazimuo iheshehe ha u saidiya mutru atsokao vu hatwari?",
+      "options": [
+        "Afagna musada rahisi na ndzisa",
+        "Ãki aou harimoi trongo za bazifagna",
+        "Udjama harimwa utso kao yontsi"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "ha ilazimu udzisa ubaki harimwa shitru, riya ndziya na ya madjiliya ya rangu yi miswili."
+    },
+    "recommendedActionId": "action_check_neighbors",
+    "resourceId": "resource_alerts",
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 6,
+    "externalVideoUrl": "https://www.info.gouv.fr/risques/se-preparer-a-une-situation-durgence",
+    "externalVideoLabel": "sirkali bole page info.gouv. dzindre ya mpia, na madza ya wanyawo"
+  },
+  {
+    "id": "VID-07",
+    "slug": "reagir-coupure-electricite",
+    "title": "Dji aa upara upangavi wa wuku",
+    "summary": "Zitayarisha marongozi ya harimwa taa, ulague na zi zombo muhimu. Zibumba zisu dzivaha ha usalama.",
+    "duration": "2 min 25",
+    "level": "Mukini",
+    "risk": "utsaha ugaki wa ugaki",
+    "audience": "uwadjama piya",
+    "domain": "energy_communication",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "Muso page rasmi wafo.goav, sinya bito, lesungu na yezi, na maji yaka yapuliha hari mwa zi trongo zitsokao yotsi zijao yontsi bole.",
+      "Ai hari mwa zitru zangina, be moni mwa zitru zangina, shindzi za rangu, bushi na shindrasi ya telefoua.",
+      "shidzia ini y wovhatsa zitru zini trongoni zi hidjiri mauri de zi trongo ziliyo amba utsorongoa ushindzi wa midjuza."
+    ],
+    "quiz": {
+      "question": "trini ya toutá urengeledzeye kabula ya ugadza radi?",
+      "options": [
+        "Minuru na taa ndzitwaharifu",
+        "zioni namuna yi miangishiyo ya dini ya ewa",
+        "kavhu vwa watru wahimou"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Trongo za sirini zilazimu zitayarishiwe na zalazimu zidunguwe na zi nyasiya za marongozi ya usalama."
+    },
+    "recommendedActionId": "action_light",
+    "resourceId": "resource_alerts",
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 7,
+    "externalVideoUrl": "https://www.info.gouv.fr/risques/se-preparer-a-une-situation-durgence",
+    "externalVideoLabel": "pare bole sirkali bole info.gav, rangu doungu na zombo za kuhurema"
+  },
+  {
+    "id": "VID-08",
+    "slug": "reagir-coupure-eau",
+    "title": "ngalia maji yaka ya mwitsi",
+    "summary": "Zidza zi taãbu muhimu zihidjiri na trongo za maji zihidzihao. Zi trongo zini zi onesa mauri, za riya zi nori na mahadisi ya mungu.",
+    "duration": "2 min 51",
+    "level": "Mukini",
+    "risk": "ungadza maji",
+    "audience": "uwadjama piya",
+    "domain": "water_food",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "video PremicationFR : trongo za karito makedjiri- hidza moni mwa vua.",
+      "Namna zi video isu onesa matso yaho mauri e yaho amba mutru akubali chitrou harimwa zi trongo zahidjiri amuriboledjiri. Awa na yilazimu riya yi mitrume ya i amuri de i amuri yahe.",
+      "Hari mwa Risini mia mia mbili, itsoauti yi mitsumba ya maji yika yi mira, tsena itsokao yotsi ha utriya tanmbo ya mearuba ya meso uregee."
+    ],
+    "quiz": {
+      "question": "neka maji yaka yapasua, trongo trini de itsodungao?",
+      "options": [
+        "Musomo rasmi ulawa",
+        "wahidzisa mahabari",
+        "Kaya e mila tu za tsumba"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Mupango rasmi abaki harimwa zi trongo za mwili za lawa harimwa zi ankili za hidjiri."
+    },
+    "recommendedActionId": "action_water_reserve",
+    "resourceId": "resource_inondation",
+    "sourceIds": [
+      "source_gouvernement_risques",
+      "source_prefecture_mayotte"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 8,
+    "externalVideoUrl": "https://youtu.be/n-5ltuDogF4",
+    "externalVideoLabel": "trongo : ouro himidjiri : ouro hidjiri- radiRu ya serikali"
+  },
+  {
+    "id": "VID-09",
+    "slug": "reflexes-pendant-cyclone",
+    "title": "Risiketsi wakati wa tufani",
+    "summary": "Dzianisa zi endra dagoni vhale, zi suku zile zalazimu zi dzindre harimwa zi trongo ziliyo amba tsi de zi trongo ziliyo amba tsi de zi trongo zile zalazimu zihidjiri.",
+    "duration": "2 min 50",
+    "level": "muhimu",
+    "risk": "bmidza",
+    "audience": "uwadjama piya",
+    "domain": "behaviors",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "Mutsumba wa sirkali bole ya sirkali bole una veleya mindru ya peu harimwa zi trongo za hidjiri mauri de zile za hidjiri mauri de zile za hidjiri.",
+      "Yisoni yayo ri judze yizi mindru hule, wupua zitru zi shindrao makati mbeli za ukurubiya, wala ulawe hari mwa zi trongo zihidjiri zihimao, musutru ahima hari mwa zi suku zile za rendre wadzi.",
+      "Maore atsoka shitru iyo ilazimu rike harimwa zitru zi hadisi na zi trongo za tufani zatolewa na wakala wadzani."
+    ],
+    "quiz": {
+      "question": "uwaswili yahetsi dagoni vhale, urenge mufano upi?",
+      "options": [
+        "Zi nyasiya za wabole hodari",
+        "allocwesi na trongo kayavumusa",
+        "ilazi yahe tu"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Tafajiri uwo uengedza uelewa, badi kavhunguwa zi nyasiya za madjeshi,"
+    },
+    "recommendedActionId": "action_official_sources",
+    "resourceId": "resource_cyclone",
+    "sourceIds": [
+      "source_gouvernement_risques",
+      "source_prefecture_mayotte"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 9,
+    "externalVideoUrl": "https://www.securite-civile.interieur.gouv.fr/reagir",
+    "externalVideoLabel": "Mushashi wa video Haia yaswilli - Atreseya wakati wa tufani na maindro mafulera"
+  },
+  {
+    "id": "VID-10",
+    "slug": "premieres-actions-apres-evenement",
+    "title": "Trongo ya mbeli yi miswili baanda yahidjiri",
+    "summary": "Namutayarishe i trongo iyo, wala tsi rangu wu kanaani wala tsi ha ujo tsahao. Zitru zitsimidza midjuza habari, rike na musada wangina.",
+    "duration": "2 min 45",
+    "level": "muhimu",
+    "risk": "baanda yahissi",
+    "audience": "uwadjama piya",
+    "domain": "behaviors",
+    "videoUrl": "",
+    "thumbnailUrl": "/images/video-placeholder.svg",
+    "subtitles": [],
+    "transcript": [
+      "Muso page rasmi wafo.goav, ueledza wuhima wuhima baanda ya hali ya Hidhuri : wujuwa zi tadjiri, ha waye urongowa amba aono trongo zini rangu akrimso zia a regeya tsi dagoni tu wakati wandre wa shariya yamohamusao.",
+      "Y Labiblu iyo u ri aaaa aou hiriwao musada aoudjaaliwa elecatrou wala sivu.",
+      "shitru ini de zizo huhiriwa zi trongo zini mwangishio ya madjini y regeyao yahe."
+    ],
+    "quiz": {
+      "question": "baanda ya dagoni vhale, trini de yalazimu yaewe?",
+      "options": [
+        "Nirenge ma taambou wala si za udjama",
+        "trongo za mbeli za zignou rasmi",
+        "ngalia makazi yaho neka amba yitsoka"
+      ],
+      "correctOptionIndex": 0,
+      "explanation": "Yalazimu tsena harimwa ndziro ya tsena ya tsena ilazimu fanye ava ha uharaka na wala taamwa jitsiya."
+    },
+    "recommendedActionId": "action_test_plan",
+    "resourceId": "resource_alerts",
+    "sourceIds": [
+      "source_gouvernement_risques",
+      "source_prefecture_mayotte"
+    ],
+    "revisionDate": "2026-08-05",
+    "language": "fr",
+    "status": "to_validate",
+    "order": 10,
+    "externalVideoUrl": "https://www.info.gouv.fr/risques/se-preparer-a-une-situation-durgence",
+    "externalVideoLabel": "bvoi rasmi page info.gouv. dzina ya hovouhu"
+  }
+]

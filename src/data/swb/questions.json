@@ -1,0 +1,784 @@
+[
+  {
+    "id": "household_01",
+    "domain": "household",
+    "text": "Eba haho dagoni haho ujua wantru wahifagna hayi harimwa trongo yahidjiri?",
+    "help": "namu fikiri wanatsa, wawu uwabalilwa wantru wabole, zinyama na ziyo za muhimu.",
+    "required": true,
+    "weight": 3,
+    "criticality": "medium",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan kavhusi ata trongo yamusika tsena.",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "Harimwa zini, be madza kawaelewa mutru atsokao yotsi",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, dziha bole yingaliya",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_family_plan"
+    ],
+    "sourceIds": [
+      "source_prefecture_mayotte"
+    ]
+  },
+  {
+    "id": "household_02",
+    "domain": "household",
+    "text": "halihu una monimo wa udjama waho na piya likoli?",
+    "help": "Tika mutsahagua vahanu ndziyani ha wadzipara neka u mwangishiyo wadziwa.",
+    "required": true,
+    "weight": 3,
+    "criticality": "high",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "ewa be waye tsi jau.",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, i trongo iyo juwa na ndziro ya uingiya",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_family_plan"
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ]
+  },
+  {
+    "id": "household_03",
+    "domain": "household",
+    "text": "Je, wapara zendza muhimu kabula ya telea?",
+    "help": "Labiblu moja au gazeti la shindri aou la para harimoi li gwindzi.",
+    "required": true,
+    "weight": 3,
+    "criticality": "medium",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "Idadi nyengi tu",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, wandzani muhimu uwo ka tsena",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_contacts"
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ]
+  },
+  {
+    "id": "household_04",
+    "domain": "household",
+    "text": "hali mutru aa wa karibu ujua namna ya uhupara au uhu saidiyani neka vhanu?",
+    "help": "Mpango wawo e ha ondro mu tsahao a labe nyumba y ewa baanda ya mufumo.",
+    "required": true,
+    "weight": 2,
+    "criticality": "medium",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "ewa be neka tsi shama taambu",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, ulagua na waye ujuwa ha djira",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_check_neighbors"
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ]
+  },
+  {
+    "id": "housing_01",
+    "domain": "housing",
+    "text": "nyumba yaho ina vwa vavo y regeya?",
+    "help": "Yina utso kao salama zaidi ha udunga ziridhi rasmi za hidjiri.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "labda, be iyo kayana na formation",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, akojuwa ha wendra dagoni",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_repli_zone"
+    ],
+    "sourceIds": [
+      "source_prefecture_mayotte"
+    ]
+  },
+  {
+    "id": "housing_02",
+    "domain": "housing",
+    "text": "hali zivho za vhale na zi trongo za muvukisho na za moni za mwendre?",
+    "help": "Zitru zi ndziani zi ndziani zi taãbu ha wu peu.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "bas, bassi ha tu",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, vhwa harimoi trongo rahisi",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_secure_openings",
+      "action_clear_exterior"
+    ],
+    "sourceIds": [
+      "source_prefecture_mayotte"
+    ]
+  },
+  {
+    "id": "housing_03",
+    "domain": "housing",
+    "text": "wawe ujua za ufanya neka madza ulawa djirani?",
+    "help": "Tafaswi ya haziridza ulawa ; ya saidia arengeledzeshe dagoni.",
+    "required": true,
+    "weight": 5,
+    "criticality": "critical",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "Wami ujua miraharifu mishashi.",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, dagoni ujua zazimu zihimo",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_official_sources",
+      "action_emergency_bag"
+    ],
+    "sourceIds": [
+      "source_prefecture_mayotte",
+      "source_gouvernement_risques"
+    ]
+  },
+  {
+    "id": "housing_04",
+    "domain": "housing",
+    "text": "Eaho dagoni hanyu, wana taa za shitswa zini zisikwa na radi?",
+    "help": "Neka tu harimwa nuru ya telea.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "ewa be ya ushashi",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, marke nyengi zawo ulawa",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_light"
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ]
+  },
+  {
+    "id": "water_food_01",
+    "domain": "water_food",
+    "text": "Una maji ya ousaidia makazi yaho?",
+    "help": "Mukizishi wa ilazimu watru wafikiwe ha madjawabu ya tsi ha madjawabu ya mungu.",
+    "required": true,
+    "weight": 5,
+    "criticality": "critical",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "bas, bassi ha tu",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, shahula isubuliwa yafanyiwa madjili",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_water_reserve"
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ]
+  },
+  {
+    "id": "water_food_02",
+    "domain": "water_food",
+    "text": "una vavo la shahula rahisi ya ondro?",
+    "help": "Zia zi macha ya dagoni na ndziro rahisi yapiha.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "Mwana pavi be kashindri",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, shahula iduku yaduku",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_food_reserve"
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ]
+  },
+  {
+    "id": "water_food_03",
+    "domain": "water_food",
+    "text": "wawe ujuliya zi trongo na wuendra za ziani?",
+    "help": "Harimwa mukabala muhimu lazima ike harimwa wakati watru watsokao na wu rendreha ha wendra.",
+    "required": true,
+    "weight": 3,
+    "criticality": "medium",
+    "answers": [
+      {
+        "id": "none",
+        "label": "kaystoka",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "Wakati ukao",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa hagna soukou",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_food_reserve",
+      "action_water_reserve"
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ]
+  },
+  {
+    "id": "water_food_04",
+    "domain": "water_food",
+    "text": "hali za shahula za dagoni zizo zisondro ngaliya?",
+    "help": "Usifikiri juwa zahu, maaa, maulafu ya muhimu awu zi juhu.",
+    "required": true,
+    "weight": 3,
+    "criticality": "medium",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "Ha fungu",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa wa i suku",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_children_items",
+      "action_pet_plan"
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ]
+  },
+  {
+    "id": "energy_communication_01",
+    "domain": "energy_communication",
+    "text": "Eba zini mu na ndziani ya amba mu tsopara habari rasmi?",
+    "help": "Keme weke, kaitso hutowa kaya lazimu rangou vhavho kabla ya wendra.",
+    "required": true,
+    "weight": 5,
+    "criticality": "critical",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "ndziani",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, neka zitru nyengi zaholwa",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_radio",
+      "action_official_sources"
+    ],
+    "sourceIds": [
+      "source_fr_alert",
+      "source_prefecture_mayotte"
+    ]
+  },
+  {
+    "id": "energy_communication_02",
+    "domain": "energy_communication",
+    "text": "hali ya marongozi yaho awu keme?",
+    "help": "Mitrume aãdhwi ya ulangwa na mahabari aou zi rendreha.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "Ewa be mara nyengi regeya",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, a tayari adzisa",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_power_bank"
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ]
+  },
+  {
+    "id": "energy_communication_03",
+    "domain": "energy_communication",
+    "text": "nyumba yaho u juwa vhahanu upara zi trongo rasmi za humia?",
+    "help": "namutayarishe zi zombo monyewe zi aminio kabula ya tadjiri.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "Mutru e ajua amba.",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, dagoni piya ujua mifera",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_official_sources"
+    ],
+    "sourceIds": [
+      "source_prefecture_mayotte",
+      "source_fr_alert"
+    ]
+  },
+  {
+    "id": "energy_communication_04",
+    "domain": "energy_communication",
+    "text": "udjerebiya i shama yaho ile udzitriya marongozi yaho?",
+    "help": "Musaha rahisi uonesa zi trongo zahimoi.",
+    "required": true,
+    "weight": 3,
+    "criticality": "medium",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "mara moja, vhokudunga",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa hagna soukou",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_test_plan",
+      "action_light",
+      "action_power_bank"
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ]
+  },
+  {
+    "id": "health_documents_01",
+    "domain": "health_documents",
+    "text": "hali zitru za muhimu ziyihwa na zihidjiri?",
+    "help": "Zia zi husu zitru zendza, neka tsi outrou outsahao ri vulikiya zi ndziya za ndziani.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "zitru no tu aãfi",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "Ewa, tsi de zi nyasiya zi nyasiyao zitwaharifu",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_docs"
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ]
+  },
+  {
+    "id": "health_documents_02",
+    "domain": "health_documents",
+    "text": "hali zi nyasiya muhimu moni na zi agoni zirituiwao tsi ha mahadisi ya patana na trongo za ba tiba za vhanu?",
+    "help": "rongowa trongo ya tout zaou zihidjiri, kavhusi trongo ya patana na trongo ya patana na marongozi yanu.",
+    "required": true,
+    "weight": 5,
+    "criticality": "critical",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "bas, bassi ha tu",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, na fundicrecation neka tsi yalazimu",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_medicine_plan"
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ]
+  },
+  {
+    "id": "health_documents_03",
+    "domain": "health_documents",
+    "text": "Una marke ya siga ya oho anijuao hanyuju?",
+    "help": "Zilazimu ziri zahe zifanye djitihadi zazo zihiswe, zihimwe amba zi trongo zalo zisifikana.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "ewa be kamupara",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, iyo uengiha na ufaulu",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_first_aid"
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ]
+  },
+  {
+    "id": "health_documents_04",
+    "domain": "health_documents",
+    "text": "wawe ujua namna ya hu trini ya ou zihifagna trongo oho wala kaketsi mwandro?",
+    "help": "I interlte ini kaisi hiriwao dzina, hangui de mikabala, wala kala ya midjuza",
+    "required": true,
+    "weight": 3,
+    "criticality": "medium",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "Ha fungu",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "Ewa, zitru zizo zisikwa amba zitru-foufagna",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_docs"
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ]
+  },
+  {
+    "id": "behaviors_01",
+    "domain": "behaviors",
+    "text": "wawe ujuwa zi trongo za peu kabla ya dagoni au vua nyengi?",
+    "help": "Hubiblua makartassi ya wantru wazio, wakati wa yihimo.",
+    "required": true,
+    "weight": 5,
+    "criticality": "critical",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "misomo yahono",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, misomo ya masadaka ujuwa",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_official_sources",
+      "action_test_plan"
+    ],
+    "sourceIds": [
+      "source_prefecture_mayotte"
+    ]
+  },
+  {
+    "id": "behaviors_02",
+    "domain": "behaviors",
+    "text": "Eagoni ujua zazimu zi rongolwa harimwa koko la kafranari?",
+    "help": "Shitru iyo usaidia urengeledzea be kai kayaja harimwa wakati mukamilifu.",
+    "required": true,
+    "weight": 5,
+    "criticality": "critical",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "Harimwa nyumba e tu",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, kula mutru ajua zitru zahe.",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_family_plan",
+      "action_official_sources"
+    ],
+    "sourceIds": [
+      "source_fr_alert",
+      "source_prefecture_mayotte"
+    ]
+  },
+  {
+    "id": "behaviors_03",
+    "domain": "behaviors",
+    "text": "madza waparo fanya formation ya patana na trongo za dagoni?",
+    "help": "formation hou piya u fanye djitihadi ya wu djitihadi.",
+    "required": true,
+    "weight": 3,
+    "criticality": "medium",
+    "answers": [
+      {
+        "id": "none",
+        "label": "kaystoka",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "wakati moja",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa neka tsi ya mahabari",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_test_plan"
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ]
+  },
+  {
+    "id": "behaviors_04",
+    "domain": "behaviors",
+    "text": "baanda ya dagoni vhavho, wawe ujuwa uyingaliya zi taãbu zaho vhavho kabla ya u regeya zi vavo zaho?",
+    "help": "Zia zi amuri namusike mbeli za wakala rasmi, tsena uswe zi ngama za hatwari.",
+    "required": true,
+    "weight": 4,
+    "criticality": "high",
+    "answers": [
+      {
+        "id": "none",
+        "label": "anhan",
+        "score": 0
+      },
+      {
+        "id": "partial",
+        "label": "bas, bassi ha tu",
+        "score": 50
+      },
+      {
+        "id": "ready",
+        "label": "ewa, matso yaho yajuwa",
+        "score": 100
+      }
+    ],
+    "actionIds": [
+      "action_official_sources",
+      "action_check_neighbors"
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ]
+  }
+]

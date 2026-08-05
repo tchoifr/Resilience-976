@@ -1,0 +1,42 @@
+[
+  {
+    "id": "source_prefecture_mayotte",
+    "label": "Mukabala wa eore - Misadjahazi ya uka",
+    "organization": "entrema ya sirkali bole maore",
+    "url": "https://www.mayotte.gouv.fr/Actions-de-l-Etat/Prevention-des-risques-et-securite/Prevention-des-risques2/Risques-naturels/Risques-meteorologiques",
+    "consultedAt": "2026-08-04",
+    "validationStatus": "validated"
+  },
+  {
+    "id": "source_gouvernement_risques",
+    "label": "wandre wa sirkali- waweriya",
+    "organization": "sirini",
+    "url": "https://www.securite-civile.interieur.gouv.fr/reagir/comment-se-preparer-face-aux-risques/kit-durgence",
+    "consultedAt": "2026-08-04",
+    "validationStatus": "validated"
+  },
+  {
+    "id": "source_fr_alert",
+    "label": "ewa",
+    "organization": "sirini",
+    "url": "https://www.fr-alert.gouv.fr/",
+    "consultedAt": "2026-08-04",
+    "validationStatus": "validated"
+  },
+  {
+    "id": "source_croix_rouge",
+    "label": "Muingereza wa shifarantsa madipe - Shia ya sirini",
+    "organization": "vwa ushindzi wa shifarantsa madipe",
+    "url": "https://www.croix-rouge.fr/faire-face-au-choc-climatique-nos-propositions-pour-une-meilleure/catakit-preparer-son-sac-durgence",
+    "consultedAt": "2026-08-04",
+    "validationStatus": "validated"
+  },
+  {
+    "id": "source_dreal_normandie_videos",
+    "label": "KAVU TSENA ya rangu ya rangu ya malavu na misomo ya bahari",
+    "organization": "ZINDRA YA HAMU",
+    "url": "https://www.normandie.developpement-durable.gouv.fr/la-dreal-normandie-a-coproduit-une-serie-de-videos-a5071.html?lang=fr",
+    "consultedAt": "2026-08-05",
+    "validationStatus": "validated"
+  }
+]

@@ -1,0 +1,127 @@
+[
+  {
+    "id": "kit_base_water",
+    "label": "wanya maji ha udunga djiriya lariya",
+    "category": "water_food",
+    "conditions": [],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_base_food",
+    "label": "Shahula rahisi za dagoni",
+    "category": "water_food",
+    "conditions": [],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_base_radio",
+    "label": "Namna jeje e mutru a vulikiao dhwamana ya tsi",
+    "category": "communication",
+    "conditions": [],
+    "sourceIds": [
+      "source_fr_alert",
+      "source_prefecture_mayotte"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_base_light",
+    "label": "mwenge na nguvu za radi",
+    "category": "energy",
+    "conditions": [],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_base_first_aid",
+    "label": "Aryoya owa ya sindra ya charayya",
+    "category": "health",
+    "conditions": [],
+    "sourceIds": [
+      "source_croix_rouge"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_base_documents",
+    "label": "nyasiya zi ndzisa za zikala zihidjiri zahidjiri",
+    "category": "documents",
+    "conditions": [],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_children",
+    "label": "zitrongo za udjama umwana na mayaho",
+    "category": "household",
+    "conditions": [
+      {
+        "field": "children",
+        "operator": ">",
+        "value": 0
+      }
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_elderly",
+    "label": "Trongo za muhimu ha wadjerebu wa pawade au wa outswa",
+    "category": "household",
+    "conditions": [
+      {
+        "field": "elderly",
+        "operator": ">",
+        "value": 0
+      }
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_special_needs",
+    "label": "daradja titi harimwa zitsouha muhimu",
+    "category": "household",
+    "conditions": [
+      {
+        "field": "specialNeeds",
+        "operator": "=",
+        "value": true
+      }
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "kit_pets",
+    "label": "Yasu nyengi ha zinyama za agoni",
+    "category": "household",
+    "conditions": [
+      {
+        "field": "pets",
+        "operator": ">",
+        "value": 0
+      }
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ],
+    "validationStatus": "to_validate"
+  }
+]

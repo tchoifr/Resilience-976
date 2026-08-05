@@ -1,1 +1,0 @@
-import{d as s,c as l,n,a as t,t as r,E as o,o as i}from"./index-BKOknEFH.js";const p=s({__name:"AppAlert",props:{title:{},variant:{default:"info"}},setup(e){return(a,c)=>(i(),l("div",{class:n(["alert",`alert--${e.variant}`]),role:"status"},[t("strong",null,r(e.title),1),t("div",null,[o(a.$slots,"default")])],2))}});export{p as _};

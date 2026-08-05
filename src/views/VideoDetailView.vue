@@ -22,7 +22,7 @@ import { getDomainLabel, useI18n } from '@/shared/i18n/i18n.service'
 
 const route = useRoute()
 const { t } = useI18n()
-const video = computed(() => videosBySlug.get(String(route.params.slug)))
+const video = computed(() => videosBySlug.value.get(String(route.params.slug)))
 const selectedAnswer = ref<number | null>(null)
 const hasAnswered = ref(false)
 const progress = ref<VideoProgressEntry | null>(
@@ -30,21 +30,23 @@ const progress = ref<VideoProgressEntry | null>(
 )
 
 const currentIndex = computed(() =>
-  video.value ? videos.findIndex((candidate) => candidate.id === video.value?.id) : -1,
+  video.value ? videos.value.findIndex((candidate) => candidate.id === video.value?.id) : -1,
 )
-const previousVideo = computed(() => videos[currentIndex.value - 1])
-const nextVideo = computed(() => videos[currentIndex.value + 1])
+const previousVideo = computed(() => videos.value[currentIndex.value - 1])
+const nextVideo = computed(() => videos.value[currentIndex.value + 1])
 const linkedAction = computed(() =>
-  video.value ? actionsById.get(video.value.recommendedActionId) : undefined,
+  video.value ? actionsById.value.get(video.value.recommendedActionId) : undefined,
 )
-const linkedResource = computed(() => (video.value ? resourcesById.get(video.value.resourceId) : undefined))
+const linkedResource = computed(() =>
+  video.value ? resourcesById.value.get(video.value.resourceId) : undefined,
+)
 const sources = computed<Source[]>(() => {
   if (!video.value) {
     return []
   }
 
   return video.value.sourceIds
-    .map((sourceId) => sourcesById.get(sourceId))
+    .map((sourceId) => sourcesById.value.get(sourceId))
     .filter((source): source is Source => source !== undefined)
 })
 const isCorrect = computed(

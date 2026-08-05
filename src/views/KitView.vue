@@ -20,7 +20,7 @@ const numberFields = computed<Array<{ field: NumberHouseholdField; label: string
   { field: 'pets', label: t('kit.fields.pets') },
 ])
 
-const personalizedKit = computed(() => getKitItems(kitItems, assessmentStore.household))
+const personalizedKit = computed(() => getKitItems(kitItems.value, assessmentStore.household))
 const kitByCategory = computed(() => {
   return personalizedKit.value.reduce<Record<string, KitItem[]>>((groups, item) => {
     groups[item.category] = [...(groups[item.category] ?? []), item]

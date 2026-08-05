@@ -29,7 +29,7 @@ const assessmentStore = useAssessmentStore()
 const isGeneratingPdf = ref(false)
 const { t } = useI18n()
 
-const result = computed(() => calculateAssessment(questions, assessmentStore.answers))
+const result = computed(() => calculateAssessment(questions.value, assessmentStore.answers))
 const translatedLevel = computed<ScoreLevel>(() => ({
   ...result.value.level,
   label: t(`scoreLevels.${result.value.level.id}.label`),
@@ -44,10 +44,10 @@ const translatedResult = computed(() => ({
   })),
 }))
 const recommendedActions = computed(() =>
-  getRecommendedActions(questions, actions, assessmentStore.answers),
+  getRecommendedActions(questions.value, actions.value, assessmentStore.answers),
 )
 const actionPlan = computed(() => buildActionPlan(recommendedActions.value))
-const personalizedKit = computed(() => getKitItems(kitItems, assessmentStore.household))
+const personalizedKit = computed(() => getKitItems(kitItems.value, assessmentStore.household))
 const pdfChecklistItems = computed(() => [
   ...recommendedActions.value.map((action) => ({
     id: action.id,
@@ -67,7 +67,7 @@ onMounted(() => {
 
 function getSources(sourceIds: string[]): Source[] {
   return sourceIds
-    .map((sourceId) => sourcesById.get(sourceId))
+    .map((sourceId) => sourcesById.value.get(sourceId))
     .filter((source): source is Source => source !== undefined)
 }
 
@@ -79,7 +79,7 @@ function buildAssessmentPdfInput() {
     checklist: assessmentStore.checklist,
     checklistItems: pdfChecklistItems.value,
     kitItems: personalizedKit.value,
-    sources,
+    sources: sources.value,
   }
 }
 

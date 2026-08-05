@@ -15,10 +15,11 @@ const { t } = useI18n()
 const progressState = ref<VideoProgressState>(loadVideoProgress())
 
 const completedCount = computed(
-  () => videos.filter((video) => progressState.value[video.id]?.status === 'completed').length,
+  () =>
+    videos.value.filter((video) => progressState.value[video.id]?.status === 'completed').length,
 )
 const progressPercent = computed(() =>
-  videos.length === 0 ? 0 : Math.round((completedCount.value / videos.length) * 100),
+  videos.value.length === 0 ? 0 : Math.round((completedCount.value / videos.value.length) * 100),
 )
 
 function progressLabel(videoId: string): string {

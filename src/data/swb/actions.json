@@ -1,0 +1,308 @@
+[
+  {
+    "id": "action_family_plan",
+    "title": "Nitayarisha mupango rahisi wadjama",
+    "priorityBand": "now",
+    "effort": "medium",
+    "why": "Mupango ujulihana piyawo uwo usutsaha wakati zi mafikira zini za ndziha.",
+    "instructions": [
+      "Ngalia shihahiriha ndzimoihe soiffi harimoi shitswa.",
+      "Regedza masterehi yahe baina ya watrou na wantru wa hazi.",
+      "namuziwe amba kula mutru ajua izo uzihira kapiteni"
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_contacts",
+    "title": "Namuna itrongo muhimu ulawao teleahoni",
+    "priorityBand": "week",
+    "effort": "low",
+    "why": "Wula bwe yafumwayo, au ouro yanyoni mwa zi trongo, iyo u para tsena utso para.",
+    "instructions": [
+      "Orodza ndziani za ndziani na vou zi anmali za ndjema harimwa karatasi.",
+      "Tika moni mwa trusuku.",
+      "tsi trongo tsahani yiso baina ya kila fanye shitru yangina."
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_check_neighbors",
+    "title": "i sa aendreleya ha urongowa vhale",
+    "priorityBand": "week",
+    "effort": "low",
+    "why": "Mufano wa wuraanda wa wijiri uwo husaidia kwa haraka ujuwa watru waliyo na djitihadi.",
+    "instructions": [
+      "Vua mutru muamini aagoni.",
+      "Judzisa trongo tsi ha sibabu ya atta atta harimoi trongo zapatana na waye.",
+      "Ani e mahadisi rahisi ya wendza utso kao yotsi baanda yahidjiri."
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_repli_zone",
+    "title": "Mu ngalia harimwa nyumba ndzitwaharifu",
+    "priorityBand": "now",
+    "effort": "medium",
+    "why": "Vwa lijulihanao harimwa taambu lisuzunguhao muswala wa rendrehani.",
+    "instructions": [
+      "Muna kadhwi ya tsi bole ha udunga ya madjahazi yahe.",
+      "Rini e tsio lini la rendre hanyu.",
+      "mwasurumia zi trongo izo marike hayi mitru ya wadzipara."
+    ],
+    "sourceIds": [
+      "source_prefecture_mayotte"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_secure_openings",
+    "title": "namuketsiye yi mizumari ndzuzuri",
+    "priorityBand": "week",
+    "effort": "medium",
+    "why": "Vuliya yi mizumari shitswa, iyo u para u taambu na zi shitswa.",
+    "instructions": [
+      "namuzise milango yakao, madirisha na mindru ya ndziani.",
+      "djitayarishe zitru zitsoshindrao zifanyishiha haraka.",
+      "Mudunge e fundi wa hazi dzaho aou harimoi trongo muhimu."
+    ],
+    "sourceIds": [
+      "source_prefecture_mayotte"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_clear_exterior",
+    "title": "Mukizi wa zitru za shi nguavi",
+    "priorityBand": "now",
+    "effort": "low",
+    "why": "Zitru zi ndziani zi ndziani zi taãbu ha wu peu.",
+    "instructions": [
+      "Otsoa zitru zi regezewa au za roddreni.",
+      "namudzike vhahanu mwatria maharale",
+      "renga zi taãbu kabula ya zi tadjiri."
+    ],
+    "sourceIds": [
+      "source_prefecture_mayotte"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_water_reserve",
+    "title": "namutayarishe maji",
+    "priorityBand": "now",
+    "effort": "medium",
+    "why": "Madza ya maji yawuha baanda ya trongo muhimu.",
+    "instructions": [
+      "Namungalie murongo wa sirkali bole amoesa langina neka tsena.",
+      "Utriaha wendrehimou muraharifu wa dagoni.",
+      "Ha kawaida uangalia wuangamivu wa zi gnoi."
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_food_reserve",
+    "title": "oufagna harimoi shahula rahisi",
+    "priorityBand": "week",
+    "effort": "medium",
+    "why": "Shahula za mayahudi zi ndjema za agoni uwo zi saidie wakati wa tadjiri.",
+    "instructions": [
+      "Tika shahula za agoni akojuwa.",
+      "Dziani zi zoziro ndziro na zitru za hiriwa.",
+      "Fanya mufumo wa ntru vavo na vavo."
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_light",
+    "title": "Tayarisha vua za raa",
+    "priorityBand": "now",
+    "effort": "low",
+    "why": "bilatusa ya peu i vhenu zi trongo muhimu midzano wa mwiso unu",
+    "instructions": [
+      "Kaza madjini na peni na zinyoni ndziyani aou y sandre.",
+      "namusike alama ya mohono wawo.",
+      "Neka usuendra tu ha lamachini."
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_radio",
+    "title": "Ani e marke marke moutrou wa habari aou tsikani",
+    "priorityBand": "now",
+    "effort": "low",
+    "why": "Risina trongo rasmi yasuzingiwa wakati wa taãbu.",
+    "instructions": [
+      "Ngalia mitere ya tsi bole",
+      "Andaa marke e zizo kala tu internet.",
+      "Namudzisa e ushindra wendre wahimou kabla ya harimoi uwade wa para."
+    ],
+    "sourceIds": [
+      "source_fr_alert",
+      "source_prefecture_mayotte"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_power_bank",
+    "title": "Djeli na ou trongo jouzisha madjini ya ringwa",
+    "priorityBand": "week",
+    "effort": "low",
+    "why": "Wingu la harimoi marike oupara marke habari ndjema na magandza ya parani.",
+    "instructions": [
+      "dzianisha taambu za vani.",
+      "kanga nyongo za ngaha.",
+      "namufanye mipango amba harimwa utsimidze watru warahara harimwa muraharifu."
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_official_sources",
+    "title": "outsa zi nyasiya mbeli za makartaswini",
+    "priorityBand": "now",
+    "effort": "low",
+    "why": "Zi nyasiya zitru zitsoka zi taãbu ; zi mbeli rasmi zilazimu zibaki zi himbolwe.",
+    "instructions": [
+      "Ngalia zi trongo zendza ha kweli za vavo na zi trandra zangina.",
+      "Zihua harimwa teleoni na karatasi, zini muna vavo.",
+      "Namudzisa mahadisi kabla ya umuanyidza."
+    ],
+    "sourceIds": [
+      "source_prefecture_mayotte",
+      "source_fr_alert"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_docs",
+    "title": "Tangihwa zitru za zitru zema",
+    "priorityBand": "week",
+    "effort": "medium",
+    "why": "Nakala zombolwazo, zizo zitso saidia mahadisi ya mbeli na mabaribari yahe.",
+    "instructions": [
+      "Ngalia zitru zitru ou zio kabula zangina awu zi rongolwa.",
+      "Tika zi nyasiya za maji zihidjiri.",
+      "namungalie zi trongo na siri za zitru mbovu za tsahani."
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_medicine_plan",
+    "title": "dziria marendra muhimu yasike",
+    "priorityBand": "now",
+    "effort": "medium",
+    "why": "Harimwa tsena, ilazimu i sa alawe wakati wa taãbu.",
+    "instructions": [
+      "mwasu ngihe harimwa zi trongo za bazina za shi baitihani i suku.",
+      "Mumia fundi wa hazi (cecation) neka hidjiri.",
+      "namuke unge lamoja na maharaba ya tikadi ya koulawa."
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_first_aid",
+    "title": "Namusangengengenge pai trongo ya sirkali ya wandre",
+    "priorityBand": "week",
+    "effort": "low",
+    "why": "Mutru akohiriwa trongo zendza ha uzuri na hu bassi ha wuzunguha zi hadisi za lewo wakati watsokao yotsi.",
+    "instructions": [
+      "Namusohedzeshe zi trongo za shi nyumba zanyu madza.",
+      "namunahane mindru, wawe urahafu oho na utso mupaka.",
+      "Nieledze ahanu agoni."
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_children_items",
+    "title": "Toedza zizo za mwana ha trusuha ya pai",
+    "priorityBand": "week",
+    "effort": "medium",
+    "why": "Wanatsaha madza waamba zi trongo zahe moni na zi trongo oho za hu enyesa.",
+    "instructions": [
+      "Otsasi ou hatwariha.",
+      "Labiblusa zi trongo za wendzao ha ua vhili.",
+      "Regedza ujo washadidisha mbeli mwa kaji kisajema."
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_pet_plan",
+    "title": "Ku trongo za urumishia zi za zinyama",
+    "priorityBand": "week",
+    "effort": "medium",
+    "why": "Zi zinyama tsahani moni na inyumba ndzitwaharifu tsena ilazimu zieledzewe.",
+    "instructions": [
+      "Otsasisha shahula, awu zi awu zifeli na uzihiriwa.",
+      "Kaza aãhi uwaswili.",
+      "Namungalie hali ndziro za mavake zihimo zalazimu."
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_emergency_bag",
+    "title": "namuvudze mukoa mu tayari utoledze",
+    "priorityBand": "now",
+    "effort": "medium",
+    "why": "Mukoa wawo usu ngamidza midziro taambulidzewa na wendzani.",
+    "instructions": [
+      "Wukanisha zitru muhimu.",
+      "Lidziani harimwa vale Vavo.",
+      "Namusomeye hari mwa piya zi trongo awuha harimoi wakati awuhawo."
+    ],
+    "sourceIds": [
+      "source_gouvernement_risques"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "action_test_plan",
+    "title": "urenge formation ya formation",
+    "priorityBand": "week",
+    "effort": "low",
+    "why": "oufagna formation isu vule tsena hali halisi.",
+    "instructions": [
+      "Shumishidza wushindzi awu hule.",
+      "Namuna e u para, moni na zi gnooni.",
+      "Fanya haraka amba fuko mbole la ou fagna hazi."
+    ],
+    "sourceIds": [
+      "source_croix_rouge"
+    ],
+    "validationStatus": "to_validate"
+  }
+]

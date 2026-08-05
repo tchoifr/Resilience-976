@@ -6,6 +6,7 @@ export const frMessages = {
   language: {
     label: 'Langue',
     french: 'Français',
+    shimaore: 'Shimaore',
   },
   navigation: {
     ariaLabel: 'Navigation principale',
