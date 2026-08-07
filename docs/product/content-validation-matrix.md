@@ -1,7 +1,8 @@
 # Matrice de validation contenus
 
 Date de preparation: 4 aout 2026  
-Statut: pret pour revue metier
+Derniere revue interne: 7 aout 2026  
+Statut: revue editoriale interne completee, validation metier externe requise avant publication officielle
 
 ## Sources verifiees
 
@@ -22,6 +23,31 @@ Statut: pret pour revue metier
 | Actions immediates     | Actions derivees des reponses faibles et criticites                                                       | Referent risques           |
 | Sante/documents        | Aucune donnee medicale detaillee saisie dans l'application                                                | Porteur + legal            |
 | Message responsabilite | Outil de sensibilisation, pas alerte temps reel, pas secours                                              | Porteur + legal            |
+
+## Revue interne du 7 aout 2026
+
+| Controle                                                                 | Resultat |
+| ------------------------------------------------------------------------ | -------- |
+| Les 24 questions FR sont rattachees a au moins une source officielle      | OK       |
+| Les questions SWB conservent les memes IDs, poids, criticites et sources  | OK       |
+| Les actions FR/SWB ont une source et restent marquees `to_validate`       | OK       |
+| Les elements du kit FR/SWB ont une source et restent marques `to_validate`| OK       |
+| Les ressources FR/SWB ont une source et restent marquees `to_validate`    | OK       |
+| Les sources officielles sont marquees `validated` avec date de consultation | OK     |
+| Aucune question ne demande nom, adresse, document, pathologie ou donnee medicale detaillee | OK |
+| Les textes sensibles evitent les consignes d'alerte temps reel ou de secours | OK    |
+
+Conclusion: le contenu est coherent pour une revue porteur/referent. Les statuts `to_validate` sont conserves pour les questions metier, actions, ressources et kit afin de ne pas confondre revue interne et validation officielle.
+
+## Points a signer avant fermeture definitive
+
+| Point | Responsable attendu | Preuve attendue |
+| ----- | ------------------- | --------------- |
+| Bareme de scoring, poids et criticites | Porteur + referent risques | Validation datee dans le registre des sources |
+| Recommandations et instructions d'actions | Referent risques | Validation datee ou corrections integrees |
+| Kit d'urgence et quantites eventuelles | Referent risques | Validation datee, source officielle associee |
+| Traduction shimaore / kibushi utilisee dans l'app | Relecteur local | Relecture datee avec corrections integrees |
+| Mentions legales et limites du service | Porteur + legal | Accord date ou version approuvee |
 
 ## Regle de fermeture des tickets contenus
 

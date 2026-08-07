@@ -63,6 +63,13 @@ const router = createRouter({
       },
     },
     {
+      path: '/tableau-de-bord',
+      component: () => import('@/views/DashboardView.vue'),
+      meta: {
+        seoKey: 'dashboard',
+      },
+    },
+    {
       path: '/mentions-legales',
       component: () => import('@/views/LegalView.vue'),
       meta: {

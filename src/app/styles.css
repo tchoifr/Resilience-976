@@ -73,6 +73,25 @@ input:focus-visible {
   outline-offset: 3px;
 }
 
+.skip-link {
+  position: fixed;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 100;
+  transform: translateY(-160%);
+  border-radius: var(--radius-sm);
+  background: var(--color-text-strong);
+  color: #ffffff;
+  padding: 10px 14px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform 0.16s ease;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
 .app-main {
   min-height: calc(100vh - 164px);
 }
@@ -304,6 +323,161 @@ input:focus-visible {
   border-top: 1px solid var(--color-border);
   background: #ffffff;
   color: var(--color-text-strong);
+}
+
+.dashboard-layout {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.dashboard-hero {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 860px;
+}
+
+.dashboard-hero h1 {
+  margin: 0;
+}
+
+.dashboard-hero p {
+  margin: 0;
+  color: var(--color-text);
+}
+
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.metric-card {
+  min-height: 150px;
+  border: 1px solid var(--color-border);
+  border-top: 6px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  padding: var(--space-3);
+  display: grid;
+  align-content: space-between;
+  gap: var(--space-2);
+}
+
+.metric-card--green {
+  border-top-color: #4caf50;
+}
+
+.metric-card--orange {
+  border-top-color: #f4a261;
+}
+
+.metric-card--neutral {
+  border-top-color: var(--color-border-strong);
+}
+
+.metric-card span,
+.metric-card small,
+.funnel-step small,
+.event-list small,
+.recipe-list small,
+.quality-row small {
+  color: var(--color-text);
+}
+
+.metric-card strong {
+  color: var(--color-text-strong);
+  font-size: clamp(2rem, 8vw, 3.25rem);
+  line-height: 1;
+}
+
+.dashboard-panel {
+  overflow: hidden;
+}
+
+.dashboard-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.dashboard-panel h2 {
+  margin-top: 0;
+}
+
+.funnel-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.funnel-step {
+  min-height: 130px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  padding: var(--space-3);
+  display: grid;
+  gap: var(--space-1);
+}
+
+.funnel-step strong {
+  font-size: 2rem;
+  color: var(--color-primary);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.dashboard-panel table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+}
+
+.dashboard-panel th,
+.dashboard-panel td {
+  border-bottom: 1px solid var(--color-border);
+  padding: 12px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.dashboard-panel th {
+  color: var(--color-text-strong);
+  font-size: 0.84rem;
+}
+
+.quality-list,
+.event-list,
+.recipe-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.quality-row,
+.event-list li,
+.recipe-list li {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.7fr) minmax(0, 1fr);
+  gap: 4px var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-2);
+}
+
+.quality-row small,
+.event-list small,
+.recipe-list small {
+  grid-column: 2;
+}
+
+.event-list code {
+  overflow-wrap: anywhere;
 }
 
 .app-footer a,
@@ -1361,6 +1535,11 @@ input:focus-visible {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .dashboard-summary,
+  .funnel-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .journey-step::after {
     display: none;
   }
@@ -1465,8 +1644,26 @@ input:focus-visible {
   }
 
   .hero-card .trust-row,
-  .journey-steps {
+  .journey-steps,
+  .dashboard-summary,
+  .funnel-grid {
     grid-template-columns: 1fr;
+  }
+
+  .metric-card {
+    min-height: 128px;
+  }
+
+  .quality-row,
+  .event-list li,
+  .recipe-list li {
+    grid-template-columns: 1fr;
+  }
+
+  .quality-row small,
+  .event-list small,
+  .recipe-list small {
+    grid-column: 1;
   }
 
   .answer-option {

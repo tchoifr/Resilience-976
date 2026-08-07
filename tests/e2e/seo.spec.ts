@@ -20,4 +20,12 @@ test('les balises SEO changent selon la route', async ({ page }) => {
     'href',
     'https://exemple.fr/ressources',
   )
+
+  await page.goto('/tableau-de-bord')
+
+  await expect(page).toHaveTitle('Tableau de bord - Resilience 976')
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    'href',
+    'https://exemple.fr/tableau-de-bord',
+  )
 })

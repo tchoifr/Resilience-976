@@ -18,6 +18,7 @@ export const frMessages = {
     kit: 'Kit',
     resources: 'Ressources',
     videos: 'Vidéos',
+    dashboard: 'Stats',
   },
   footer: {
     baseline: 'Plateforme publique, gratuite, sans compte.',
@@ -99,6 +100,11 @@ export const frMessages = {
     videoDetail: {
       title: 'Capsule vidéo - Resilience 976',
       description: 'Consultez une capsule vidéo, sa transcription, ses sources et sa question de validation.',
+    },
+    dashboard: {
+      title: 'Tableau de bord - Resilience 976',
+      description:
+        'Suivi des indicateurs de sensibilisation, campagnes, livrables et recette statistique.',
     },
     legal: {
       title: 'Mentions légales - Resilience 976',

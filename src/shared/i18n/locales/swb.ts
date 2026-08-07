@@ -18,6 +18,7 @@ export const swbMessages = {
     kit: 'shiri',
     resources: 'zi mali',
     videos: 'zisahani',
+    dashboard: 'stats',
   },
   footer: {
     baseline: 'v ale suku la sirkali bole, bure, wala tsi de lisewao.',
@@ -98,6 +99,10 @@ export const swbMessages = {
     videoDetail: {
       title: 'video gnoumba kactorule - wendreu wa mara kumi na mbili',
       description: 'namudzise shahula ya video, zitru zalo, zi swala la yi trongo zayo na suala la ufalume wa i sa.',
+    },
+    dashboard: {
+      title: 'stats - Resilience 976',
+      description: 'utsi wa zi alama za watru wengiya, campagne, PDF na udzima wa daradja.',
     },
     legal: {
       title: 'alama za mpia - uandra wa pawa 9 na',

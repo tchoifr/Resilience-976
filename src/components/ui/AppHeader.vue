@@ -18,6 +18,7 @@ const navLinks = [
   { to: '/kit', labelKey: 'navigation.kit' },
   { to: '/ressources', labelKey: 'navigation.resources' },
   { to: '/videos', labelKey: 'navigation.videos' },
+  { to: '/tableau-de-bord', labelKey: 'navigation.dashboard' },
 ]
 
 function toggleMenu() {
