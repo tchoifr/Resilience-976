@@ -25,7 +25,10 @@ interface DashboardStats {
   }>
 }
 
-const dashboardEndpoint = import.meta.env.VITE_DASHBOARD_ENDPOINT ?? '/api/dashboard'
+const defaultDashboardEndpoint = import.meta.env.PROD
+  ? 'https://resilience-976-analytics.onrender.com/api/dashboard'
+  : '/api/dashboard'
+const dashboardEndpoint = import.meta.env.VITE_DASHBOARD_ENDPOINT ?? defaultDashboardEndpoint
 const stats = ref<DashboardStats | null>(null)
 const isLoading = ref(true)
 

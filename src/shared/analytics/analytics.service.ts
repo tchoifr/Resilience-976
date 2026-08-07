@@ -19,7 +19,10 @@ export interface AnalyticsEvent {
 const analyticsEnabled = import.meta.env.DEV
   ? import.meta.env.VITE_ANALYTICS_ENABLED !== 'false'
   : import.meta.env.VITE_ANALYTICS_ENABLED === 'true'
-const analyticsEndpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT ?? '/api/events'
+const defaultAnalyticsEndpoint = import.meta.env.PROD
+  ? 'https://resilience-976-analytics.onrender.com/api/events'
+  : '/api/events'
+const analyticsEndpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT ?? defaultAnalyticsEndpoint
 const visitorStorageKey = 'resilience976.analytics.visitorId'
 
 function getVisitorId(): string {
