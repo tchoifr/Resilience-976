@@ -13,12 +13,14 @@ const ALLOWED_ORIGINS = (process.env.ANALYTICS_ALLOWED_ORIGINS ?? 'http://127.0.
   .filter(Boolean)
 
 const eventMap = {
+  page_view: 'page_view',
   diagnostic_started: 'journey_started',
   diagnostic_completed: 'journey_completed',
   result_viewed: 'diagnostic_result_viewed',
   checklist_opened: 'checklist_opened',
   kit_opened: 'emergency_kit_generated',
   pdf_downloaded: 'pdf_downloaded',
+  technical_error: 'technical_error',
 }
 
 const allowedEvents = new Set(Object.keys(eventMap))
@@ -147,12 +149,14 @@ function buildDashboard(events, updatedAt) {
     events.filter((event) => event.name === 'diagnostic_started').map((event) => event.visitorId),
   )
   const completedCount = events.filter((event) => event.name === 'diagnostic_completed').length
+  const visitCount = events.filter((event) => event.name === 'page_view').length
   const startedCount = events.filter((event) => event.name === 'diagnostic_started').length
   const resultViewedCount = events.filter((event) => event.name === 'result_viewed').length
   const actionCount = events.filter((event) =>
     ['checklist_opened', 'kit_opened', 'pdf_downloaded'].includes(event.name),
   ).length
   const pdfCount = events.filter((event) => event.name === 'pdf_downloaded').length
+  const technicalErrorCount = events.filter((event) => event.name === 'technical_error').length
   const campaigns = new Map()
 
   for (const event of events) {
@@ -183,13 +187,14 @@ function buildDashboard(events, updatedAt) {
     updatedAt,
     target: 5000,
     totals: {
-      visits: null,
+      visits: visitCount,
       engagedVisitors: engagedVisitorIds.size,
       journeysStarted: startedCount,
       journeysCompleted: completedCount,
       resultViews: resultViewedCount,
       actionOpens: actionCount,
       pdfDownloads: pdfCount,
+      technicalErrors: technicalErrorCount,
       completionRate: startedCount === 0 ? 0 : Math.round((completedCount / startedCount) * 100),
     },
     campaigns: Array.from(campaigns.values()).sort((a, b) => b.engaged - a.engaged),

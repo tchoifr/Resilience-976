@@ -14,6 +14,7 @@ interface DashboardStats {
     resultViews: number
     actionOpens: number
     pdfDownloads: number
+    technicalErrors: number
     completionRate: number
   }
   campaigns: Array<{
@@ -55,11 +56,7 @@ const summaryCards = computed(() => [
   },
   {
     label: 'Livrables',
-    value: displayValue(
-      stats.value
-        ? stats.value.totals.actionOpens + stats.value.totals.pdfDownloads
-        : undefined,
-    ),
+    value: displayValue(stats.value?.totals.actionOpens),
     detail: 'PDF, checklists, kits, attestations',
     tone: 'orange',
   },
@@ -112,7 +109,7 @@ const campaignRows = computed(() => {
 
 const qualityRows = computed(() => [
   ['Disponibilité', '—', 'Suivi hebdomadaire après mise en ligne'],
-  ['Erreurs bloquantes', '—', 'Objectif proche de 0'],
+  ['Erreurs bloquantes', displayValue(stats.value?.totals.technicalErrors), 'Objectif proche de 0'],
   ['Retours utilisateurs', '—', 'À qualifier par thème'],
   ['Dernière extraction', stats.value?.updatedAt ?? '—', 'Date visible dans chaque bilan'],
 ])

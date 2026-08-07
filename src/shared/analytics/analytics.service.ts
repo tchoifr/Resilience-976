@@ -1,10 +1,12 @@
 export type AnalyticsEventName =
+  | 'page_view'
   | 'diagnostic_started'
   | 'diagnostic_completed'
   | 'result_viewed'
   | 'pdf_downloaded'
   | 'checklist_opened'
   | 'kit_opened'
+  | 'technical_error'
 
 export interface AnalyticsEvent {
   name: AnalyticsEventName

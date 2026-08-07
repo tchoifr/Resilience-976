@@ -155,12 +155,14 @@ Le collecteur ne doit jamais recevoir:
 
 | Front | Metrique preuve n°09 |
 | ----- | -------------------- |
+| `page_view` | `page_view` |
 | `diagnostic_started` | `journey_started` |
 | `diagnostic_completed` | `journey_completed` |
 | `result_viewed` | `diagnostic_result_viewed` |
 | `checklist_opened` | `checklist_opened` |
 | `kit_opened` | `emergency_kit_generated` |
 | `pdf_downloaded` | `pdf_downloaded` |
+| `technical_error` | `technical_error` |
 
 ## Variables serveur
 

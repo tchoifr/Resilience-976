@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import { trackEvent } from '@/shared/analytics/analytics.service'
 import { translate } from '@/shared/i18n/i18n.service'
 import { updateHead } from '@/shared/seo/head.service'
 
@@ -100,6 +101,7 @@ export function updateRouteHead(): void {
 
 router.afterEach(() => {
   updateRouteHead()
+  trackEvent('page_view')
 })
 
 export default router
