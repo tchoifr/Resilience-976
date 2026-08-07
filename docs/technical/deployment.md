@@ -25,6 +25,8 @@ VITE_APP_NAME=Resilience 976
 VITE_ASSESSMENT_VERSION=1.0.0
 VITE_PUBLIC_BASE_URL=https://exemple.fr
 VITE_ANALYTICS_ENABLED=false
+VITE_ANALYTICS_ENDPOINT=/api/events
+VITE_DASHBOARD_ENDPOINT=/api/dashboard
 ```
 
 Aucune variable `VITE_` ne doit contenir de secret.
@@ -49,3 +51,22 @@ Le workflow `.github/workflows/ci.yml` lance:
 - installation Chromium Playwright
 - `npm run test:e2e`
 - `npm audit --audit-level=critical`
+
+## Collecteur statistique optionnel
+
+Le tableau de bord d'impact utilise le collecteur Node seulement si l'analytics est active.
+
+```bash
+npm run analytics:server
+```
+
+Variables serveur utiles:
+
+```bash
+HOST=127.0.0.1
+PORT=8787
+ANALYTICS_DATA_FILE=server/data/events.jsonl
+ANALYTICS_ALLOWED_ORIGINS=https://domaine-final.fr
+```
+
+En production, exposer le collecteur derriere HTTPS sur `/api/*` ou configurer les endpoints publics `VITE_ANALYTICS_ENDPOINT` et `VITE_DASHBOARD_ENDPOINT`.

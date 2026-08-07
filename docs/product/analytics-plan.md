@@ -4,6 +4,53 @@
 
 Par defaut, aucun traceur n'est actif. La variable `VITE_ANALYTICS_ENABLED=false` garde la couche analytics en no-op.
 
+## Tableau de bord MVP
+
+Une page de pilotage est disponible dans l'application sur `/tableau-de-bord`.
+
+Elle matérialise la pièce de preuve n°09 avec:
+
+- objectif principal de 5 000 visiteurs engagés uniques;
+- entonnoir visites, parcours commencés, résultats consultés et passage à l'action;
+- registre de campagnes à alimenter;
+- suivi qualité: disponibilité, erreurs, retours et date d'extraction;
+- catalogue des événements à instrumenter;
+- recette minimale avant ouverture publique.
+
+Les valeurs réelles restent volontairement à `—` tant que l'instrumentation, l'outil de mesure et la recette réseau ne sont pas activés. Aucune audience ou donnée d'impact n'est inventée.
+
+## Collecteur Node MVP
+
+Un collecteur minimal sans dependance externe est disponible dans `server/analytics-server.mjs`.
+
+Commandes locales:
+
+```bash
+npm run analytics:server
+VITE_ANALYTICS_ENABLED=true npm run dev
+```
+
+Endpoints:
+
+- `POST /api/events`: collecte un evenement autorise;
+- `GET /api/dashboard`: renvoie les agrégats pour `/tableau-de-bord`;
+- `GET /api/health`: controle de disponibilite.
+
+Stockage local:
+
+- fichier JSONL `server/data/events.jsonl`;
+- dossier ignore par git;
+- aucun nom, courriel, adresse, reponse detaillee, score individuel ou donnee medicale.
+
+Champs conserves:
+
+- nom d'evenement autorise;
+- identifiant visiteur anonyme local;
+- version applicative;
+- chemin public normalise;
+- identifiant de campagne non nominatif;
+- horodatage serveur.
+
 ## Evenements prepares
 
 | Evenement              | Finalite                            | Donnees exclues                |
