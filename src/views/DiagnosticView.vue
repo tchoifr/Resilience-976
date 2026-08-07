@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import AppButton from '@/components/ui/AppButton.vue'
@@ -44,6 +44,10 @@ const progress = computed(() =>
 )
 const isLastQuestion = computed(() => assessmentStore.currentIndex >= questions.value.length - 1)
 const canContinue = computed(() => !currentQuestion.value.required || Boolean(selectedAnswer.value))
+
+onMounted(() => {
+  trackEvent('diagnostic_started')
+})
 
 async function focusQuestion() {
   await nextTick()

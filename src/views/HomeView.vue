@@ -3,7 +3,6 @@ import { RouterLink } from 'vue-router'
 
 import AppAlert from '@/components/ui/AppAlert.vue'
 import { useAssessmentStore } from '@/features/assessment/stores/assessment.store'
-import { trackEvent } from '@/shared/analytics/analytics.service'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
 const assessmentStore = useAssessmentStore()
@@ -44,11 +43,7 @@ const journeySteps = [
           <p>{{ t('home.intro') }}</p>
 
           <div class="cluster hero-actions">
-            <RouterLink
-              class="link-button link-button--primary"
-              to="/diagnostic"
-              @click="trackEvent('diagnostic_started')"
-            >
+            <RouterLink class="link-button link-button--primary" to="/diagnostic">
               {{ assessmentStore.hasAnswers ? t('home.resume') : t('home.start') }}
             </RouterLink>
             <RouterLink class="link-button link-button--secondary" to="/ressources">
