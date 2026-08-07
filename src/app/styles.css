@@ -378,8 +378,6 @@ input:focus-visible {
 .metric-card span,
 .metric-card small,
 .funnel-step small,
-.event-list small,
-.recipe-list small,
 .quality-row small {
   color: var(--color-text);
 }
@@ -427,32 +425,7 @@ input:focus-visible {
   color: var(--color-primary);
 }
 
-.table-wrap {
-  overflow-x: auto;
-}
-
-.dashboard-panel table {
-  width: 100%;
-  min-width: 680px;
-  border-collapse: collapse;
-}
-
-.dashboard-panel th,
-.dashboard-panel td {
-  border-bottom: 1px solid var(--color-border);
-  padding: 12px 10px;
-  text-align: left;
-  vertical-align: top;
-}
-
-.dashboard-panel th {
-  color: var(--color-text-strong);
-  font-size: 0.84rem;
-}
-
-.quality-list,
-.event-list,
-.recipe-list {
+.quality-list {
   display: grid;
   gap: var(--space-2);
   margin: 0;
@@ -460,9 +433,7 @@ input:focus-visible {
   list-style: none;
 }
 
-.quality-row,
-.event-list li,
-.recipe-list li {
+.quality-row {
   display: grid;
   grid-template-columns: minmax(120px, 0.7fr) minmax(0, 1fr);
   gap: 4px var(--space-2);
@@ -470,14 +441,8 @@ input:focus-visible {
   padding-bottom: var(--space-2);
 }
 
-.quality-row small,
-.event-list small,
-.recipe-list small {
+.quality-row small {
   grid-column: 2;
-}
-
-.event-list code {
-  overflow-wrap: anywhere;
 }
 
 .app-footer a,

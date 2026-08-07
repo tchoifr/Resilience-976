@@ -17,12 +17,6 @@ interface DashboardStats {
     technicalErrors: number
     completionRate: number
   }
-  campaigns: Array<{
-    campaignId: string
-    engaged: number
-    completed: number
-    actions: number
-  }>
 }
 
 const defaultDashboardEndpoint = import.meta.env.PROD
@@ -88,53 +82,12 @@ const funnelSteps = computed(() => [
   },
 ])
 
-const fallbackCampaignRows = [
-  ['CAMP-01', 'Structure à renseigner', 'QR / affiche', '—', '—', 'Prévue'],
-  ['CAMP-02', 'Structure à renseigner', 'Lien partenaire', '—', '—', 'Prévue'],
-  ['CAMP-03', 'Structure à renseigner', 'Événement', '—', '—', 'Prévue'],
-  ['DIRECT', 'Accès direct', 'Site / partage libre', '—', '—', 'À mesurer'],
-]
-
-const campaignRows = computed(() => {
-  if (!stats.value || stats.value.campaigns.length === 0) {
-    return fallbackCampaignRows
-  }
-
-  return stats.value.campaigns.map((campaign) => [
-    campaign.campaignId,
-    campaign.campaignId === 'DIRECT' ? 'Accès direct' : 'Campagne',
-    campaign.campaignId === 'DIRECT' ? 'Site / partage libre' : 'Lien tracé',
-    displayValue(campaign.engaged),
-    displayValue(campaign.completed),
-    'Mesurée',
-  ])
-})
-
 const qualityRows = computed(() => [
   ['Disponibilité', '—', 'Suivi hebdomadaire après mise en ligne'],
   ['Erreurs bloquantes', displayValue(stats.value?.totals.technicalErrors), 'Objectif proche de 0'],
   ['Retours utilisateurs', '—', 'À qualifier par thème'],
   ['Dernière extraction', stats.value?.updatedAt ?? '—', 'Date visible dans chaque bilan'],
 ])
-
-const eventRows = [
-  ['journey_started', 'Début diagnostic, quiz ou micro-formation', 'module, campagne, date'],
-  ['journey_completed', 'Affichage du résultat final', 'module, durée, campagne'],
-  ['diagnostic_result_viewed', 'Consultation résultat personnalisé', 'niveau agrégé, campagne'],
-  ['checklist_opened', 'Ouverture checklist', 'campagne'],
-  ['emergency_kit_generated', 'Génération du kit', 'catégorie de foyer agrégée'],
-  ['pdf_downloaded', 'Téléchargement PDF', 'type de document'],
-  ['technical_error', 'Erreur bloquante interface', 'écran, code technique'],
-]
-
-const recipeRows = [
-  ['M01', 'Ouverture seule de l’accueil', 'Aucun visiteur touché compté'],
-  ['M02', 'Démarrage d’un diagnostic', '1 visiteur engagé et 1 parcours commencé'],
-  ['M04', 'Fin du diagnostic', '1 parcours terminé et durée calculable'],
-  ['M05', 'Checklist et kit', 'Actions enregistrées sans réponses détaillées'],
-  ['M10', 'Inspection réseau', 'Aucune donnée nominative ni réponse détaillée'],
-  ['M12', 'Export mensuel', 'Totaux cohérents avec les événements de test'],
-]
 
 onMounted(async () => {
   try {
@@ -192,73 +145,15 @@ onMounted(async () => {
         </div>
       </section>
 
-      <section class="grid grid--2">
-        <article class="panel dashboard-panel">
-          <h2>Canaux et campagnes</h2>
-          <div class="table-wrap" tabindex="0" aria-label="Tableau des campagnes">
-            <table>
-              <thead>
-                <tr>
-                  <th>Code</th>
-                  <th>Relais</th>
-                  <th>Canal</th>
-                  <th>Engagés</th>
-                  <th>Terminés</th>
-                  <th>Statut</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="row in campaignRows" :key="row[0]">
-                  <td v-for="cell in row" :key="cell">{{ cell }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </article>
-
-        <article class="panel dashboard-panel">
-          <h2>Qualité de service</h2>
-          <div class="quality-list">
-            <div v-for="row in qualityRows" :key="row[0]" class="quality-row">
-              <strong>{{ row[0] }}</strong>
-              <span>{{ row[1] }}</span>
-              <small>{{ row[2] }}</small>
-            </div>
-          </div>
-        </article>
-      </section>
-
-      <section class="grid grid--2">
-        <article class="panel dashboard-panel">
-          <h2>Événements à instrumenter</h2>
-          <ul class="event-list">
-            <li v-for="row in eventRows" :key="row[0]">
-              <code>{{ row[0] }}</code>
-              <span>{{ row[1] }}</span>
-              <small>{{ row[2] }}</small>
-            </li>
-          </ul>
-        </article>
-
-        <article class="panel dashboard-panel">
-          <h2>Recette avant ouverture</h2>
-          <ul class="recipe-list">
-            <li v-for="row in recipeRows" :key="row[0]">
-              <strong>{{ row[0] }}</strong>
-              <span>{{ row[1] }}</span>
-              <small>{{ row[2] }}</small>
-            </li>
-          </ul>
-        </article>
-      </section>
-
       <section class="panel dashboard-panel">
-        <h2>Règle de prudence</h2>
-        <p class="muted">
-          Le compteur principal ne devra pas être présenté comme atteint avec des impressions, des
-          pages vues ou de la portée sociale. Seuls les visiteurs engagés uniques alimenteront le
-          bilan final, avec date d’extraction, période et limites méthodologiques.
-        </p>
+        <h2>Qualité de service</h2>
+        <div class="quality-list">
+          <div v-for="row in qualityRows" :key="row[0]" class="quality-row">
+            <strong>{{ row[0] }}</strong>
+            <span>{{ row[1] }}</span>
+            <small>{{ row[2] }}</small>
+          </div>
+        </div>
       </section>
     </div>
   </section>
