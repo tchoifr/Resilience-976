@@ -19,6 +19,7 @@ const navLinks = [
   { to: '/ressources', labelKey: 'navigation.resources' },
   { to: '/videos', labelKey: 'navigation.videos' },
   { to: '/tableau-de-bord', labelKey: 'navigation.dashboard' },
+  { to: '/experimentation-utilisateurs', labelKey: 'navigation.experiment' },
 ]
 
 function toggleMenu() {

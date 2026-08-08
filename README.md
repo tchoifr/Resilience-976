@@ -27,6 +27,7 @@ npm run test:e2e         # tests fonctionnels Playwright
 npm run build            # build production
 npm run preview          # verifier dist
 npm run quality          # lint + type-check + unit + build
+npm run seo:campaign-links # liens de campagne pour QR codes
 ```
 
 ## Architecture
@@ -69,18 +70,37 @@ Le tableau de bord est disponible sur:
 /tableau-de-bord
 ```
 
+Le formulaire d'experimentation utilisateurs pour la preuve 11 est disponible sur:
+
+```txt
+/experimentation-utilisateurs
+```
+
 Endpoints backend:
 
 ```txt
 GET  /api/health
 POST /api/events
+POST /api/feedback
 GET  /api/dashboard
 ```
 
-Le stockage local des evenements se fait dans:
+Les evenements analytics et les retours du formulaire sont centralises dans:
+
+```txt
+server/data/resilience.sqlite
+```
+
+Les evenements gardent aussi une trace JSONL locale compatible:
 
 ```txt
 server/data/events.jsonl
+```
+
+Exporter les retours du formulaire depuis la BDD:
+
+```bash
+npm run feedback:export
 ```
 
 Ce dossier est ignore par git.

@@ -19,6 +19,7 @@ export const swbMessages = {
     resources: 'zi mali',
     videos: 'zisahani',
     dashboard: 'stats',
+    experiment: 'testi',
   },
   footer: {
     baseline: 'v ale suku la sirkali bole, bure, wala tsi de lisewao.',
@@ -52,7 +53,8 @@ export const swbMessages = {
   scoreLevels: {
     insufficient: {
       label: 'ou piya mipango ya tadjiri',
-      message: 'Zitru nyengi muhimu zalazimu zi rongowe na waye i trongo muhimu.',
+      message:
+        'Zitru nyengi muhimu zalazimu zi rongowe na waye i trongo muhimu.',
     },
     fragile: {
       label: 'Mitayarisho vu na bu hila',
@@ -70,23 +72,28 @@ export const swbMessages = {
   seo: {
     home: {
       title: 'wami tsili endra chindrani, yaani, mupango wangu',
-      description: 'bilatusa, bila outsi ha sibabu ya oujo mupango wa tout zaou djiduburiha na mipango ya mitru.',
+      description:
+        'bilatusa, bila outsi ha sibabu ya oujo mupango wa tout zaou djiduburiha na mipango ya mitru.',
     },
     diagnostic: {
-      title: 'Anika awushia alama ya mbole ya awu mwashani mwa mwaka wa 9 na sama',
+      title:
+        'Anika awushia alama ya mbole ya awu mwashani mwa mwaka wa 9 na sama',
       description: 'Dji aa na zingulidjiri dzianisio, wala tsi de awu zisahao.',
     },
     results: {
       title: 'Trongo za wendza, 9ãdhwini, na vhanu',
-      description: 'Namudzise trongo zaho, trongo za hidjiri na mipango ya mitru.',
+      description:
+        'Namudzise trongo zaho, trongo za hidjiri na mipango ya mitru.',
     },
     checklist: {
       title: 'ou dounga ougou wa parani - endra na dzina ya chindra',
-      description: 'tsena fanya mitayarisho yaho ha wanyu ujo mutayarishiya marike ya hu shandza.',
+      description:
+        'tsena fanya mitayarisho yaho ha wanyu ujo mutayarishiya marike ya hu shandza.',
     },
     kit: {
       title: 'watimbo wa peu - nakili bole wa 9ãma',
-      description: 'bassi anisa mwana trongo wa pawa wa harimwa trongo ya rendrehane na wudjama wa nyumba yaho.',
+      description:
+        'bassi anisa mwana trongo wa pawa wa harimwa trongo ya rendrehane na wudjama wa nyumba yaho.',
     },
     resources: {
       title: 'zi taãbu za wubaki mwaka wa 9^ na chindra',
@@ -94,19 +101,28 @@ export const swbMessages = {
     },
     videos: {
       title: 'video - uaãbu ya mwaka wa 9^ na chindra',
-      description: 'Tika taambou ya matayarisho yanu na wendrelee wendrelea maesha yaho.',
+      description:
+        'Tika taambou ya matayarisho yanu na wendrelee wendrelea maesha yaho.',
     },
     videoDetail: {
       title: 'video gnoumba kactorule - wendreu wa mara kumi na mbili',
-      description: 'namudzise shahula ya video, zitru zalo, zi swala la yi trongo zayo na suala la ufalume wa i sa.',
+      description:
+        'namudzise shahula ya video, zitru zalo, zi swala la yi trongo zayo na suala la ufalume wa i sa.',
     },
     dashboard: {
       title: 'stats - Resilience 976',
-      description: 'utsi wa zi alama za watru wengiya, campagne, PDF na udzima wa daradja.',
+      description:
+        'utsi wa zi alama za watru wengiya, campagne, PDF na udzima wa daradja.',
+    },
+    experiment: {
+      title: 'Expérimentation utilisateurs - Resilience 976',
+      description:
+        'Questionnaire anonymisé pour documenter les tests utilisateurs du prototype.',
     },
     legal: {
       title: 'alama za mpia - uandra wa pawa 9 na',
-      description: 'dhwama harimwa zi hazi, tsena trongo za wendza na mastereko ya wushindzi maesha 9 na vhavho.',
+      description:
+        'dhwama harimwa zi hazi, tsena trongo za wendza na mastereko ya wushindzi maesha 9 na vhavho.',
     },
     notFound: {
       title: 'uwaswili kawapara wandre- wa pawani',
@@ -116,12 +132,14 @@ export const swbMessages = {
   home: {
     eyebrow: 'bure omboleyo, wala si endra',
     title: 'uwasudjitayarishe atta taambu?',
-    intro: 'djiduburisha ndziani yaho ya maha mitsano yaho aou harimoi trongo za fagna, awona ndziya, ndzisa, trongo za ayi mikassi na PIF.',
+    intro:
+      'djiduburisha ndziani yaho ya maha mitsano yaho aou harimoi trongo za fagna, awona ndziya, ndzisa, trongo za ayi mikassi na PIF.',
     start: 'mainsha ya andrisa Untru',
     resume: 'wendrelea uwangna',
     resources: 'ngalia zi zombo',
     privacyTitle: 'U utadjirifu',
-    privacy: 'Trongo iyo y djawabu yabaki harimwa shio titi ini. Neka utsoshindra utoleya data ya dagoni haho, wakati uwo zi ma djawabu awonao za sharia.',
+    privacy:
+      'Trongo iyo y djawabu yabaki harimwa shio titi ini. Neka utsoshindra utoleya data ya dagoni haho, wakati uwo zi ma djawabu awonao za sharia.',
     journeyAria: 'mufano wa zi mbeli',
     journeyTitle: 'azia ya musaa',
     journeyText: 'Afagna, sabu, tsena, trongo, ndziani, trongo na elidjiri.',
@@ -158,13 +176,15 @@ export const swbMessages = {
     eyebrow: 'maaa',
     title: 'daradja yaho',
     incompleteTitle: 'Umbukitru muhalasi',
-    incomplete: 'barua la choma ujulizi rangu vhale litolewao harimwa shiri ini.',
+    incomplete:
+      'barua la choma ujulizi rangu vhale litolewao harimwa shiri ini.',
     startDiagnostic: 'mainsha ya andrisa Untru',
     domainScores: 'watru wengi ulawa na ufalume',
     emptyScores: 'Idadi ya watru itsoka baanda ya djawabu ya handra yaho.',
     immediatePriorities: 'trongo zaho traru moja',
     weekActions: 'zi anmali za hidjiri muda wa suku saba',
-    warning: 'regice chindrani, awona marongozi ya wendza yahe. Yao kaya harasa taambu za wakati halisi wala kayana na wendza zi trongo zadjiri moni na ya madhwamana yendza nguvu.',
+    warning:
+      'regice chindrani, awona marongozi ya wendza yahe. Yao kaya harasa taambu za wakati halisi wala kayana na wendza zi trongo zadjiri moni na ya madhwamana yendza nguvu.',
     openChecklist: 'Niulie uako',
     openKit: 'ngalia trusu ya padzi',
     downloadCertificate: 'Shukidza mkataba',
@@ -178,7 +198,8 @@ export const swbMessages = {
     recommended: 'Zibwa zi taãbu',
     optional: 'Zi ndjema',
     customTitle: 'zi taãbu zangu',
-    customIntro: 'Amoesa zi trongo za dagoni haho vhanu. Zi trongo zibaki harimwa nutro ini, zi dzina na uzimo, amwesa hari mwa PDF.',
+    customIntro:
+      'Amoesa zi trongo za dagoni haho vhanu. Zi trongo zibaki harimwa nutro ini, zi dzina na uzimo, amwesa hari mwa PDF.',
     countZero: 'Pevoni yidjiri tsena',
     countOne: 'mwiso madjiti tsunu aengedza tsena',
     countMany: '{count} Pevoni ata shitru zitru',
@@ -198,7 +219,8 @@ export const swbMessages = {
   kit: {
     eyebrow: 'trongo za sirini',
     title: 'trongo yangu ya mila',
-    intro: 'Kiasi izo piya u watru wabaki amba kawa sibabu ya wafikiwa na madongozi rasmi yaho ya komowana.',
+    intro:
+      'Kiasi izo piya u watru wabaki amba kawa sibabu ya wafikiwa na madongozi rasmi yaho ya komowana.',
     householdAria: 'Komba la dagoni',
     fields: {
       adults: 'Wantru wapeu',
@@ -220,13 +242,16 @@ export const swbMessages = {
     eyebrow: 'habari ya shi tsi halali',
     title: 'tana taambo na siri',
     serviceTitle: 'zunguha za kitabole',
-    service: 'endrani mia chindrani, de waye de mutru ariangidziwe na matayarisho. Ah kayaandaledza mayetwari ya wakati wa kweli, katsovhingi mahake ya madjahazi wala kavhunguwa zitru zatolewao na wakala wa maliri madhwahazi.',
+    service:
+      'endrani mia chindrani, de waye de mutru ariangidziwe na matayarisho. Ah kayaandaledza mayetwari ya wakati wa kweli, katsovhingi mahake ya madjahazi wala kavhunguwa zitru zatolewao na wakala wa maliri madhwahazi.',
     dataTitle: 'factwi ya huntsi',
     data: 'Miidjo, tsena fanyaa, fanya mipango na igagua ndziya za dagoni na iliyo rahisi, kaina Shiploi tu harimwa sembeya izo uvhira ha urongozi waho.',
-    privacy: 'Shitru iyo kailazimu uangihe, marke, baruama, awu trongo za tiba.',
+    privacy:
+      'Shitru iyo kailazimu uangihe, marke, baruama, awu trongo za tiba.',
     resetLocal: 'dzianisa ou trongo za dagoni',
     sourcesTitle: 'ziashi',
-    sources: 'masuala, trongo za zini, zi taãbu na zizo, zilazimu zihisewe na trongo za tsihole, kabula ya zoua piya u mwangishiyo rasmi.',
+    sources:
+      'masuala, trongo za zini, zi taãbu na zizo, zilazimu zihisewe na trongo za tsihole, kabula ya zoua piya u mwangishiyo rasmi.',
   },
   resources: {
     eyebrow: 'zi mali',
@@ -235,7 +260,8 @@ export const swbMessages = {
   videos: {
     eyebrow: 'oufagna Dole',
     title: 'zideya na mahadisi manu',
-    intro: 'mitsumba mitsumba mitsano yatayarisha. habari za umutayarishidziwa kabla ya u mwaha rasmi wa zi video za mwiso zisulawe.',
+    intro:
+      'mitsumba mitsumba mitsano yatayarisha. habari za umutayarishidziwa kabla ya u mwaha rasmi wa zi video za mwiso zisulawe.',
     progressAria: 'mavunguo ya zitru dzina moni na zi trongo dzinao titi',
     globalProgress: 'irengeledza mundro wa telefou',
     completedCount: 'Pevonicha {completed} bumba za pare zadziha {total}',
@@ -250,8 +276,10 @@ export const swbMessages = {
     domain: 'vaila',
     revisionDate: 'kanakili ya formation',
     detailEyebrow: 'video Kaule',
-    videoPending: 'Zidiya zi ia za mahabari za maindrie. Tadjiri na zi zouri, zi trongo na zitru vhavho kazina ata zini.',
-    externalVideoAvailable: 'Muhalasi rasmi wahiriwa vhahanu vhahanu. Usuja harimwa baraza pia, ile si risike muzitrie chindra langina wala tsi dzifanyishiye dzina laho.',
+    videoPending:
+      'Zidiya zi ia za mahabari za maindrie. Tadjiri na zi zouri, zi trongo na zitru vhavho kazina ata zini.',
+    externalVideoAvailable:
+      'Muhalasi rasmi wahiriwa vhahanu vhahanu. Usuja harimwa baraza pia, ile si risike muzitrie chindra langina wala tsi dzifanyishiye dzina laho.',
     openOfficialVideo: 'Niulie video rasmi',
     quizTitle: 'suala la udzisa',
     validateAnswer: 'Nisidze kamwe djawabu langu',
@@ -296,27 +324,33 @@ export const swbMessages = {
     certificateLine2: 'amwesa abalidza mitru ya renga',
     generatedAt: 'stagidzo lidziro Pevoni ngavia {date}',
     version: 'pare anni ivhossoisse 1.0.',
-    disclaimer: 'atta zombo za oupara taambu : kayadjikuruu zi nyasiya za madjeshi maole.',
-    annexHeader: 'miangwa chindrani wa pawani - hanaswani ha ujo mupango wa rengwa',
+    disclaimer:
+      'atta zombo za oupara taambu : kayadjikuruu zi nyasiya za madjeshi maole.',
+    annexHeader:
+      'miangwa chindrani wa pawani - hanaswani ha ujo mupango wa rengwa',
     domainScores: 'watru wengi ulawa na ufalume',
     immediatePriorities: 'ni tsiyamoi zi trongo zangu wakati uwo',
     weekActions: 'zi anmali za hidjiri muda wa suku saba',
     checklist: 'ou dounga oudjade',
-    checkedCount: '{count} tolocationateAcation ya outs) yanuna indina innou yi factsion',
+    checkedCount:
+      '{count} tolocationateAcation ya outs) yanuna indina innou yi factsion',
     kit: 'trongo ya mutru ya rendreha wakati wa uwade',
     mainSources: 'zieshi bole',
     responsibility: 'Vavo uangiha hazi za ndzisa',
-    responsibilityText: 'endrani mia chindrani, de waye de mutru ariangidziwe na matayarisho. Ah kayaandaledza mayetwari ya wakati wa kweli, katsovhingi mahake ya madjahazi wala kavhunguwa zitru zatolewao na wakala wa maliri madhwahazi.',
+    responsibilityText:
+      'endrani mia chindrani, de waye de mutru ariangidziwe na matayarisho. Ah kayaandaledza mayetwari ya wakati wa kweli, katsovhingi mahake ya madjahazi wala kavhunguwa zitru zatolewao na wakala wa maliri madhwahazi.',
     checklistTitle: 'oufagna trongo za matayarisho',
     checklistSubtitle: 'ziriya zi taãbu za dagoni na zi fanya hazi za ketsi',
     checklistCompleted: '{percent}% Atta Atta Atta idjitru',
     checklistHint: 'Tika rangowa, ou ourgue aou graphique aou yi para.',
-    checklistLocalNote: 'Trongo ya midjibou yi rendre harimwa shiri yaho, kabula ya zingwa.',
+    checklistLocalNote:
+      'Trongo ya midjibou yi rendre harimwa shiri yaho, kabula ya zingwa.',
     recommendedActions: 'Zibwa zi taãbu',
     customActions: 'zi taãbu zangu',
     noCustomAction: 'kavhu atta utsimidzisa wakati uwo.',
     mention: 'ufalume',
-    checklistMention: 'mwandro unu, mutayarishiyo mutayarishiyo wa patana na wanyahe wala kayija na zi trongo zatolewa na wakala hodari.',
+    checklistMention:
+      'mwandro unu, mutayarishiyo mutayarishiyo wa patana na wanyahe wala kayija na zi trongo zatolewa na wakala hodari.',
   },
 } as const
 

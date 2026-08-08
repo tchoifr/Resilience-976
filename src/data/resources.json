@@ -16,6 +16,28 @@
     "validationStatus": "to_validate"
   },
   {
+    "id": "resource_seisme",
+    "title": "Séisme",
+    "domain": "behaviors",
+    "description": "Comprendre le risque sismique à Mayotte, les consignes pendant les secousses et les points d’attention pour le logement.",
+    "sourceIds": [
+      "source_prefecture_mayotte_seismes",
+      "source_georisques_ppr_mayotte"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "resource_mouvement_terrain",
+    "title": "Mouvement de terrain",
+    "domain": "housing",
+    "description": "Repérer les informations officielles sur les glissements, éboulements, coulées de boue et zones exposées.",
+    "sourceIds": [
+      "source_prefecture_mayotte_mouvements_terrain",
+      "source_georisques_ppr_mayotte"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
     "id": "resource_alerts",
     "title": "Alertes et informations officielles",
     "domain": "energy_communication",

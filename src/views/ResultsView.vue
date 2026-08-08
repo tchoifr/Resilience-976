@@ -29,7 +29,9 @@ const assessmentStore = useAssessmentStore()
 const isGeneratingPdf = ref(false)
 const { t } = useI18n()
 
-const result = computed(() => calculateAssessment(questions.value, assessmentStore.answers))
+const result = computed(() =>
+  calculateAssessment(questions.value, assessmentStore.answers),
+)
 const translatedLevel = computed<ScoreLevel>(() => ({
   ...result.value.level,
   label: t(`scoreLevels.${result.value.level.id}.label`),
@@ -44,10 +46,16 @@ const translatedResult = computed(() => ({
   })),
 }))
 const recommendedActions = computed(() =>
-  getRecommendedActions(questions.value, actions.value, assessmentStore.answers),
+  getRecommendedActions(
+    questions.value,
+    actions.value,
+    assessmentStore.answers,
+  ),
 )
 const actionPlan = computed(() => buildActionPlan(recommendedActions.value))
-const personalizedKit = computed(() => getKitItems(kitItems.value, assessmentStore.household))
+const personalizedKit = computed(() =>
+  getKitItems(kitItems.value, assessmentStore.household),
+)
 const pdfChecklistItems = computed(() => [
   ...recommendedActions.value.map((action) => ({
     id: action.id,
@@ -63,6 +71,10 @@ const pdfChecklistItems = computed(() => [
 
 onMounted(() => {
   trackEvent('result_viewed')
+
+  if (assessmentStore.hasAnswers) {
+    trackEvent('action_plan_opened')
+  }
 })
 
 function getSources(sourceIds: string[]): Source[] {
@@ -91,10 +103,15 @@ async function exportPdf(mode: 'download' | 'print') {
   isGeneratingPdf.value = true
 
   try {
-    const { generateAssessmentPdf } = await import('@/features/assessment/services/pdf.service')
+    const { generateAssessmentPdf } =
+      await import('@/features/assessment/services/pdf.service')
 
     generateAssessmentPdf(buildAssessmentPdfInput(), { mode })
-    trackEvent('pdf_downloaded')
+    trackEvent('certificate_generated')
+
+    if (mode === 'download') {
+      trackEvent('pdf_downloaded')
+    }
   } finally {
     isGeneratingPdf.value = false
   }
@@ -113,13 +130,18 @@ async function exportPdf(mode: 'download' | 'print') {
         variant="warning"
       >
         {{ t('results.incomplete') }}
-        <RouterLink to="/diagnostic">{{ t('results.startDiagnostic') }}</RouterLink
+        <RouterLink to="/diagnostic">{{
+          t('results.startDiagnostic')
+        }}</RouterLink
         >.
       </AppAlert>
 
       <div class="grid grid--2 result-overview">
         <section class="panel score-panel">
-          <ScoreGauge :score="translatedResult.globalScore" :level="translatedResult.level" />
+          <ScoreGauge
+            :score="translatedResult.globalScore"
+            :level="translatedResult.level"
+          />
         </section>
 
         <section class="panel stack domain-panel">
@@ -127,13 +149,20 @@ async function exportPdf(mode: 'download' | 'print') {
           <div v-if="result.domainScores.length === 0" class="muted">
             {{ t('results.emptyScores') }}
           </div>
-          <div v-for="domain in result.domainScores" :key="domain.id" class="domain-score">
+          <div
+            v-for="domain in result.domainScores"
+            :key="domain.id"
+            class="domain-score"
+          >
             <div class="domain-score__label">
               <span>{{ getDomainLabel(domain.id) }}</span>
               <span>{{ domain.score }}/100</span>
             </div>
             <div class="domain-score__track">
-              <div class="domain-score__bar" :style="{ width: `${domain.score}%` }"></div>
+              <div
+                class="domain-score__bar"
+                :style="{ width: `${domain.score}%` }"
+              ></div>
             </div>
           </div>
         </section>
@@ -173,9 +202,17 @@ async function exportPdf(mode: 'download' | 'print') {
           t('results.openKit')
         }}</RouterLink>
         <AppButton :disabled="isGeneratingPdf" @click="exportPdf('download')">
-          {{ isGeneratingPdf ? t('results.preparingPdf') : t('results.downloadCertificate') }}
+          {{
+            isGeneratingPdf
+              ? t('results.preparingPdf')
+              : t('results.downloadCertificate')
+          }}
         </AppButton>
-        <AppButton variant="secondary" :disabled="isGeneratingPdf" @click="exportPdf('print')">
+        <AppButton
+          variant="secondary"
+          :disabled="isGeneratingPdf"
+          @click="exportPdf('print')"
+        >
           {{ t('results.printCertificate') }}
         </AppButton>
         <AppButton variant="danger" @click="assessmentStore.reset">{{

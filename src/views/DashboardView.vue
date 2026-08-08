@@ -1,6 +1,7 @@
 <script setup lang="ts">
 /* global fetch */
 import { computed, onMounted, ref } from 'vue'
+import { RouterLink } from 'vue-router'
 
 interface DashboardStats {
   generatedAt: string
@@ -14,6 +15,10 @@ interface DashboardStats {
     resultViews: number
     actionOpens: number
     pdfDownloads: number
+    certificatesGenerated: number
+    checklistProgressEvents: number
+    sourcesOpened: number
+    feedbackSubmitted: number
     technicalErrors: number
     completionRate: number
   }
@@ -22,7 +27,11 @@ interface DashboardStats {
 const defaultDashboardEndpoint = import.meta.env.PROD
   ? 'https://resilience-976-analytics.onrender.com/api/dashboard'
   : '/api/dashboard'
-const dashboardEndpoint = import.meta.env.VITE_DASHBOARD_ENDPOINT ?? defaultDashboardEndpoint
+const dashboardEndpoint =
+  import.meta.env.VITE_DASHBOARD_ENDPOINT ?? defaultDashboardEndpoint
+const dashboardEnabled = import.meta.env.DEV
+  ? import.meta.env.VITE_ANALYTICS_ENABLED !== 'false'
+  : import.meta.env.VITE_ANALYTICS_ENABLED === 'true'
 const stats = ref<DashboardStats | null>(null)
 const isLoading = ref(true)
 
@@ -39,7 +48,9 @@ const summaryCards = computed(() => [
   {
     label: 'Engagés réels',
     value: displayValue(stats.value?.totals.engagedVisitors),
-    detail: stats.value ? 'visiteurs engagés uniques' : 'à renseigner après instrumentation',
+    detail: stats.value
+      ? 'visiteurs engagés uniques'
+      : 'à renseigner après instrumentation',
     tone: 'neutral',
   },
   {
@@ -84,12 +95,82 @@ const funnelSteps = computed(() => [
 
 const qualityRows = computed(() => [
   ['Disponibilité', '—', 'Suivi hebdomadaire après mise en ligne'],
-  ['Erreurs bloquantes', displayValue(stats.value?.totals.technicalErrors), 'Objectif proche de 0'],
-  ['Retours utilisateurs', '—', 'À qualifier par thème'],
-  ['Dernière extraction', stats.value?.updatedAt ?? '—', 'Date visible dans chaque bilan'],
+  [
+    'Erreurs bloquantes',
+    displayValue(stats.value?.totals.technicalErrors),
+    'Objectif proche de 0',
+  ],
+  [
+    'Retours utilisateurs',
+    displayValue(stats.value?.totals.feedbackSubmitted),
+    'Formulaires anonymisés reçus',
+  ],
+  [
+    'Sources ouvertes',
+    displayValue(stats.value?.totals.sourcesOpened),
+    'Consultation des références officielles',
+  ],
+  [
+    'Dernière extraction',
+    stats.value?.updatedAt ?? '—',
+    'Date visible dans chaque bilan',
+  ],
+])
+
+const eventRows = computed(() => [
+  [
+    'diagnostic_started',
+    displayValue(stats.value?.totals.journeysStarted),
+    'Parcours commencé',
+  ],
+  [
+    'diagnostic_completed',
+    displayValue(stats.value?.totals.journeysCompleted),
+    'Parcours terminé',
+  ],
+  [
+    'result_viewed',
+    displayValue(stats.value?.totals.resultViews),
+    'Résultat consulté',
+  ],
+  [
+    'action_plan_opened',
+    displayValue(stats.value?.totals.actionOpens),
+    'Passage à l’action',
+  ],
+  [
+    'certificate_generated',
+    displayValue(stats.value?.totals.certificatesGenerated),
+    'Attestation générée',
+  ],
+  [
+    'pdf_downloaded',
+    displayValue(stats.value?.totals.pdfDownloads),
+    'PDF téléchargé',
+  ],
+  [
+    'checklist_progress',
+    displayValue(stats.value?.totals.checklistProgressEvents),
+    'Seuil checklist atteint',
+  ],
+  [
+    'source_opened',
+    displayValue(stats.value?.totals.sourcesOpened),
+    'Source officielle ouverte',
+  ],
+  [
+    'feedback_submitted',
+    displayValue(stats.value?.totals.feedbackSubmitted),
+    'Retour utilisateur reçu',
+  ],
 ])
 
 onMounted(async () => {
+  if (!dashboardEnabled) {
+    isLoading.value = false
+    return
+  }
+
   try {
     const response = await fetch(dashboardEndpoint)
 
@@ -111,8 +192,8 @@ onMounted(async () => {
         <p class="eyebrow">Pilotage d’impact</p>
         <h1>Tableau de bord statistique</h1>
         <p>
-          Suivi prévu pour mesurer l’objectif de sensibilisation sans compter une simple page vue et
-          sans collecter de données nominatives.
+          Suivi prévu pour mesurer l’objectif de sensibilisation sans compter
+          une simple page vue et sans collecter de données nominatives.
         </p>
       </header>
 
@@ -133,11 +214,19 @@ onMounted(async () => {
         <div class="dashboard-section-heading">
           <h2>Entonnoir de participation</h2>
           <span class="pill pill--warning">{{
-            stats ? 'Données collecteur' : isLoading ? 'Chargement' : 'Valeurs à alimenter'
+            stats
+              ? 'Données collecteur'
+              : isLoading
+                ? 'Chargement'
+                : 'Valeurs à alimenter'
           }}</span>
         </div>
         <div class="funnel-grid">
-          <article v-for="step in funnelSteps" :key="step.label" class="funnel-step">
+          <article
+            v-for="step in funnelSteps"
+            :key="step.label"
+            class="funnel-step"
+          >
             <strong>{{ step.value }}</strong>
             <span>{{ step.label }}</span>
             <small>{{ step.help }}</small>
@@ -149,6 +238,25 @@ onMounted(async () => {
         <h2>Qualité de service</h2>
         <div class="quality-list">
           <div v-for="row in qualityRows" :key="row[0]" class="quality-row">
+            <strong>{{ row[0] }}</strong>
+            <span>{{ row[1] }}</span>
+            <small>{{ row[2] }}</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel dashboard-panel">
+        <div class="dashboard-section-heading">
+          <h2>Plan de marquage</h2>
+          <RouterLink
+            class="link-button link-button--secondary"
+            to="/experimentation-utilisateurs"
+          >
+            Formulaire test
+          </RouterLink>
+        </div>
+        <div class="quality-list">
+          <div v-for="row in eventRows" :key="row[0]" class="quality-row">
             <strong>{{ row[0] }}</strong>
             <span>{{ row[1] }}</span>
             <small>{{ row[2] }}</small>

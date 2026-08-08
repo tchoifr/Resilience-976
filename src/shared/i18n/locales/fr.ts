@@ -19,6 +19,7 @@ export const frMessages = {
     resources: 'Ressources',
     videos: 'Vidéos',
     dashboard: 'Stats',
+    experiment: 'Expérimentation',
   },
   footer: {
     baseline: 'Plateforme publique, gratuite, sans compte.',
@@ -52,11 +53,13 @@ export const frMessages = {
   scoreLevels: {
     insufficient: {
       label: 'Préparation insuffisante',
-      message: 'Plusieurs éléments essentiels doivent être traités en priorité.',
+      message:
+        'Plusieurs éléments essentiels doivent être traités en priorité.',
     },
     fragile: {
       label: 'Préparation fragile',
-      message: 'Des bases existent, mais des vulnérabilités importantes subsistent.',
+      message:
+        'Des bases existent, mais des vulnérabilités importantes subsistent.',
     },
     good: {
       label: 'Bien préparé',
@@ -75,40 +78,53 @@ export const frMessages = {
     },
     diagnostic: {
       title: 'Diagnostic - Resilience 976',
-      description: 'Répondez au diagnostic de préparation sans compte et sans base de données.',
+      description:
+        'Répondez au diagnostic de préparation sans compte et sans base de données.',
     },
     results: {
       title: 'Résultats - Resilience 976',
-      description: 'Consultez votre score, vos priorités et votre plan d’actions personnalisé.',
+      description:
+        'Consultez votre score, vos priorités et votre plan d’actions personnalisé.',
     },
     checklist: {
       title: 'Checklist - Resilience 976',
-      description: 'Suivez vos actions de préparation avec une checklist conservée localement.',
+      description:
+        'Suivez vos actions de préparation avec une checklist conservée localement.',
     },
     kit: {
       title: 'Kit d’urgence - Resilience 976',
-      description: 'Générez un kit d’urgence adapté à la composition de votre foyer.',
+      description:
+        'Générez un kit d’urgence adapté à la composition de votre foyer.',
     },
     resources: {
       title: 'Ressources - Resilience 976',
-      description: 'Consultez les fiches pratiques et sources officielles référencées.',
+      description:
+        'Consultez les fiches pratiques et sources officielles référencées.',
     },
     videos: {
       title: 'Vidéos - Resilience 976',
-      description: 'Parcourez les micro-formations de préparation et suivez votre progression.',
+      description:
+        'Parcourez les micro-formations de préparation et suivez votre progression.',
     },
     videoDetail: {
       title: 'Capsule vidéo - Resilience 976',
-      description: 'Consultez une capsule vidéo, sa transcription, ses sources et sa question de validation.',
+      description:
+        'Consultez une capsule vidéo, sa transcription, ses sources et sa question de validation.',
     },
     dashboard: {
       title: 'Tableau de bord - Resilience 976',
       description:
         'Suivi des indicateurs de sensibilisation, campagnes, livrables et recette statistique.',
     },
+    experiment: {
+      title: 'Expérimentation utilisateurs - Resilience 976',
+      description:
+        'Questionnaire anonymisé pour documenter les tests utilisateurs du prototype.',
+    },
     legal: {
       title: 'Mentions légales - Resilience 976',
-      description: 'Responsabilité, confidentialité et limites du service Resilience 976.',
+      description:
+        'Responsabilité, confidentialité et limites du service Resilience 976.',
     },
     notFound: {
       title: 'Page introuvable - Resilience 976',
@@ -261,7 +277,8 @@ export const frMessages = {
     domain: 'Domaine',
     revisionDate: 'Date de révision',
     detailEyebrow: 'Capsule vidéo',
-    videoPending: 'Vidéo en attente de livraison éditoriale. La transcription et les sources restent accessibles.',
+    videoPending:
+      'Vidéo en attente de livraison éditoriale. La transcription et les sources restent accessibles.',
     externalVideoAvailable:
       'Une vraie vidéo officielle est disponible sur le site source. Elle s’ouvre dans un nouvel onglet pour éviter de charger un traceur externe sans action de votre part.',
     openOfficialVideo: 'Ouvrir la vidéo officielle',
@@ -304,7 +321,8 @@ export const frMessages = {
     brandSubtitle: 'Mon Plan Résilience',
     certificateTitle: 'Certificat de préparation',
     certificateSubtitle: 'Diagnostic personnel de sensibilisation',
-    certificateLine1: 'Ce document atteste que le foyer a complété son diagnostic',
+    certificateLine1:
+      'Ce document atteste que le foyer a complété son diagnostic',
     certificateLine2: 'et dispose d’un plan d’actions personnalisé.',
     generatedAt: 'Document généré le {date}',
     version: 'Version questionnaire 1.0.0',
@@ -325,7 +343,8 @@ export const frMessages = {
     checklistSubtitle: 'Actions recommandées et actions personnelles du foyer',
     checklistCompleted: '{percent}% complété',
     checklistHint: 'À garder accessible, à imprimer ou à glisser dans le kit.',
-    checklistLocalNote: 'Les actions personnelles restent locales sur votre appareil avant export.',
+    checklistLocalNote:
+      'Les actions personnelles restent locales sur votre appareil avant export.',
     recommendedActions: 'Actions recommandées',
     customActions: 'Mes actions personnelles',
     noCustomAction: 'Aucune action personnelle ajoutée pour le moment.',

@@ -4,9 +4,7 @@
     "title": "bmidza",
     "domain": "behaviors",
     "description": "Dalia zi taãbu za wakati wa taihani Maore, tsena uangihe zi zi apara zi abumba za hule za mulume wulawa.",
-    "sourceIds": [
-      "source_prefecture_mayotte"
-    ],
+    "sourceIds": ["source_prefecture_mayotte"],
     "validationStatus": "to_validate"
   },
   {
@@ -14,9 +12,28 @@
     "title": "vua nyengi na vua za vua",
     "domain": "housing",
     "description": "U juwa zi trongo ndjema hari mwa zi vua nyengi, zi topita harimwa zi vuao maji, awu zi taãbu za muhimu.",
+    "sourceIds": ["source_prefecture_mayotte", "source_gouvernement_risques"],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "resource_seisme",
+    "title": "séisme",
+    "domain": "behaviors",
+    "description": "U juwa hatwari ya séisme Maore, zi trongo rasmi wakati wa mtingito na zi habari za makazi.",
     "sourceIds": [
-      "source_prefecture_mayotte",
-      "source_gouvernement_risques"
+      "source_prefecture_mayotte_seismes",
+      "source_georisques_ppr_mayotte"
+    ],
+    "validationStatus": "to_validate"
+  },
+  {
+    "id": "resource_mouvement_terrain",
+    "title": "mouvement de terrain",
+    "domain": "housing",
+    "description": "U pata zi habari rasmi harimwa glissement, éboulement, coulée de boue na zi ndawo za hatwari.",
+    "sourceIds": [
+      "source_prefecture_mayotte_mouvements_terrain",
+      "source_georisques_ppr_mayotte"
     ],
     "validationStatus": "to_validate"
   },
@@ -25,10 +42,7 @@
     "title": "taari na habari rasmi",
     "domain": "energy_communication",
     "description": "Zi juwa zi mbeli zi taãbu zi taãbu za waminifu, ile udunga zi trongo zatolewa na madhwamana ya shariya.",
-    "sourceIds": [
-      "source_fr_alert",
-      "source_prefecture_mayotte"
-    ],
+    "sourceIds": ["source_fr_alert", "source_prefecture_mayotte"],
     "validationStatus": "to_validate"
   },
   {
@@ -36,10 +50,7 @@
     "title": "trongo za sirini",
     "domain": "water_food",
     "description": "namutayarishese trongo za marike ava zini za pawa, zidunguwe vavo na zi rendrehane za rendreha djini.",
-    "sourceIds": [
-      "source_gouvernement_risques",
-      "source_croix_rouge"
-    ],
+    "sourceIds": ["source_gouvernement_risques", "source_croix_rouge"],
     "validationStatus": "to_validate"
   }
 ]
