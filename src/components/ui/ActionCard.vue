@@ -12,7 +12,6 @@ defineProps<{
   action: RecommendationAction | PrioritizedAction
   sources: Source[]
 }>()
-
 const { t } = useI18n()
 </script>
 
