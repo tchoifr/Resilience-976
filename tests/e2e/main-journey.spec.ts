@@ -103,7 +103,9 @@ test('checklist et kit restent accessibles sans compte', async ({ page }) => {
 test('formulaire experimentation utilisateurs exporte des retours anonymes', async ({
   page,
 }) => {
-  await page.goto('/experimentation-utilisateurs')
+  await page.goto('/')
+  await openNavigationIfNeeded(page)
+  await page.getByRole('link', { name: 'Expérimentation' }).click()
 
   await expect(
     page.getByRole('heading', { name: 'Questionnaire de test' }),

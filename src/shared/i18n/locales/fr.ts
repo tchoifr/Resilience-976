@@ -19,6 +19,7 @@ export const frMessages = {
     resources: 'Ressources',
     videos: 'Vidéos',
     dashboard: 'Stats',
+    experiment: 'Expérimentation',
   },
   footer: {
     baseline: 'Plateforme publique, gratuite, sans compte.',

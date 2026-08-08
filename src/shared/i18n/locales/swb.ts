@@ -19,6 +19,7 @@ export const swbMessages = {
     resources: 'zi mali',
     videos: 'zisahani',
     dashboard: 'stats',
+    experiment: 'testi',
   },
   footer: {
     baseline: 'v ale suku la sirkali bole, bure, wala tsi de lisewao.',
