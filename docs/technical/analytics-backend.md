@@ -9,7 +9,8 @@ Il couvre la piece de preuve n°09:
 - compter les visiteurs engages uniques;
 - compter les parcours commences et termines;
 - mesurer les consultations de resultats;
-- mesurer les ouvertures de checklist, kit et telechargements PDF;
+- mesurer les ouvertures de plan d'actions, checklist, kit, attestations et telechargements PDF;
+- mesurer les seuils de progression checklist, ouvertures de sources et retours utilisateurs;
 - attribuer les usages a une campagne non nominative;
 - exposer des agregats au tableau de bord `/tableau-de-bord`.
 
@@ -19,7 +20,7 @@ Il couvre la piece de preuve n°09:
 server/analytics-server.mjs
 ```
 
-Le serveur utilise uniquement les modules natifs Node.js. Il n'ajoute pas Express, Fastify, base SQL ou dependance externe.
+Le serveur utilise uniquement les modules natifs Node.js. Il n'ajoute pas Express ou Fastify. Les evenements analytics et les retours du formulaire sont centralises dans une base SQLite via `node:sqlite`. Le fichier JSONL des evenements peut rester comme trace locale compatible.
 
 ## Lancement local
 
@@ -86,6 +87,48 @@ Reponse:
 }
 ```
 
+### `POST /api/feedback`
+
+Enregistre un retour anonymise du formulaire `/experimentation-utilisateurs` dans SQLite.
+
+Exemple abrege:
+
+```json
+{
+  "participantCode": "PTEST",
+  "device": "smartphone",
+  "profile": "famille",
+  "assistance": "aucune",
+  "durationMinutes": 12,
+  "completedJourney": true,
+  "ratings": {
+    "objective": 4,
+    "questions": 4,
+    "autonomy": 4,
+    "score": 4,
+    "priorities": 4,
+    "actions": 4,
+    "deliverables": 4,
+    "trust": 4,
+    "officialWarnings": 4,
+    "recommendation": 4
+  },
+  "usefulAction": "Preparer le kit",
+  "difficulty": "",
+  "priorityImprovement": "",
+  "concern": ""
+}
+```
+
+Reponse:
+
+```json
+{
+  "ok": true,
+  "id": "11111111-1111-4111-8111-111111111111"
+}
+```
+
 ### `GET /api/dashboard`
 
 Retourne les agregats affiches par le tableau de bord.
@@ -118,7 +161,18 @@ Exemple:
 
 ## Stockage
 
-Les evenements sont ecrits en JSONL:
+Les evenements analytics et les retours du formulaire sont ecrits dans SQLite:
+
+```txt
+server/data/resilience.sqlite
+```
+
+Tables creees automatiquement:
+
+- `analytics_events`;
+- `user_feedback`.
+
+Les evenements sont aussi conserves en JSONL comme trace locale compatible:
 
 ```txt
 server/data/events.jsonl
@@ -153,16 +207,21 @@ Le collecteur ne doit jamais recevoir:
 
 ## Evenements actuellement acceptes
 
-| Front | Metrique preuve n°09 |
-| ----- | -------------------- |
-| `page_view` | `page_view` |
-| `diagnostic_started` | `journey_started` |
-| `diagnostic_completed` | `journey_completed` |
-| `result_viewed` | `diagnostic_result_viewed` |
-| `checklist_opened` | `checklist_opened` |
-| `kit_opened` | `emergency_kit_generated` |
-| `pdf_downloaded` | `pdf_downloaded` |
-| `technical_error` | `technical_error` |
+| Front                   | Metrique preuve n°09       |
+| ----------------------- | -------------------------- |
+| `page_view`             | `page_view`                |
+| `action_plan_opened`    | `action_plan_opened`       |
+| `certificate_generated` | `certificate_generated`    |
+| `checklist_progress`    | `checklist_progress`       |
+| `diagnostic_started`    | `journey_started`          |
+| `diagnostic_completed`  | `journey_completed`        |
+| `feedback_submitted`    | `feedback_submitted`       |
+| `result_viewed`         | `diagnostic_result_viewed` |
+| `checklist_opened`      | `checklist_opened`         |
+| `kit_opened`            | `emergency_kit_generated`  |
+| `pdf_downloaded`        | `pdf_downloaded`           |
+| `source_opened`         | `source_opened`            |
+| `technical_error`       | `technical_error`          |
 
 ## Variables serveur
 
@@ -170,6 +229,7 @@ Le collecteur ne doit jamais recevoir:
 HOST=127.0.0.1
 PORT=8787
 ANALYTICS_DATA_FILE=server/data/events.jsonl
+RESILIENCE_DATABASE_FILE=server/data/resilience.sqlite
 ANALYTICS_ALLOWED_ORIGINS=https://domaine-final.fr
 ```
 
@@ -179,6 +239,10 @@ ANALYTICS_ALLOWED_ORIGINS=https://domaine-final.fr
 VITE_ANALYTICS_ENABLED=true
 VITE_ANALYTICS_ENDPOINT=/api/events
 VITE_DASHBOARD_ENDPOINT=/api/dashboard
+VITE_FEEDBACK_DATABASE_ENABLED=true
+VITE_FEEDBACK_ENDPOINT=/api/feedback
+VITE_GOOGLE_ANALYTICS_ENABLED=false
+VITE_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 ```
 
 ## Verification rapide
@@ -189,11 +253,13 @@ curl -X POST http://127.0.0.1:8787/api/events \
   -H 'content-type: application/json' \
   --data '{"name":"diagnostic_started","version":"1.0.0","path":"/diagnostic","visitorId":"11111111-1111-4111-8111-111111111111","campaignId":"CAMP-TEST"}'
 curl http://127.0.0.1:8787/api/dashboard
+npm run feedback:export
 ```
 
 ## Limites MVP
 
-- Le stockage JSONL est suffisant pour une preuve et un MVP local, mais une production longue devrait migrer vers PostgreSQL, SQLite gere ou un outil analytics dedie.
+- Le stockage JSONL + SQLite est suffisant pour une preuve et un MVP local, mais une production longue devrait migrer vers PostgreSQL, SQLite gere ou un outil analytics dedie.
 - La deduplication repose sur un identifiant anonyme local par navigateur.
 - Une suppression du stockage local ou un changement d'appareil peut creer un nouveau visiteur technique.
 - L'acces au endpoint dashboard doit etre protege avant une production publique si les volumes reels ne doivent pas etre publics.
+- Les exports `feedback-export.csv` et `feedback-export.json` restent dans `server/data/` et ne doivent pas etre commites.

@@ -8,6 +8,30 @@
     "validationStatus": "validated"
   },
   {
+    "id": "source_prefecture_mayotte_seismes",
+    "label": "Préfecture de Mayotte - Séismes",
+    "organization": "Services de l’État à Mayotte",
+    "url": "https://www.mayotte.gouv.fr/Actions-de-l-Etat/Prevention-des-risques-et-securite/Prevention-des-risques2/Risques-naturels/Seismes",
+    "consultedAt": "2026-08-08",
+    "validationStatus": "validated"
+  },
+  {
+    "id": "source_prefecture_mayotte_mouvements_terrain",
+    "label": "Préfecture de Mayotte - Mouvements de terrain",
+    "organization": "Services de l’État à Mayotte",
+    "url": "https://www.mayotte.gouv.fr/layout/set/print/Actions-de-l-Etat/Prevention-des-risques-et-securite/Prevention-des-risques2/Risques-naturels/Mouvements-de-terrain2",
+    "consultedAt": "2026-08-08",
+    "validationStatus": "validated"
+  },
+  {
+    "id": "source_georisques_ppr_mayotte",
+    "label": "Géorisques - Plans de prévention des risques à Mayotte",
+    "organization": "Ministère de la Transition écologique",
+    "url": "https://www.georisques.gouv.fr/donnee-risques/PPR/Fiche-ppr/pprn/976DE20100009",
+    "consultedAt": "2026-08-08",
+    "validationStatus": "validated"
+  },
+  {
     "id": "source_gouvernement_risques",
     "label": "Sécurité civile - Kit d’urgence",
     "organization": "Ministère de l’Intérieur",

@@ -3,7 +3,11 @@ import { computed, onMounted, ref } from 'vue'
 
 import AppButton from '@/components/ui/AppButton.vue'
 import ProgressBar from '@/components/ui/ProgressBar.vue'
-import { actions, questions, sourcesById } from '@/features/assessment/services/content.service'
+import {
+  actions,
+  questions,
+  sourcesById,
+} from '@/features/assessment/services/content.service'
 import { getRecommendedActions } from '@/features/assessment/services/recommendation.service'
 import { useAssessmentStore } from '@/features/assessment/stores/assessment.store'
 import type { PrioritizedAction } from '@/features/assessment/types/recommendation'
@@ -14,6 +18,8 @@ const assessmentStore = useAssessmentStore()
 const customLabel = ref('')
 const isGeneratingChecklistPdf = ref(false)
 const { t } = useI18n()
+const trackedChecklistThresholds = new Set<number>()
+const checklistProgressThresholds = [25, 50, 75, 100]
 const customExamples = computed(() => [
   t('checklist.examples.closePerson'),
   t('checklist.examples.documents'),
@@ -21,7 +27,11 @@ const customExamples = computed(() => [
 ])
 
 const checklistActions = computed<PrioritizedAction[]>(() => {
-  const recommended = getRecommendedActions(questions.value, actions.value, assessmentStore.answers)
+  const recommended = getRecommendedActions(
+    questions.value,
+    actions.value,
+    assessmentStore.answers,
+  )
 
   if (recommended.length > 0) {
     return recommended
@@ -34,17 +44,22 @@ const checklistActions = computed<PrioritizedAction[]>(() => {
 })
 
 const totalCount = computed(
-  () => checklistActions.value.length + assessmentStore.customChecklistItems.length,
+  () =>
+    checklistActions.value.length + assessmentStore.customChecklistItems.length,
 )
 const doneCount = computed(() => {
   const standardDone = checklistActions.value.filter(
     (action) => assessmentStore.checklist[action.id],
   ).length
-  const customDone = assessmentStore.customChecklistItems.filter((item) => item.completed).length
+  const customDone = assessmentStore.customChecklistItems.filter(
+    (item) => item.completed,
+  ).length
   return standardDone + customDone
 })
 const progress = computed(() =>
-  totalCount.value === 0 ? 0 : Math.round((doneCount.value / totalCount.value) * 100),
+  totalCount.value === 0
+    ? 0
+    : Math.round((doneCount.value / totalCount.value) * 100),
 )
 
 onMounted(() => {
@@ -60,6 +75,28 @@ function addExample(label: string) {
   assessmentStore.addCustomChecklistItem(label)
 }
 
+function trackChecklistProgressThresholds() {
+  for (const threshold of checklistProgressThresholds) {
+    if (
+      progress.value >= threshold &&
+      !trackedChecklistThresholds.has(threshold)
+    ) {
+      trackedChecklistThresholds.add(threshold)
+      trackEvent('checklist_progress')
+    }
+  }
+}
+
+function toggleChecklistItem(id: string) {
+  assessmentStore.toggleChecklistItem(id)
+  trackChecklistProgressThresholds()
+}
+
+function toggleCustomChecklistItem(id: string) {
+  assessmentStore.toggleCustomChecklistItem(id)
+  trackChecklistProgressThresholds()
+}
+
 function printPage() {
   window.print()
 }
@@ -72,7 +109,8 @@ async function exportChecklistPdf() {
   isGeneratingChecklistPdf.value = true
 
   try {
-    const { generateChecklistPdf } = await import('@/features/assessment/services/pdf.service')
+    const { generateChecklistPdf } =
+      await import('@/features/assessment/services/pdf.service')
 
     generateChecklistPdf({
       recommendedItems: checklistActions.value.map((action) => ({
@@ -89,13 +127,16 @@ async function exportChecklistPdf() {
       completedCount: doneCount.value,
       totalCount: totalCount.value,
     })
+    trackEvent('pdf_downloaded')
   } finally {
     isGeneratingChecklistPdf.value = false
   }
 }
 
 function firstSourceLabel(sourceIds: string[]): string {
-  const source = sourceIds.map((sourceId) => sourcesById.value.get(sourceId)).find(Boolean)
+  const source = sourceIds
+    .map((sourceId) => sourcesById.value.get(sourceId))
+    .find(Boolean)
   return source?.label ?? t('common.sourceToValidate')
 }
 
@@ -121,15 +162,21 @@ function customCountLabel(count: number): string {
 
       <section class="panel">
         <h2 class="section-title">{{ t('checklist.recommended') }}</h2>
-        <label v-for="action in checklistActions" :key="action.id" class="check-row">
+        <label
+          v-for="action in checklistActions"
+          :key="action.id"
+          class="check-row"
+        >
           <input
             type="checkbox"
             :checked="Boolean(assessmentStore.checklist[action.id])"
-            @change="assessmentStore.toggleChecklistItem(action.id)"
+            @change="toggleChecklistItem(action.id)"
           />
           <span>
             <strong>{{ action.title }}</strong>
-            <span class="muted"> - {{ firstSourceLabel(action.sourceIds) }}</span>
+            <span class="muted">
+              - {{ firstSourceLabel(action.sourceIds) }}</span
+            >
           </span>
         </label>
       </section>
@@ -173,7 +220,10 @@ function customCountLabel(count: number): string {
           <AppButton type="submit">{{ t('checklist.add') }}</AppButton>
         </form>
 
-        <div v-if="assessmentStore.customChecklistItems.length > 0" class="custom-items">
+        <div
+          v-if="assessmentStore.customChecklistItems.length > 0"
+          class="custom-items"
+        >
           <label
             v-for="item in assessmentStore.customChecklistItems"
             :key="item.id"
@@ -182,7 +232,7 @@ function customCountLabel(count: number): string {
             <input
               type="checkbox"
               :checked="item.completed"
-              @change="assessmentStore.toggleCustomChecklistItem(item.id)"
+              @change="toggleCustomChecklistItem(item.id)"
             />
             <span>
               <strong>{{ item.label }}</strong>
@@ -193,10 +243,19 @@ function customCountLabel(count: number): string {
       </section>
 
       <div class="cluster">
-        <AppButton :disabled="isGeneratingChecklistPdf" @click="exportChecklistPdf">
-          {{ isGeneratingChecklistPdf ? t('results.preparingPdf') : t('checklist.downloadPdf') }}
+        <AppButton
+          :disabled="isGeneratingChecklistPdf"
+          @click="exportChecklistPdf"
+        >
+          {{
+            isGeneratingChecklistPdf
+              ? t('results.preparingPdf')
+              : t('checklist.downloadPdf')
+          }}
         </AppButton>
-        <AppButton variant="secondary" @click="printPage">{{ t('checklist.printPage') }}</AppButton>
+        <AppButton variant="secondary" @click="printPage">{{
+          t('checklist.printPage')
+        }}</AppButton>
         <AppButton variant="danger" @click="assessmentStore.reset">{{
           t('common.resetData')
         }}</AppButton>

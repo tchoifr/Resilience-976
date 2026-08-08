@@ -66,7 +66,8 @@ Variables serveur utiles:
 HOST=127.0.0.1
 PORT=8787
 ANALYTICS_DATA_FILE=server/data/events.jsonl
+RESILIENCE_DATABASE_FILE=server/data/resilience.sqlite
 ANALYTICS_ALLOWED_ORIGINS=https://domaine-final.fr
 ```
 
-En production, exposer le collecteur derriere HTTPS sur `/api/*` ou configurer les endpoints publics `VITE_ANALYTICS_ENDPOINT` et `VITE_DASHBOARD_ENDPOINT`.
+En production, exposer le collecteur derriere HTTPS sur `/api/*` ou configurer les endpoints publics `VITE_ANALYTICS_ENDPOINT`, `VITE_DASHBOARD_ENDPOINT` et `VITE_FEEDBACK_ENDPOINT`.

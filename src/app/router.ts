@@ -71,6 +71,13 @@ const router = createRouter({
       },
     },
     {
+      path: '/experimentation-utilisateurs',
+      component: () => import('@/views/UserExperimentView.vue'),
+      meta: {
+        seoKey: 'experiment',
+      },
+    },
+    {
       path: '/mentions-legales',
       component: () => import('@/views/LegalView.vue'),
       meta: {
@@ -90,7 +97,8 @@ const router = createRouter({
 
 export function updateRouteHead(): void {
   const route = router.currentRoute.value
-  const seoKey = typeof route.meta.seoKey === 'string' ? route.meta.seoKey : 'home'
+  const seoKey =
+    typeof route.meta.seoKey === 'string' ? route.meta.seoKey : 'home'
 
   updateHead({
     title: translate(`seo.${seoKey}.title`),

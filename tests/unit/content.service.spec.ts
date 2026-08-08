@@ -18,7 +18,11 @@ describe('contenus metier', () => {
   })
 
   it('bascule les contenus metier en shimaore quand la langue swb est active', () => {
-    registerLocale({ code: 'swb', label: swbMessages.language.shimaore, messages: swbMessages })
+    registerLocale({
+      code: 'swb',
+      label: swbMessages.language.shimaore,
+      messages: swbMessages,
+    })
     setLocale('swb')
 
     expect(questions.value[0]?.id).toBe('household_01')
@@ -34,6 +38,17 @@ describe('contenus metier', () => {
     expect(kitItems.value.length).toBeGreaterThanOrEqual(10)
     expect(resources.value.length).toBeGreaterThanOrEqual(4)
     expect(sources.value.length).toBeGreaterThanOrEqual(4)
+  })
+
+  it('couvre les quatre risques naturels promis dans les ressources', () => {
+    expect(resources.value.map((resource) => resource.id)).toEqual(
+      expect.arrayContaining([
+        'resource_cyclone',
+        'resource_inondation',
+        'resource_seisme',
+        'resource_mouvement_terrain',
+      ]),
+    )
   })
 
   it('relie chaque question a des actions et sources existantes', () => {
@@ -80,7 +95,13 @@ describe('contenus metier', () => {
   })
 
   it('garde les recommandations sensibles en validation metier', () => {
-    expect(actions.value.every((action) => action.validationStatus === 'to_validate')).toBe(true)
-    expect(kitItems.value.every((item) => item.validationStatus === 'to_validate')).toBe(true)
+    expect(
+      actions.value.every(
+        (action) => action.validationStatus === 'to_validate',
+      ),
+    ).toBe(true)
+    expect(
+      kitItems.value.every((item) => item.validationStatus === 'to_validate'),
+    ).toBe(true)
   })
 })

@@ -19,6 +19,10 @@ export default defineConfig({
     ? undefined
     : {
         command: 'npm run dev -- --host 127.0.0.1 --port 4173',
+        env: {
+          VITE_ANALYTICS_ENABLED: 'false',
+          VITE_FEEDBACK_DATABASE_ENABLED: 'false',
+        },
         url: 'http://127.0.0.1:4173',
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
