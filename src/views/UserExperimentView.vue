@@ -3,7 +3,10 @@
 import { computed, onMounted, ref } from 'vue'
 
 import AppButton from '@/components/ui/AppButton.vue'
-import { trackEvent } from '@/shared/analytics/analytics.service'
+import { getVisitorId, trackEvent } from '@/shared/analytics/analytics.service'
+import { useI18n } from '@/shared/i18n/i18n.service'
+
+const { t } = useI18n()
 
 const storageKey = 'resilience976.userExperiment.feedback'
 const feedbackDatabaseEnabled = import.meta.env.DEV
@@ -16,47 +19,16 @@ const feedbackEndpoint =
   import.meta.env.VITE_FEEDBACK_ENDPOINT ?? defaultFeedbackEndpoint
 
 const ratingQuestions = [
-  {
-    key: 'objective',
-    label: 'J’ai compris l’objectif de la plateforme dès la page d’accueil.',
-  },
-  {
-    key: 'questions',
-    label: 'Les questions du diagnostic étaient faciles à comprendre.',
-  },
-  {
-    key: 'autonomy',
-    label: 'J’ai pu avancer sans me perdre ni demander beaucoup d’aide.',
-  },
-  {
-    key: 'score',
-    label: 'Le résultat et le score étaient faciles à interpréter.',
-  },
-  {
-    key: 'priorities',
-    label: 'Les priorités proposées correspondaient à ma situation.',
-  },
-  {
-    key: 'actions',
-    label: 'Les actions proposées me semblent concrètes et réalisables.',
-  },
-  {
-    key: 'deliverables',
-    label: 'La checklist ou le kit d’urgence me seront utiles.',
-  },
-  {
-    key: 'trust',
-    label:
-      'J’ai confiance dans les informations car les sources et limites sont visibles.',
-  },
-  {
-    key: 'officialWarnings',
-    label: 'Je comprends que l’outil ne remplace pas les alertes officielles.',
-  },
-  {
-    key: 'recommendation',
-    label: 'Je recommanderais ce parcours à un proche ou à mon public.',
-  },
+  { key: 'objective' },
+  { key: 'questions' },
+  { key: 'autonomy' },
+  { key: 'score' },
+  { key: 'priorities' },
+  { key: 'actions' },
+  { key: 'deliverables' },
+  { key: 'trust' },
+  { key: 'officialWarnings' },
+  { key: 'recommendation' },
 ] as const
 
 type RatingKey = (typeof ratingQuestions)[number]['key']
@@ -65,6 +37,7 @@ type FeedbackSaveStatus = 'idle' | 'saving' | 'database' | 'local'
 interface ExperimentFeedback {
   id: string
   createdAt: string
+  visitorId: string
   participantCode: string
   device: string
   browser: string
@@ -98,15 +71,15 @@ const submissionsCount = computed(() => savedFeedback.value.length)
 const lastSubmission = computed(() => savedFeedback.value[0])
 const saveStatusLabel = computed(() => {
   if (feedbackSaveStatus.value === 'saving') {
-    return 'Enregistrement dans la base en cours.'
+    return t('userExperiment.summary.statusSaving')
   }
 
   if (feedbackSaveStatus.value === 'database') {
-    return 'Dernier retour enregistré dans la base SQLite.'
+    return t('userExperiment.summary.statusDatabase')
   }
 
   if (feedbackSaveStatus.value === 'local') {
-    return 'Copie locale conservée. Base indisponible ou désactivée.'
+    return t('userExperiment.summary.statusLocal')
   }
 
   return ''
@@ -123,7 +96,7 @@ function createInitialRatings(): Record<RatingKey, number> {
 }
 
 function generateParticipantCode(): string {
-  return `P${String(Date.now()).slice(-6)}`
+  return window.crypto.randomUUID()
 }
 
 function loadSavedFeedback() {
@@ -188,6 +161,7 @@ function submitFeedback() {
   const entry: ExperimentFeedback = {
     id: window.crypto.randomUUID(),
     createdAt: new Date().toISOString(),
+    visitorId: getVisitorId(),
     participantCode: participantCode.value.trim() || generateParticipantCode(),
     device: device.value,
     browser: browser.value.trim().slice(0, 160),
@@ -238,6 +212,7 @@ function exportCsv() {
   const headers = [
     'id',
     'createdAt',
+    'visitorId',
     'participantCode',
     'device',
     'browser',
@@ -255,6 +230,7 @@ function exportCsv() {
     [
       entry.id,
       entry.createdAt,
+      entry.visitorId,
       entry.participantCode,
       entry.device,
       entry.browser,
@@ -288,14 +264,13 @@ onMounted(() => {
 <template>
   <section class="page page--narrow">
     <div class="stack">
-      <p class="eyebrow">Expérimentation utilisateurs</p>
-      <h1>Questionnaire de test</h1>
+      <p class="eyebrow">{{ t('userExperiment.eyebrow') }}</p>
+      <h1>{{ t('userExperiment.title') }}</h1>
 
       <section class="panel experiment-summary">
-        <strong>{{ submissionsCount }} retour(s) enregistré(s)</strong>
+        <strong>{{ t('userExperiment.summary.submissions', { count: submissionsCount }) }}</strong>
         <span>
-          Base SQLite côté serveur quand elle est active, avec copie locale de
-          secours sur cet appareil.
+          {{ t('userExperiment.summary.description') }}
         </span>
         <small v-if="saveStatusLabel" aria-live="polite">
           {{ saveStatusLabel }}
@@ -307,63 +282,52 @@ onMounted(() => {
         @submit.prevent="submitFeedback"
       >
         <fieldset class="form-fieldset">
-          <legend class="section-title">Session</legend>
+          <legend class="section-title">{{ t('userExperiment.session.legend') }}</legend>
           <div class="form-grid">
-            <label class="form-row" for="participant-code">
-              <span>Code participant</span>
-              <input
-                id="participant-code"
-                v-model="participantCode"
-                class="text-input"
-                maxlength="20"
-                type="text"
-              />
-            </label>
-
             <label class="form-row" for="experiment-device">
-              <span>Appareil</span>
+              <span>{{ t('userExperiment.session.device') }}</span>
               <select
                 id="experiment-device"
                 v-model="device"
                 class="text-input"
               >
-                <option value="smartphone">Smartphone</option>
-                <option value="ordinateur">Ordinateur</option>
-                <option value="tablette">Tablette</option>
+                <option value="smartphone">{{ t('userExperiment.session.deviceSmartphone') }}</option>
+                <option value="ordinateur">{{ t('userExperiment.session.deviceComputer') }}</option>
+                <option value="tablette">{{ t('userExperiment.session.deviceTablet') }}</option>
               </select>
             </label>
 
             <label class="form-row" for="experiment-profile">
-              <span>Profil général</span>
+              <span>{{ t('userExperiment.session.profile') }}</span>
               <select
                 id="experiment-profile"
                 v-model="profile"
                 class="text-input"
               >
-                <option value="famille">Famille</option>
-                <option value="jeune">Jeune</option>
-                <option value="senior">Senior</option>
-                <option value="aidant">Aidant</option>
-                <option value="relais">Relais territorial</option>
-                <option value="autre">Autre</option>
+                <option value="famille">{{ t('userExperiment.session.profileFamily') }}</option>
+                <option value="jeune">{{ t('userExperiment.session.profileYoung') }}</option>
+                <option value="senior">{{ t('userExperiment.session.profileSenior') }}</option>
+                <option value="aidant">{{ t('userExperiment.session.profileHelper') }}</option>
+                <option value="relais">{{ t('userExperiment.session.profileRelay') }}</option>
+                <option value="autre">{{ t('userExperiment.session.profileOther') }}</option>
               </select>
             </label>
 
             <label class="form-row" for="experiment-assistance">
-              <span>Aide reçue</span>
+              <span>{{ t('userExperiment.session.assistance') }}</span>
               <select
                 id="experiment-assistance"
                 v-model="assistance"
                 class="text-input"
               >
-                <option value="aucune">Aucune</option>
-                <option value="faible">Faible</option>
-                <option value="importante">Importante</option>
+                <option value="aucune">{{ t('userExperiment.session.assistanceNone') }}</option>
+                <option value="faible">{{ t('userExperiment.session.assistanceLow') }}</option>
+                <option value="importante">{{ t('userExperiment.session.assistanceHigh') }}</option>
               </select>
             </label>
 
             <label class="form-row" for="experiment-duration">
-              <span>Durée totale en minutes</span>
+              <span>{{ t('userExperiment.session.duration') }}</span>
               <input
                 id="experiment-duration"
                 v-model.number="durationMinutes"
@@ -377,36 +341,23 @@ onMounted(() => {
             <label class="check-row experiment-check">
               <input v-model="completedJourney" type="checkbox" />
               <span>
-                <strong>Parcours terminé</strong>
-                <small
-                  >Diagnostic, résultats et au moins un livrable
-                  consulté.</small
-                >
+                <strong>{{ t('userExperiment.session.completed') }}</strong>
+                <small>{{ t('userExperiment.session.completedHelp') }}</small>
               </span>
             </label>
           </div>
-
-          <label class="form-row" for="experiment-browser">
-            <span>Navigateur</span>
-            <input
-              id="experiment-browser"
-              v-model="browser"
-              class="text-input"
-              type="text"
-            />
-          </label>
         </fieldset>
 
         <fieldset class="form-fieldset">
-          <legend class="section-title">Évaluation</legend>
-          <p class="muted">1 = pas du tout, 3 = moyen, 5 = tout à fait.</p>
+          <legend class="section-title">{{ t('userExperiment.evaluation.legend') }}</legend>
+          <p class="muted">{{ t('userExperiment.evaluation.scaleHelp') }}</p>
           <div class="rating-grid">
             <label
               v-for="question in ratingQuestions"
               :key="question.key"
               class="rating-row"
             >
-              <span>{{ question.label }}</span>
+              <span>{{ t(`userExperiment.evaluation.${question.key}`) }}</span>
               <select v-model.number="ratings[question.key]" class="text-input">
                 <option
                   v-for="score in [1, 2, 3, 4, 5]"
@@ -421,9 +372,9 @@ onMounted(() => {
         </fieldset>
 
         <fieldset class="form-fieldset">
-          <legend class="section-title">Commentaires</legend>
+          <legend class="section-title">{{ t('userExperiment.comments.legend') }}</legend>
           <label class="form-row" for="useful-action">
-            <span>Quelle action utile avez-vous découverte ?</span>
+            <span>{{ t('userExperiment.comments.usefulAction') }}</span>
             <textarea
               id="useful-action"
               v-model="usefulAction"
@@ -432,7 +383,7 @@ onMounted(() => {
           </label>
 
           <label class="form-row" for="difficulty">
-            <span>Quel élément vous a semblé difficile ou peu clair ?</span>
+            <span>{{ t('userExperiment.comments.difficulty') }}</span>
             <textarea
               id="difficulty"
               v-model="difficulty"
@@ -441,7 +392,7 @@ onMounted(() => {
           </label>
 
           <label class="form-row" for="priority-improvement">
-            <span>Quelle amélioration vous paraît prioritaire ?</span>
+            <span>{{ t('userExperiment.comments.priorityImprovement') }}</span>
             <textarea
               id="priority-improvement"
               v-model="priorityImprovement"
@@ -450,7 +401,7 @@ onMounted(() => {
           </label>
 
           <label class="form-row" for="concern">
-            <span>Y a-t-il une recommandation inadaptée ou préoccupante ?</span>
+            <span>{{ t('userExperiment.comments.concern') }}</span>
             <textarea
               id="concern"
               v-model="concern"
@@ -460,35 +411,38 @@ onMounted(() => {
         </fieldset>
 
         <div class="cluster">
-          <AppButton type="submit">Enregistrer le retour</AppButton>
+          <AppButton type="submit">{{ t('userExperiment.actions.submit') }}</AppButton>
           <AppButton
             variant="secondary"
             :disabled="submissionsCount === 0"
             @click="exportCsv"
           >
-            Export CSV
+            {{ t('userExperiment.actions.exportCsv') }}
           </AppButton>
           <AppButton
             variant="secondary"
             :disabled="submissionsCount === 0"
             @click="exportJson"
           >
-            Export JSON
+            {{ t('userExperiment.actions.exportJson') }}
           </AppButton>
         </div>
       </form>
 
       <section v-if="lastSubmission" class="panel stack">
-        <h2 class="section-title">Dernier retour</h2>
+        <h2 class="section-title">{{ t('userExperiment.lastSubmission.title') }}</h2>
         <div class="quality-list">
           <div class="quality-row">
-            <strong>Code</strong>
+            <strong>{{ t('userExperiment.lastSubmission.code') }}</strong>
             <span>{{ lastSubmission.participantCode }}</span>
             <small>{{ lastSubmission.createdAt }}</small>
           </div>
           <div class="quality-row">
-            <strong>Durée</strong>
-            <span>{{ lastSubmission.durationMinutes }} min</span>
+            <strong>{{ t('userExperiment.lastSubmission.duration') }}</strong>
+            <span
+              >{{ lastSubmission.durationMinutes }}
+              {{ t('userExperiment.lastSubmission.minutesSuffix') }}</span
+            >
             <small
               >{{ lastSubmission.device }} -
               {{ lastSubmission.assistance }}</small

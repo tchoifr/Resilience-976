@@ -6,6 +6,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import ProgressBar from '@/components/ui/ProgressBar.vue'
 import QuestionCard from '@/components/ui/QuestionCard.vue'
 import { questions } from '@/features/assessment/services/content.service'
+import { syncDiagnosticResponses } from '@/features/assessment/services/diagnostic-sync.service'
 import { useAssessmentStore } from '@/features/assessment/stores/assessment.store'
 import type { AssessmentDomain } from '@/features/assessment/types/question'
 import { trackEvent } from '@/shared/analytics/analytics.service'
@@ -46,7 +47,12 @@ const isLastQuestion = computed(() => assessmentStore.currentIndex >= questions.
 const canContinue = computed(() => !currentQuestion.value.required || Boolean(selectedAnswer.value))
 
 onMounted(() => {
-  trackEvent('diagnostic_started')
+  // Only a genuine first entry counts as a start; resuming an
+  // already-in-progress or already-completed diagnostic re-mounts this view
+  // without being a new funnel entry.
+  if (!assessmentStore.hasAnswers) {
+    trackEvent('diagnostic_started')
+  }
 })
 
 async function focusQuestion() {
@@ -67,6 +73,7 @@ function goNext() {
   if (isLastQuestion.value) {
     assessmentStore.complete()
     trackEvent('diagnostic_completed')
+    syncDiagnosticResponses(assessmentStore.answers)
     void router.push('/resultats')
     return
   }

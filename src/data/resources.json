@@ -4,7 +4,7 @@
     "title": "Cyclone",
     "domain": "behaviors",
     "description": "Comprendre les risques météorologiques à Mayotte et retrouver les documents locaux de la préfecture.",
-    "sourceIds": ["source_prefecture_mayotte"],
+    "sourceIds": ["source_prefecture_mayotte", "source_meteo_france_vigilance_mayotte"],
     "validationStatus": "to_validate"
   },
   {
@@ -42,7 +42,7 @@
     "title": "Alertes et informations officielles",
     "domain": "energy_communication",
     "description": "Connaître les canaux fiables pour suivre les consignes diffusées par les autorités.",
-    "sourceIds": ["source_fr_alert", "source_prefecture_mayotte"],
+    "sourceIds": ["source_fr_alert", "source_prefecture_mayotte", "source_meteo_france_vigilance_mayotte"],
     "validationStatus": "to_validate"
   },
   {

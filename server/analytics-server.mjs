@@ -15,6 +15,9 @@ const DATABASE_FILE = resolve(
     process.env.FEEDBACK_DATABASE_FILE ??
     'server/data/resilience.sqlite',
 )
+const QUESTIONS_FILE = resolve(
+  process.env.QUESTIONS_DATA_FILE ?? 'src/data/questions.json',
+)
 const ALLOWED_ORIGINS = (
   process.env.ANALYTICS_ALLOWED_ORIGINS ??
   'http://127.0.0.1:5173,http://localhost:5173'
@@ -61,6 +64,8 @@ const allowedPaths = new Set([
   '/ressources',
   '/videos',
   '/tableau-de-bord',
+  '/tableau-de-bord/experimentation',
+  '/tableau-de-bord/diagnostics',
   '/experimentation-utilisateurs',
   '/mentions-legales',
 ])
@@ -142,17 +147,11 @@ function sanitizeEvent(input) {
     throw new Error('invalid_event')
   }
 
-  const visitorId =
-    typeof input.visitorId === 'string' &&
-    /^[a-f0-9-]{36}$/.test(input.visitorId)
-      ? input.visitorId
-      : randomUUID()
-
   return {
     id: randomUUID(),
     name: input.name,
     metricName: eventMap[input.name],
-    visitorId,
+    visitorId: sanitizeVisitorId(input.visitorId),
     version:
       typeof input.version === 'string' ? input.version.slice(0, 32) : '1.0.0',
     path: sanitizePath(input.path),
@@ -182,11 +181,7 @@ function sanitizeInteger(value, min, max, fallback) {
 }
 
 function sanitizeParticipantCode(value) {
-  const participantCode = sanitizeText(value, 20)
-
-  return /^[a-z0-9_-]{1,20}$/i.test(participantCode)
-    ? participantCode
-    : `P${Date.now().toString().slice(-6)}`
+  return sanitizeVisitorId(value)
 }
 
 function sanitizeClientDate(value) {
@@ -210,6 +205,173 @@ function sanitizeRatings(value) {
   )
 }
 
+function sanitizeVisitorId(value) {
+  return typeof value === 'string' && /^[a-f0-9-]{36}$/.test(value)
+    ? value
+    : randomUUID()
+}
+
+let questionsIndex = null
+
+async function getQuestionsIndex() {
+  if (questionsIndex) {
+    return questionsIndex
+  }
+
+  const questions = JSON.parse(await readFile(QUESTIONS_FILE, 'utf8'))
+  const byId = new Map(questions.map((question) => [question.id, question]))
+  const validAnswersByQuestion = new Map(
+    questions.map((question) => [
+      question.id,
+      new Set(question.answers.map((answer) => answer.id)),
+    ]),
+  )
+
+  questionsIndex = { questions, byId, validAnswersByQuestion }
+  return questionsIndex
+}
+
+async function sanitizeDiagnosticAnswers(input) {
+  const { validAnswersByQuestion } = await getQuestionsIndex()
+  const answers = input && typeof input === 'object' ? input : {}
+  const sanitized = {}
+
+  for (const [questionId, answerId] of Object.entries(answers)) {
+    const allowedAnswers = validAnswersByQuestion.get(questionId)
+
+    if (
+      allowedAnswers &&
+      typeof answerId === 'string' &&
+      allowedAnswers.has(answerId)
+    ) {
+      sanitized[questionId] = answerId
+    }
+  }
+
+  return sanitized
+}
+
+function getScoreLevelId(score) {
+  if (score <= 39) {
+    return 'insufficient'
+  }
+
+  if (score <= 59) {
+    return 'fragile'
+  }
+
+  if (score <= 79) {
+    return 'good'
+  }
+
+  return 'very_good'
+}
+
+// Mirrors calculateAssessment() in src/features/assessment/services/scoring.service.ts
+// so aggregate stats match what the app itself would show a given respondent.
+function calculateDiagnosticScore(answers, questionsById) {
+  const domains = new Map()
+
+  for (const [questionId, answerId] of Object.entries(answers)) {
+    const question = questionsById.get(questionId)
+    const option = question?.answers.find((answer) => answer.id === answerId)
+
+    if (!question || !option) {
+      continue
+    }
+
+    const current = domains.get(question.domain) ?? { sum: 0, weight: 0 }
+    current.sum += option.score * question.weight
+    current.weight += question.weight
+    domains.set(question.domain, current)
+  }
+
+  const domainScores = {}
+
+  for (const [domain, value] of domains) {
+    domainScores[domain] =
+      value.weight === 0 ? 0 : Math.round(value.sum / value.weight)
+  }
+
+  const scores = Object.values(domainScores)
+  const globalScore =
+    scores.length === 0
+      ? 0
+      : Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length)
+
+  return { globalScore, domainScores }
+}
+
+function buildDiagnosticStats(rows, index) {
+  const total = rows.length
+  const domainSums = {}
+  const domainCounts = {}
+  const levelCounts = { insufficient: 0, fragile: 0, good: 0, very_good: 0 }
+  const questionAnswerCounts = new Map()
+  let globalScoreSum = 0
+
+  for (const row of rows) {
+    const { globalScore, domainScores } = calculateDiagnosticScore(
+      row.answers,
+      index.byId,
+    )
+
+    globalScoreSum += globalScore
+    levelCounts[getScoreLevelId(globalScore)] += 1
+
+    for (const [domain, score] of Object.entries(domainScores)) {
+      domainSums[domain] = (domainSums[domain] ?? 0) + score
+      domainCounts[domain] = (domainCounts[domain] ?? 0) + 1
+    }
+
+    for (const [questionId, answerId] of Object.entries(row.answers)) {
+      if (!questionAnswerCounts.has(questionId)) {
+        questionAnswerCounts.set(questionId, new Map())
+      }
+
+      const counts = questionAnswerCounts.get(questionId)
+      counts.set(answerId, (counts.get(answerId) ?? 0) + 1)
+    }
+  }
+
+  const domainAverages = {}
+
+  for (const domain of Object.keys(domainSums)) {
+    domainAverages[domain] = Math.round(domainSums[domain] / domainCounts[domain])
+  }
+
+  const questionBreakdown = index.questions.map((question) => ({
+    id: question.id,
+    domain: question.domain,
+    answers: question.answers.map((answer) => ({
+      id: answer.id,
+      score: answer.score,
+      count: questionAnswerCounts.get(question.id)?.get(answer.id) ?? 0,
+    })),
+  }))
+
+  return {
+    generatedAt: new Date().toISOString(),
+    total,
+    averageGlobalScore: total === 0 ? 0 : Math.round(globalScoreSum / total),
+    domainAverages,
+    levelCounts,
+    questionBreakdown,
+  }
+}
+
+async function sanitizeDiagnosticResponse(input) {
+  return {
+    id: sanitizeVisitorId(input.id),
+    createdAt: new Date().toISOString(),
+    visitorId: sanitizeVisitorId(input.visitorId),
+    campaignId: sanitizeCampaign(input.campaignId),
+    version:
+      typeof input.version === 'string' ? input.version.slice(0, 32) : '1.0.0',
+    answers: await sanitizeDiagnosticAnswers(input.answers),
+  }
+}
+
 function sanitizeFeedback(input) {
   return {
     id:
@@ -218,6 +380,7 @@ function sanitizeFeedback(input) {
         : randomUUID(),
     createdAt: new Date().toISOString(),
     clientCreatedAt: sanitizeClientDate(input.createdAt),
+    visitorId: sanitizeVisitorId(input.visitorId),
     participantCode: sanitizeParticipantCode(input.participantCode),
     device: sanitizeEnum(input.device, allowedDevices, 'smartphone'),
     browser: sanitizeText(input.browser, 160),
@@ -267,6 +430,7 @@ async function getDatabase() {
       id TEXT PRIMARY KEY,
       created_at TEXT NOT NULL,
       client_created_at TEXT NOT NULL,
+      visitor_id TEXT NOT NULL DEFAULT '',
       participant_code TEXT NOT NULL,
       device TEXT NOT NULL,
       browser TEXT NOT NULL,
@@ -283,9 +447,58 @@ async function getDatabase() {
 
     CREATE INDEX IF NOT EXISTS user_feedback_created_at_idx
       ON user_feedback (created_at DESC);
+
+    CREATE TABLE IF NOT EXISTS diagnostic_responses (
+      id TEXT PRIMARY KEY,
+      created_at TEXT NOT NULL,
+      visitor_id TEXT NOT NULL,
+      campaign_id TEXT NOT NULL,
+      version TEXT NOT NULL,
+      answers_json TEXT NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS diagnostic_responses_created_at_idx
+      ON diagnostic_responses (created_at DESC);
   `)
 
+  try {
+    database.exec(
+      `ALTER TABLE user_feedback ADD COLUMN visitor_id TEXT NOT NULL DEFAULT '';`,
+    )
+  } catch (error) {
+    if (!String(error.message).includes('duplicate column name')) {
+      throw error
+    }
+  }
+
   return database
+}
+
+async function saveDiagnosticResponse(diagnosticResponse) {
+  const currentDatabase = await getDatabase()
+
+  currentDatabase
+    .prepare(
+      `
+        INSERT OR IGNORE INTO diagnostic_responses (
+          id,
+          created_at,
+          visitor_id,
+          campaign_id,
+          version,
+          answers_json
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+      `,
+    )
+    .run(
+      diagnosticResponse.id,
+      diagnosticResponse.createdAt,
+      diagnosticResponse.visitorId,
+      diagnosticResponse.campaignId,
+      diagnosticResponse.version,
+      JSON.stringify(diagnosticResponse.answers),
+    )
 }
 
 async function saveEvent(event) {
@@ -331,6 +544,7 @@ async function saveFeedback(feedback) {
           id,
           created_at,
           client_created_at,
+          visitor_id,
           participant_code,
           device,
           browser,
@@ -344,13 +558,14 @@ async function saveFeedback(feedback) {
           priority_improvement,
           concern
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
     )
     .run(
       feedback.id,
       feedback.createdAt,
       feedback.clientCreatedAt,
+      feedback.visitorId,
       feedback.participantCode,
       feedback.device,
       feedback.browser,
@@ -373,6 +588,188 @@ async function countFeedback() {
     .get()
 
   return Number(row.total)
+}
+
+function parseRatingsJson(value) {
+  try {
+    return JSON.parse(value)
+  } catch {
+    return {}
+  }
+}
+
+async function readDiagnosticResponseRows() {
+  const currentDatabase = await getDatabase()
+
+  return currentDatabase
+    .prepare(
+      `
+        SELECT answers_json
+        FROM diagnostic_responses
+        ORDER BY created_at DESC
+      `,
+    )
+    .all()
+    .map((row) => ({ answers: parseRatingsJson(row.answers_json) }))
+}
+
+async function readFeedbackRows() {
+  const currentDatabase = await getDatabase()
+
+  return currentDatabase
+    .prepare(
+      `
+        SELECT
+          created_at,
+          device,
+          profile,
+          assistance,
+          duration_minutes,
+          completed_journey,
+          ratings_json,
+          useful_action,
+          difficulty,
+          priority_improvement,
+          concern
+        FROM user_feedback
+        ORDER BY created_at DESC
+      `,
+    )
+    .all()
+    .map((row) => ({
+      createdAt: row.created_at,
+      device: row.device,
+      profile: row.profile,
+      assistance: row.assistance,
+      durationMinutes: Number(row.duration_minutes),
+      completedJourney: Boolean(row.completed_journey),
+      ratings: parseRatingsJson(row.ratings_json),
+      usefulAction: row.useful_action,
+      difficulty: row.difficulty,
+      priorityImprovement: row.priority_improvement,
+      concern: row.concern,
+    }))
+}
+
+function average(values) {
+  if (values.length === 0) {
+    return 0
+  }
+
+  return (
+    Math.round(
+      (values.reduce((sum, value) => sum + value, 0) / values.length) * 10,
+    ) / 10
+  )
+}
+
+function median(values) {
+  if (values.length === 0) {
+    return 0
+  }
+
+  const sorted = [...values].sort((a, b) => a - b)
+  const middle = Math.floor(sorted.length / 2)
+
+  return sorted.length % 2 === 0
+    ? Math.round(((sorted[middle - 1] + sorted[middle]) / 2) * 10) / 10
+    : sorted[middle]
+}
+
+function countBy(rows, key, allowedValues) {
+  const counts = {}
+
+  for (const value of allowedValues) {
+    counts[value] = 0
+  }
+
+  for (const row of rows) {
+    if (Object.prototype.hasOwnProperty.call(counts, row[key])) {
+      counts[row[key]] += 1
+    }
+  }
+
+  return counts
+}
+
+function buildFeedbackStats(rows) {
+  const total = rows.length
+  const durations = rows.map((row) => row.durationMinutes)
+  const completedCount = rows.filter((row) => row.completedJourney).length
+
+  const ratingAverages = {}
+  const ratingDistribution = {}
+
+  for (const key of ratingKeys) {
+    const values = rows
+      .map((row) => row.ratings[key])
+      .filter((value) => typeof value === 'number')
+
+    ratingAverages[key] = average(values)
+    ratingDistribution[key] = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+
+    for (const value of values) {
+      if (ratingDistribution[key][value] !== undefined) {
+        ratingDistribution[key][value] += 1
+      }
+    }
+  }
+
+  const overallValues = rows.flatMap((row) =>
+    ratingKeys
+      .map((key) => row.ratings[key])
+      .filter((value) => typeof value === 'number'),
+  )
+  const recommendationValues = rows
+    .map((row) => row.ratings.recommendation)
+    .filter((value) => typeof value === 'number')
+  const recommendCount = recommendationValues.filter((value) => value >= 4).length
+
+  const hasComment = (row) =>
+    Boolean(
+      row.usefulAction || row.difficulty || row.priorityImprovement || row.concern,
+    )
+
+  const byDate = {}
+
+  for (const row of rows) {
+    const day = row.createdAt.slice(0, 10)
+    byDate[day] = (byDate[day] ?? 0) + 1
+  }
+
+  return {
+    generatedAt: new Date().toISOString(),
+    total,
+    byDevice: countBy(rows, 'device', allowedDevices),
+    byProfile: countBy(rows, 'profile', allowedProfiles),
+    byAssistance: countBy(rows, 'assistance', allowedAssistanceLevels),
+    completionRate:
+      total === 0 ? 0 : Math.round((completedCount / total) * 100),
+    averageDurationMinutes: average(durations),
+    medianDurationMinutes: median(durations),
+    ratingAverages,
+    overallRatingAverage: average(overallValues),
+    ratingDistribution,
+    recommendationRate:
+      recommendationValues.length === 0
+        ? 0
+        : Math.round((recommendCount / recommendationValues.length) * 100),
+    commentsCount: rows.filter(hasComment).length,
+    byDate: Object.entries(byDate)
+      .sort(([a], [b]) => (a < b ? -1 : 1))
+      .slice(-14)
+      .map(([date, count]) => ({ date, count })),
+    recentComments: rows
+      .filter(hasComment)
+      .slice(0, 10)
+      .map((row) => ({
+        createdAt: row.createdAt,
+        usefulAction: row.usefulAction,
+        difficulty: row.difficulty,
+        priorityImprovement: row.priorityImprovement,
+        concern: row.concern,
+      })),
+  }
 }
 
 async function readEventsFromDatabase() {
@@ -454,25 +851,34 @@ async function getUpdatedAt() {
   return dates.at(-1) ?? null
 }
 
-function buildDashboard(events, updatedAt, feedbackDatabaseCount = 0) {
-  const engagedVisitorIds = new Set(
-    events
-      .filter((event) => event.name === 'diagnostic_started')
-      .map((event) => event.visitorId),
+function uniqueVisitorIds(events, matchesEvent) {
+  return new Set(
+    events.filter(matchesEvent).map((event) => event.visitorId),
   )
-  const completedCount = events.filter(
-    (event) => event.name === 'diagnostic_completed',
-  ).length
-  const visitCount = events.filter((event) => event.name === 'page_view').length
-  const startedCount = events.filter(
+}
+
+function buildDashboard(events, updatedAt, feedbackDatabaseCount = 0) {
+  // Funnel steps count unique visitors, not raw events: a visitor who
+  // resumes, refreshes /resultats, or fires several actionEvents (e.g. a
+  // single certificate download fires both certificate_generated and
+  // pdf_downloaded) must only ever move a step forward once, not inflate it.
+  const engagedVisitorIds = uniqueVisitorIds(
+    events,
     (event) => event.name === 'diagnostic_started',
-  ).length
-  const resultViewedCount = events.filter(
+  )
+  const completedVisitorIds = uniqueVisitorIds(
+    events,
+    (event) => event.name === 'diagnostic_completed',
+  )
+  const resultViewedVisitorIds = uniqueVisitorIds(
+    events,
     (event) => event.name === 'result_viewed',
-  ).length
-  const actionCount = events.filter((event) =>
+  )
+  const actionVisitorIds = uniqueVisitorIds(events, (event) =>
     actionEvents.has(event.name),
-  ).length
+  )
+
+  const visitCount = events.filter((event) => event.name === 'page_view').length
   const pdfCount = events.filter(
     (event) => event.name === 'pdf_downloaded',
   ).length
@@ -524,10 +930,10 @@ function buildDashboard(events, updatedAt, feedbackDatabaseCount = 0) {
     totals: {
       visits: visitCount,
       engagedVisitors: engagedVisitorIds.size,
-      journeysStarted: startedCount,
-      journeysCompleted: completedCount,
-      resultViews: resultViewedCount,
-      actionOpens: actionCount,
+      journeysStarted: engagedVisitorIds.size,
+      journeysCompleted: completedVisitorIds.size,
+      resultViews: resultViewedVisitorIds.size,
+      actionOpens: actionVisitorIds.size,
       pdfDownloads: pdfCount,
       certificatesGenerated: certificateCount,
       checklistProgressEvents: checklistProgressCount,
@@ -535,9 +941,11 @@ function buildDashboard(events, updatedAt, feedbackDatabaseCount = 0) {
       feedbackSubmitted: totalFeedbackCount,
       technicalErrors: technicalErrorCount,
       completionRate:
-        startedCount === 0
+        engagedVisitorIds.size === 0
           ? 0
-          : Math.round((completedCount / startedCount) * 100),
+          : Math.round(
+              (completedVisitorIds.size / engagedVisitorIds.size) * 100,
+            ),
     },
     campaigns: Array.from(campaigns.values()).sort(
       (a, b) => b.engaged - a.engaged,
@@ -578,6 +986,23 @@ const server = createServer(async (request, response) => {
       return
     }
 
+    if (
+      request.method === 'POST' &&
+      requestUrl.pathname === '/api/diagnostic-responses'
+    ) {
+      const body = await readBody(request)
+      const diagnosticResponse = await sanitizeDiagnosticResponse(body)
+
+      if (Object.keys(diagnosticResponse.answers).length === 0) {
+        sendJson(response, 400, { error: 'invalid_answers' }, origin)
+        return
+      }
+
+      await saveDiagnosticResponse(diagnosticResponse)
+      sendJson(response, 201, { ok: true, id: diagnosticResponse.id }, origin)
+      return
+    }
+
     if (request.method === 'GET' && requestUrl.pathname === '/api/dashboard') {
       const events = await readEvents()
       const updatedAt = await getUpdatedAt()
@@ -589,6 +1014,29 @@ const server = createServer(async (request, response) => {
         buildDashboard(events, updatedAt, feedbackDatabaseCount),
         origin,
       )
+      return
+    }
+
+    if (
+      request.method === 'GET' &&
+      requestUrl.pathname === '/api/feedback/stats'
+    ) {
+      const rows = await readFeedbackRows()
+
+      sendJson(response, 200, buildFeedbackStats(rows), origin)
+      return
+    }
+
+    if (
+      request.method === 'GET' &&
+      requestUrl.pathname === '/api/diagnostic-responses/stats'
+    ) {
+      const [rows, index] = await Promise.all([
+        readDiagnosticResponseRows(),
+        getQuestionsIndex(),
+      ])
+
+      sendJson(response, 200, buildDiagnosticStats(rows, index), origin)
       return
     }
 

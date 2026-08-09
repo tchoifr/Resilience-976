@@ -6,6 +6,8 @@ const pages = [
   '/diagnostic',
   '/ressources',
   '/tableau-de-bord',
+  '/tableau-de-bord/experimentation',
+  '/tableau-de-bord/diagnostics',
   '/experimentation-utilisateurs',
   '/mentions-legales',
 ]

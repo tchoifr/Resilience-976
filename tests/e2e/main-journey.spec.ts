@@ -110,7 +110,6 @@ test('formulaire experimentation utilisateurs exporte des retours anonymes', asy
   await expect(
     page.getByRole('heading', { name: 'Questionnaire de test' }),
   ).toBeVisible()
-  await page.getByLabel('Code participant').fill('PTEST')
   await page.getByLabel('Durée totale en minutes').fill('12')
   await page
     .getByLabel('Quelle action utile avez-vous découverte ?')

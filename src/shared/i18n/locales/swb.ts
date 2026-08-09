@@ -119,6 +119,16 @@ export const swbMessages = {
       description:
         'Questionnaire anonymisé pour documenter les tests utilisateurs du prototype.',
     },
+    experimentStats: {
+      title: 'Statistiques du formulaire - Resilience 976',
+      description:
+        'Résultats agrégés du questionnaire de test : complétion, évaluation et commentaires.',
+    },
+    diagnosticStats: {
+      title: 'Statistiques du diagnostic - Resilience 976',
+      description:
+        'Résultats agrégés des diagnostics complétés : scores par domaine, niveaux de préparation et détail par question.',
+    },
     legal: {
       title: 'alama za mpia - uandra wa pawa 9 na',
       description:
@@ -351,6 +361,142 @@ export const swbMessages = {
     mention: 'ufalume',
     checklistMention:
       'mwandro unu, mutayarishiyo mutayarishiyo wa patana na wanyahe wala kayija na zi trongo zatolewa na wakala hodari.',
+  },
+  userExperiment: {
+    eyebrow: 'Udzisa wa wanatru',
+    title: 'Zi swali za udzisa',
+    summary: {
+      submissions: '{count} javu(bu) ziandzishiwe',
+      description:
+        'Baze cloud harimwa seriveri wakati inashughuli, na kopiya ya papahi harimwa mudjihazi unu.',
+      statusSaving: 'Uandzisha harimwa baze inashughuli.',
+      statusDatabase: 'Javu ya mwisho iandzishiwe harimwa baze cloud.',
+      statusLocal: 'Kopiya ya papahi ihifadhiwe. Baze kayipo wala kayishughuli.',
+    },
+    session: {
+      legend: 'Session',
+      participantCode: 'Kodi ya mutru',
+      device: 'Mudjihazi',
+      deviceSmartphone: 'Simu',
+      deviceComputer: 'Ordinateur',
+      deviceTablet: 'Tablette',
+      profile: 'Lahali',
+      profileFamily: 'Family',
+      profileYoung: 'Muzuguni',
+      profileSenior: 'Mutru mzuku',
+      profileHelper: 'Musaidizi',
+      profileRelay: 'Relais wa shiri',
+      profileOther: 'Trongo hangine',
+      assistance: 'Musaada uparihe',
+      assistanceNone: 'Kavhu',
+      assistanceLow: 'Piya',
+      assistanceHigh: 'Muhimu',
+      duration: 'Wakati wote harimwa dakika',
+      completed: 'Trongo idjitru',
+      completedHelp: 'Udzisa, matokeo na atta shiri moja ziangaliwe.',
+      browser: 'Navigateur',
+    },
+    evaluation: {
+      legend: 'Udjizi',
+      scaleHelp: '1 = kavhu atta, 3 = kati, 5 = ewa fasaha.',
+      objective: 'Nadjua fasi ya plateforme tangu ukurasa wa kwanza.',
+      questions: 'Zi swali za udzisa zilikuwa piya kuelewa.',
+      autonomy: 'Nishughulika bila kupotea wala kuomba musaada mwingi.',
+      score: 'Matokeo na score vilikuwa piya kutafsiri.',
+      priorities: 'Zi priorité zaparihiwe zilingana na hali yangu.',
+      actions: 'Zi trongo zaparihiwe zinaonekana za kweli na za kutimizika.',
+      deliverables: 'Checklist wala kit ya sirini itanisaidia.',
+      trust: 'Nina imani na trongo kwa sababu zi source na zi limite zinaonekana.',
+      officialWarnings: 'Nadjua kwamba plateforme kaïbadilishe zi alerte rasmi.',
+      recommendation: 'Nitashauri parcours unu kwa mutru wangu wala public wangu.',
+    },
+    comments: {
+      legend: 'Maneno',
+      usefulAction: 'Trongo gani ya manufaa waonao?',
+      difficulty: 'Trongo gani ilikuwa taãbu wala kayikuwa wazi?',
+      priorityImprovement: 'Marekebisho gani yanaonekana muhimu zaidi?',
+      concern: 'Pana recommandation isiyofaa wala inayotia wasiwasi?',
+    },
+    actions: {
+      submit: 'Hifadhi javu',
+      exportCsv: 'Export CSV',
+      exportJson: 'Export JSON',
+    },
+    lastSubmission: {
+      title: 'Javu ya mwisho',
+      code: 'Kodi',
+      duration: 'Wakati',
+      minutesSuffix: 'dakika',
+    },
+  },
+  experimentStats: {
+    eyebrow: 'Stats za javu',
+    title: 'Matokeo ya udzisa wa wanatru',
+    intro:
+      'Alama ziandzishiwe kutoka javu za questionnaire ya udzisa. Kavhu trongo ya mutru ionekane.',
+    backToDashboard: 'Rudi harimwa tableau de bord',
+    openForm: 'Fungua questionnaire',
+    loading: 'Inashughulikiwa',
+    noData: 'Kavhu javu bado.',
+    summary: {
+      total: 'Javu ziandzishiwe',
+      completionRate: 'Trongo idjitru',
+      medianDuration: 'Wakati wa kati',
+      recommendationRate: 'Watasharia parcours',
+      minutesSuffix: 'dakika',
+    },
+    profile: {
+      title: 'Lahali za wanatru',
+      device: 'Mudjihazi',
+      profile: 'Lahali',
+      assistance: 'Musaada uparihe',
+    },
+    evaluation: {
+      title: 'Udjizi wa kati',
+      overall: 'Kati harimwa',
+      distributionAria: 'Répartition ya notes 1 hadi 5',
+      disagree: 'kayikubali (1-2)',
+      neutral: 'kati (3)',
+      agree: 'inakubali (4-5)',
+    },
+    trend: {
+      title: 'Javu harimwa wakati',
+      help: '14 siku za mwisho na atta javu moja',
+    },
+    comments: {
+      title: 'Maneno ya mwisho',
+      count: '{count} javu(bu) na maneno',
+      usefulAction: 'Trongo ya manufaa',
+      difficulty: 'Taãbu',
+      priorityImprovement: 'Marekebisho muhimu',
+      concern: 'Wasiwasi',
+      empty: 'Kavhu maneno bado.',
+    },
+  },
+  diagnosticStats: {
+    eyebrow: 'Stats za udzisa',
+    title: 'Matokeo ya udzisa',
+    intro:
+      'Alama ziandzishiwe kutoka javu kamili za udzisa. Kavhu trongo ya mutru ionekane.',
+    backToDashboard: 'Rudi harimwa tableau de bord',
+    loading: 'Inashughulikiwa',
+    noData: 'Kavhu udzisa bado.',
+    summary: {
+      total: 'Udzisa ziandzishiwe',
+      averageScore: 'Score ya kati',
+    },
+    domains: {
+      title: 'Score ya kati kwa domaine',
+    },
+    levels: {
+      title: 'Daradja za matayarisho',
+    },
+    questionBreakdown: {
+      title: 'Shahula kwa swali',
+      answerNone: 'Kayafanyiwa',
+      answerPartial: 'Piya',
+      answerReady: 'Idjitru',
+    },
   },
 } as const
 
