@@ -1,0 +1,31 @@
+# Service systemd pour le backend analytics.
+#
+# Installation :
+#   1. cp deploy/resilience-976-analytics.service /etc/systemd/system/
+#   2. cp deploy/analytics.env.example /etc/resilience-976/analytics.env
+#      puis editer /etc/resilience-976/analytics.env (domaine reel, chemins).
+#   3. systemctl daemon-reload
+#   4. systemctl enable --now resilience-976-analytics
+#   5. systemctl status resilience-976-analytics
+
+[Unit]
+Description=Mon Plan Resilience 976 - backend analytics
+After=network.target
+
+[Service]
+Type=simple
+User=resilience
+Group=resilience
+WorkingDirectory=/var/www/resilience-976
+EnvironmentFile=/etc/resilience-976/analytics.env
+ExecStart=/usr/bin/node server/analytics-server.mjs
+Restart=on-failure
+RestartSec=5
+
+# Durcissement minimal : le service n'a besoin d'ecrire que dans server/data.
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/www/resilience-976/server/data
+
+[Install]
+WantedBy=multi-user.target
