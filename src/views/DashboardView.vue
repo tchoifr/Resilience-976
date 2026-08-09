@@ -3,6 +3,9 @@
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
+import SourceLink from '@/components/ui/SourceLink.vue'
+import { sourcesById } from '@/features/assessment/services/content.service'
+
 interface DashboardStats {
   generatedAt: string
   updatedAt: string | null
@@ -34,6 +37,9 @@ const dashboardEnabled = import.meta.env.DEV
   : import.meta.env.VITE_ANALYTICS_ENABLED === 'true'
 const stats = ref<DashboardStats | null>(null)
 const isLoading = ref(true)
+const populationSource = computed(() =>
+  sourcesById.value.get('source_insee_population_mayotte'),
+)
 
 const displayValue = (value: number | null | undefined) =>
   typeof value === 'number' ? value.toLocaleString('fr-FR') : '—'
@@ -91,78 +97,16 @@ const funnelSteps = computed(() => [
     value: displayValue(stats.value?.totals.actionOpens),
     help: 'Plan, checklist, kit ou PDF ouvert/généré',
   },
-])
-
-const qualityRows = computed(() => [
-  ['Disponibilité', '—', 'Suivi hebdomadaire après mise en ligne'],
-  [
-    'Erreurs bloquantes',
-    displayValue(stats.value?.totals.technicalErrors),
-    'Objectif proche de 0',
-  ],
-  [
-    'Retours utilisateurs',
-    displayValue(stats.value?.totals.feedbackSubmitted),
-    'Formulaires anonymisés reçus',
-  ],
-  [
-    'Sources ouvertes',
-    displayValue(stats.value?.totals.sourcesOpened),
-    'Consultation des références officielles',
-  ],
-  [
-    'Dernière extraction',
-    stats.value?.updatedAt ?? '—',
-    'Date visible dans chaque bilan',
-  ],
-])
-
-const eventRows = computed(() => [
-  [
-    'diagnostic_started',
-    displayValue(stats.value?.totals.journeysStarted),
-    'Parcours commencé',
-  ],
-  [
-    'diagnostic_completed',
-    displayValue(stats.value?.totals.journeysCompleted),
-    'Parcours terminé',
-  ],
-  [
-    'result_viewed',
-    displayValue(stats.value?.totals.resultViews),
-    'Résultat consulté',
-  ],
-  [
-    'action_plan_opened',
-    displayValue(stats.value?.totals.actionOpens),
-    'Passage à l’action',
-  ],
-  [
-    'certificate_generated',
-    displayValue(stats.value?.totals.certificatesGenerated),
-    'Attestation générée',
-  ],
-  [
-    'pdf_downloaded',
-    displayValue(stats.value?.totals.pdfDownloads),
-    'PDF téléchargé',
-  ],
-  [
-    'checklist_progress',
-    displayValue(stats.value?.totals.checklistProgressEvents),
-    'Seuil checklist atteint',
-  ],
-  [
-    'source_opened',
-    displayValue(stats.value?.totals.sourcesOpened),
-    'Source officielle ouverte',
-  ],
-  [
-    'feedback_submitted',
-    displayValue(stats.value?.totals.feedbackSubmitted),
-    'Retour utilisateur reçu',
-  ],
+  {
+    label: 'Retours utilisateurs',
+    value: displayValue(stats.value?.totals.feedbackSubmitted),
+    help: 'Formulaires anonymisés reçus',
+  },
+  {
+    label: 'Sources ouvertes',
+    value: displayValue(stats.value?.totals.sourcesOpened),
+    help: 'Consultation des références officielles',
+  },
 ])
 
 onMounted(async () => {
@@ -210,6 +154,27 @@ onMounted(async () => {
         </article>
       </section>
 
+      <div class="cluster">
+        <RouterLink
+          class="link-button link-button--secondary"
+          to="/tableau-de-bord/diagnostics"
+        >
+          Statistiques du diagnostic
+        </RouterLink>
+        <RouterLink
+          class="link-button link-button--secondary"
+          to="/tableau-de-bord/experimentation"
+        >
+          Statistiques du formulaire
+        </RouterLink>
+      </div>
+
+      <p v-if="populationSource" class="muted">
+        Objectif calculé sur la base de la population de Mayotte (323 153
+        habitants au 1er janvier 2026).
+        <SourceLink :source="populationSource" />
+      </p>
+
       <section class="panel dashboard-panel">
         <div class="dashboard-section-heading">
           <h2>Entonnoir de participation</h2>
@@ -231,36 +196,6 @@ onMounted(async () => {
             <span>{{ step.label }}</span>
             <small>{{ step.help }}</small>
           </article>
-        </div>
-      </section>
-
-      <section class="panel dashboard-panel">
-        <h2>Qualité de service</h2>
-        <div class="quality-list">
-          <div v-for="row in qualityRows" :key="row[0]" class="quality-row">
-            <strong>{{ row[0] }}</strong>
-            <span>{{ row[1] }}</span>
-            <small>{{ row[2] }}</small>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel dashboard-panel">
-        <div class="dashboard-section-heading">
-          <h2>Plan de marquage</h2>
-          <RouterLink
-            class="link-button link-button--secondary"
-            to="/experimentation-utilisateurs"
-          >
-            Formulaire test
-          </RouterLink>
-        </div>
-        <div class="quality-list">
-          <div v-for="row in eventRows" :key="row[0]" class="quality-row">
-            <strong>{{ row[0] }}</strong>
-            <span>{{ row[1] }}</span>
-            <small>{{ row[2] }}</small>
-          </div>
         </div>
       </section>
     </div>

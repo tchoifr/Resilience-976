@@ -121,6 +121,16 @@ export const frMessages = {
       description:
         'Questionnaire anonymisé pour documenter les tests utilisateurs du prototype.',
     },
+    experimentStats: {
+      title: 'Statistiques du formulaire - Resilience 976',
+      description:
+        'Résultats agrégés du questionnaire de test : complétion, évaluation et commentaires.',
+    },
+    diagnosticStats: {
+      title: 'Statistiques du diagnostic - Resilience 976',
+      description:
+        'Résultats agrégés des diagnostics complétés : scores par domaine, niveaux de préparation et détail par question.',
+    },
     legal: {
       title: 'Mentions légales - Resilience 976',
       description:
@@ -351,6 +361,144 @@ export const frMessages = {
     mention: 'Mention',
     checklistMention:
       'Cette checklist est un support personnel de préparation. Elle ne remplace pas les consignes diffusées par les autorités compétentes.',
+  },
+  userExperiment: {
+    eyebrow: 'Expérimentation utilisateurs',
+    title: 'Questionnaire de test',
+    summary: {
+      submissions: '{count} retour(s) enregistré(s)',
+      description:
+        'Données dans le cloud quand elle est active, avec copie locale de secours sur cet appareil.',
+      statusSaving: 'Enregistrement dans le cloud en cours.',
+      statusDatabase: 'Dernier retour enregistré dans le cloud.',
+      statusLocal: 'Copie locale conservée. Base indisponible ou désactivée.',
+    },
+    session: {
+      legend: 'Session',
+      participantCode: 'Code participant',
+      device: 'Appareil',
+      deviceSmartphone: 'Smartphone',
+      deviceComputer: 'Ordinateur',
+      deviceTablet: 'Tablette',
+      profile: 'Profil général',
+      profileFamily: 'Famille',
+      profileYoung: 'Jeune',
+      profileSenior: 'Senior',
+      profileHelper: 'Aidant',
+      profileRelay: 'Relais territorial',
+      profileOther: 'Autre',
+      assistance: 'Aide reçue',
+      assistanceNone: 'Aucune',
+      assistanceLow: 'Faible',
+      assistanceHigh: 'Importante',
+      duration: 'Durée totale en minutes',
+      completed: 'Parcours terminé',
+      completedHelp: 'Diagnostic, résultats et au moins un livrable consulté.',
+      browser: 'Navigateur',
+    },
+    evaluation: {
+      legend: 'Évaluation',
+      scaleHelp: '1 = pas du tout, 3 = moyen, 5 = tout à fait.',
+      objective: 'J’ai compris l’objectif de la plateforme dès la page d’accueil.',
+      questions: 'Les questions du diagnostic étaient faciles à comprendre.',
+      autonomy: 'J’ai pu avancer sans me perdre ni demander beaucoup d’aide.',
+      score: 'Le résultat et le score étaient faciles à interpréter.',
+      priorities: 'Les priorités proposées correspondaient à ma situation.',
+      actions: 'Les actions proposées me semblent concrètes et réalisables.',
+      deliverables: 'La checklist ou le kit d’urgence me seront utiles.',
+      trust:
+        'J’ai confiance dans les informations car les sources et limites sont visibles.',
+      officialWarnings:
+        'Je comprends que l’outil ne remplace pas les alertes officielles.',
+      recommendation: 'Je recommanderais ce parcours à un proche ou à mon public.',
+    },
+    comments: {
+      legend: 'Commentaires',
+      usefulAction: 'Quelle action utile avez-vous découverte ?',
+      difficulty: 'Quel élément vous a semblé difficile ou peu clair ?',
+      priorityImprovement: 'Quelle amélioration vous paraît prioritaire ?',
+      concern: 'Y a-t-il une recommandation inadaptée ou préoccupante ?',
+    },
+    actions: {
+      submit: 'Enregistrer le retour',
+      exportCsv: 'Export CSV',
+      exportJson: 'Export JSON',
+    },
+    lastSubmission: {
+      title: 'Dernier retour',
+      code: 'Code',
+      duration: 'Durée',
+      minutesSuffix: 'min',
+    },
+  },
+  experimentStats: {
+    eyebrow: 'Statistiques du formulaire',
+    title: 'Résultats de l’expérimentation utilisateurs',
+    intro:
+      'Indicateurs calculés à partir des retours reçus via le questionnaire de test. Aucune donnée nominative n’est affichée.',
+    backToDashboard: 'Retour au tableau de bord',
+    openForm: 'Ouvrir le formulaire',
+    loading: 'Chargement',
+    noData: 'Aucun retour enregistré pour le moment.',
+    summary: {
+      total: 'Retours reçus',
+      completionRate: 'Parcours terminé',
+      medianDuration: 'Durée médiane',
+      recommendationRate: 'Recommanderaient le parcours',
+      minutesSuffix: 'min',
+    },
+    profile: {
+      title: 'Profil des participants',
+      device: 'Appareil',
+      profile: 'Profil général',
+      assistance: 'Aide reçue',
+    },
+    evaluation: {
+      title: 'Évaluation moyenne',
+      overall: 'Moyenne globale',
+      distributionAria: 'Répartition des notes de 1 à 5',
+      disagree: 'pas d’accord (1-2)',
+      neutral: 'neutre (3)',
+      agree: 'd’accord (4-5)',
+    },
+    trend: {
+      title: 'Retours dans le temps',
+      help: '14 derniers jours avec au moins un retour',
+    },
+    comments: {
+      title: 'Derniers commentaires',
+      count: '{count} retour(s) avec un commentaire',
+      usefulAction: 'Action utile',
+      difficulty: 'Difficulté',
+      priorityImprovement: 'Amélioration prioritaire',
+      concern: 'Préoccupation',
+      empty: 'Aucun commentaire pour le moment.',
+    },
+  },
+  diagnosticStats: {
+    eyebrow: 'Statistiques du diagnostic',
+    title: 'Résultats agrégés du diagnostic',
+    intro:
+      'Indicateurs calculés à partir des réponses complètes enregistrées lors du diagnostic. Aucune donnée nominative n’est affichée.',
+    backToDashboard: 'Retour au tableau de bord',
+    loading: 'Chargement',
+    noData: 'Aucun diagnostic enregistré pour le moment.',
+    summary: {
+      total: 'Diagnostics enregistrés',
+      averageScore: 'Score global moyen',
+    },
+    domains: {
+      title: 'Score moyen par domaine',
+    },
+    levels: {
+      title: 'Niveaux de préparation',
+    },
+    questionBreakdown: {
+      title: 'Détail par question',
+      answerNone: 'Non fait',
+      answerPartial: 'Partiel',
+      answerReady: 'Fait',
+    },
   },
 } as const
 

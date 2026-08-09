@@ -45,7 +45,7 @@ declare global {
   }
 }
 
-function getVisitorId(): string {
+export function getVisitorId(): string {
   const existingVisitorId = window.localStorage.getItem(visitorStorageKey)
 
   if (existingVisitorId) {
@@ -57,7 +57,7 @@ function getVisitorId(): string {
   return visitorId
 }
 
-function getCampaignId(): string {
+export function getCampaignId(): string {
   const params = new URLSearchParams(window.location.search)
   return params.get('campaign_id') ?? params.get('utm_campaign') ?? 'DIRECT'
 }

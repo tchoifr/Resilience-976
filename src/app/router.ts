@@ -78,6 +78,20 @@ const router = createRouter({
       },
     },
     {
+      path: '/tableau-de-bord/experimentation',
+      component: () => import('@/views/ExperimentStatsView.vue'),
+      meta: {
+        seoKey: 'experimentStats',
+      },
+    },
+    {
+      path: '/tableau-de-bord/diagnostics',
+      component: () => import('@/views/DiagnosticStatsView.vue'),
+      meta: {
+        seoKey: 'diagnosticStats',
+      },
+    },
+    {
       path: '/mentions-legales',
       component: () => import('@/views/LegalView.vue'),
       meta: {

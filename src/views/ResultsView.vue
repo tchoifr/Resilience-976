@@ -70,9 +70,8 @@ const pdfChecklistItems = computed(() => [
 ])
 
 onMounted(() => {
-  trackEvent('result_viewed')
-
   if (assessmentStore.hasAnswers) {
+    trackEvent('result_viewed')
     trackEvent('action_plan_opened')
   }
 })
