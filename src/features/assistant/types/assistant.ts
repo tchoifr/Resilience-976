@@ -35,4 +35,8 @@ export interface AssistantMessage {
   text: string
   matchedEntry?: AssistantEntry
   refused?: boolean
+  pending?: boolean
+  // true when text is an LLM paraphrase of the matched entry rather than
+  // its verbatim validated wording — shown as a small disclosure.
+  viaLlm?: boolean
 }

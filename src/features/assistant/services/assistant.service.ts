@@ -1,8 +1,8 @@
 import type { AssistantEntry, AssistantMatch } from '../types/assistant'
 
-// Deliberately not an LLM: matching a question against a validated bank of
-// keyword-tagged answers means the assistant can never answer outside its
-// documented scope or invent something not already reviewed as content.
+// Offline fallback for assistant-llm.service.ts: if the Hugging Face call
+// fails or isn't configured, this deterministic keyword match against the
+// validated corpus keeps the assistant working (degraded, but never silent).
 const STOPWORDS = new Set([
   'le', 'la', 'les', 'de', 'des', 'du', 'un', 'une', 'et', 'ou', 'est',
   'pour', 'avec', 'dans', 'sur', 'que', 'qui', 'quoi', 'comment', 'pourquoi',

@@ -941,9 +941,11 @@ export const frMessages = {
     inputLabel: 'Votre question',
     inputPlaceholder: 'Ex : Que faire en cas de coupure d’eau ?',
     submit: 'Envoyer',
+    thinking: 'L’assistant réfléchit…',
     emptyState: 'Choisissez une question ci-dessus ou posez la vôtre.',
     refusedText:
       'Cette question sort du périmètre couvert par cet assistant. Consultez les canaux officiels ci-dessous.',
+    llmDisclosure: 'Réponse reformulée par IA à partir du contenu validé ci-dessus.',
     openResources: 'Voir les ressources',
   },
   quiz: {

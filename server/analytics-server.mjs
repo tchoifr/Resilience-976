@@ -1,4 +1,4 @@
-/* global console, process, URL */
+/* global console, process, URL, fetch */
 import { createServer } from 'node:http'
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
@@ -26,6 +26,20 @@ const SCENARIOS_FILE = resolve(
   process.env.SCENARIOS_DATA_FILE ?? 'src/data/scenarios.json',
 )
 const ENGAGEMENT_TARGET = 5000
+const ASSISTANT_ENTRIES_FILE = resolve(
+  process.env.ASSISTANT_ENTRIES_DATA_FILE ?? 'src/data/assistant-entries.json',
+)
+// Cle personnelle Hugging Face avec la permission "Inference Providers"
+// (https://huggingface.co/settings/tokens). Jamais exposee au navigateur :
+// uniquement lue ici, cote serveur.
+const HF_TOKEN = process.env.HF_TOKEN ?? ''
+const HF_CHAT_MODEL = process.env.HF_CHAT_MODEL ?? 'Qwen/Qwen2.5-7B-Instruct'
+const HF_ROUTER_URL = 'https://router.huggingface.co/v1/chat/completions'
+const ASSISTANT_RATE_LIMIT = Number.parseInt(
+  process.env.ASSISTANT_RATE_LIMIT ?? '20',
+  10,
+)
+const ASSISTANT_RATE_WINDOW_MS = 60_000
 const ALLOWED_ORIGINS = (
   process.env.ANALYTICS_ALLOWED_ORIGINS ??
   'http://127.0.0.1:5173,http://localhost:5173'
@@ -382,6 +396,144 @@ async function sanitizeScenarioResult(input) {
     score: sanitizeInteger(input.score, 0, 100, 0),
     choices: scenario ? sanitizeScenarioChoices(input.choices, scenario) : {},
   }
+}
+
+let assistantEntriesIndex = null
+
+async function getAssistantEntriesIndex() {
+  if (assistantEntriesIndex) {
+    return assistantEntriesIndex
+  }
+
+  const entries = JSON.parse(await readFile(ASSISTANT_ENTRIES_FILE, 'utf8'))
+  const byId = new Map(entries.map((entry) => [entry.id, entry]))
+
+  assistantEntriesIndex = { entries, byId }
+  return assistantEntriesIndex
+}
+
+function sanitizeAssistantQuestion(value) {
+  const text = typeof value === 'string' ? value.trim() : ''
+  return text.slice(0, 300)
+}
+
+const assistantRateLimitByIp = new Map()
+
+function getClientIp(request) {
+  const forwarded = request.headers['x-forwarded-for']
+
+  if (typeof forwarded === 'string' && forwarded.trim()) {
+    return forwarded.split(',')[0].trim()
+  }
+
+  return request.socket.remoteAddress ?? 'unknown'
+}
+
+function allowAssistantRequest(request) {
+  const ip = getClientIp(request)
+  const now = Date.now()
+  const windowStart = now - ASSISTANT_RATE_WINDOW_MS
+  const timestamps = (assistantRateLimitByIp.get(ip) ?? []).filter(
+    (timestamp) => timestamp > windowStart,
+  )
+
+  if (timestamps.length >= ASSISTANT_RATE_LIMIT) {
+    assistantRateLimitByIp.set(ip, timestamps)
+    return false
+  }
+
+  timestamps.push(now)
+  assistantRateLimitByIp.set(ip, timestamps)
+  return true
+}
+
+// Le corpus est petit (quelques fiches) : on l'inclut en entier a chaque
+// appel plutot que de faire une recherche prealable, et on demande au
+// modele de refuser explicitement s'il n'y trouve pas de correspondance
+// claire. Aucun fait, chiffre ou conseil hors de ces fiches ne doit
+// apparaitre dans la reponse.
+function buildAssistantSystemPrompt(entries) {
+  const sheets = entries
+    .map(
+      (entry) =>
+        `[${entry.id}]\nQuestion type : ${entry.question}\nReponse validee : ${entry.answer}`,
+    )
+    .join('\n---\n')
+
+  return [
+    "Tu es l'assistant documentaire du site public Resilience 976 (preparation aux risques a Mayotte).",
+    "Tu ne dois repondre qu'a partir des fiches validees ci-dessous, sans ajouter de fait, de chiffre, de conseil medical individuel ou de prevision meteo qui n'y figure pas.",
+    'Si aucune fiche ne repond clairement a la question, tu dois refuser.',
+    '',
+    'Fiches disponibles :',
+    sheets,
+    '',
+    'Reponds STRICTEMENT en JSON, sans aucun texte hors du JSON, au format :',
+    '{"answered": boolean, "answerText": string, "matchedEntryId": string ou null}',
+    '',
+    'Regles :',
+    '- "answered" est true seulement si une fiche correspond clairement a la question.',
+    '- "answerText" reformule fidelement la reponse validee correspondante, en francais, de maniere concise, sans rien ajouter qui ne soit pas dans la fiche. Chaine vide si answered est false.',
+    "- \"matchedEntryId\" est l'identifiant exact de la fiche utilisee (entre crochets ci-dessus), ou null si answered est false.",
+  ].join('\n')
+}
+
+// Ne fait jamais confiance au JSON du modele tel quel : matchedEntryId doit
+// correspondre a une fiche reelle du corpus, sinon la reponse est traitee
+// comme un refus. Les sourceIds affichees a l'utilisateur viennent toujours
+// de la fiche validee elle-meme, jamais d'un texte libre genere.
+function parseAssistantCompletion(rawContent, entriesById) {
+  let parsed
+
+  try {
+    parsed = JSON.parse(rawContent)
+  } catch {
+    return { answered: false, answer: '', matchedEntryId: null }
+  }
+
+  const matchedEntryId =
+    typeof parsed.matchedEntryId === 'string' ? parsed.matchedEntryId : null
+  const entry = matchedEntryId ? entriesById.get(matchedEntryId) : undefined
+  const answerText = typeof parsed.answerText === 'string' ? parsed.answerText.trim() : ''
+
+  if (parsed.answered !== true || !entry || !answerText) {
+    return { answered: false, answer: '', matchedEntryId: null }
+  }
+
+  return { answered: true, answer: answerText.slice(0, 1000), matchedEntryId: entry.id }
+}
+
+async function askHuggingFace(question, entriesIndex) {
+  const response = await fetch(HF_ROUTER_URL, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${HF_TOKEN}`,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: HF_CHAT_MODEL,
+      temperature: 0.2,
+      max_tokens: 400,
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: buildAssistantSystemPrompt(entriesIndex.entries) },
+        { role: 'user', content: question },
+      ],
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error(`hugging_face_http_${response.status}`)
+  }
+
+  const payload = await response.json()
+  const rawContent = payload.choices?.[0]?.message?.content
+
+  if (typeof rawContent !== 'string') {
+    throw new Error('hugging_face_empty_response')
+  }
+
+  return parseAssistantCompletion(rawContent, entriesIndex.byId)
 }
 
 function sanitizeKitProfile(input) {
@@ -2609,6 +2761,36 @@ const server = createServer(async (request, response) => {
 
       const profile = await getVisitorProfile(visitorId)
       sendJson(response, 200, profile, origin)
+      return
+    }
+
+    if (request.method === 'POST' && requestUrl.pathname === '/api/assistant/ask') {
+      const body = await readBody(request)
+      const question = sanitizeAssistantQuestion(body.question)
+
+      if (!question) {
+        sendJson(response, 400, { error: 'invalid_question' }, origin)
+        return
+      }
+
+      if (!HF_TOKEN) {
+        sendJson(response, 503, { error: 'assistant_unconfigured' }, origin)
+        return
+      }
+
+      if (!allowAssistantRequest(request)) {
+        sendJson(response, 429, { error: 'rate_limited' }, origin)
+        return
+      }
+
+      try {
+        const entriesIndex = await getAssistantEntriesIndex()
+        const result = await askHuggingFace(question, entriesIndex)
+        sendJson(response, 200, result, origin)
+      } catch (error) {
+        console.error('[assistant] hugging face request failed', error)
+        sendJson(response, 502, { error: 'assistant_upstream_error' }, origin)
+      }
       return
     }
 
