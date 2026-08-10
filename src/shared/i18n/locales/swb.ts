@@ -421,6 +421,25 @@ export const swbMessages = {
     mention: 'ufalume',
     checklistMention:
       'mwandro unu, mutayarishiyo mutayarishiyo wa patana na wanyahe wala kayija na zi trongo zatolewa na wakala hodari.',
+    quizTitle: 'Mkataba wa ushiriki',
+    quizSubtitle: 'Quiz ya mwongozo kuhusu hatari za Maore',
+    quizLine1: 'Waraka unu unathibitisha ushiriki harimwa quiz ya Resilience 976.',
+    quizScoreLine: 'Score iparihiwe : {score}/{total}',
+    quizDisclaimer: 'Mkataba wa mwongozo : kaïna thamani ya certification ya kazi.',
+    videoTitle: 'Mkataba wa ushiriki',
+    videoSubtitle: 'Mafunzo ya video yamalidzwa',
+    videoLine1:
+      'Waraka unu unathibitisha kwamba mafunzo ya video ya Resilience 976 yamalidzwa yote.',
+    videoScoreLine: 'Bumba {total} zamalidzwa',
+    videoDisclaimer: 'Mkataba wa mwongozo : kaïna thamani ya certification ya kazi.',
+    kitTitle: 'trongo yangu ya mila',
+    kitSubtitle: 'Kiasi kihesabiwa kutokana na komba la dagoni',
+    kitItemCount: 'vitru harimwa trongo',
+    kitHint: 'Tika rangowa, ou ourgue aou graphique aou yi para.',
+    kitDisclaimer:
+      'Kiasi kilichoonyeshwa ni mwongozo tu, lazima kirekebishwe na kuhakikishwa na mapendekezo rasmi ya sasa.',
+    kitMention:
+      'Trongo ini ya mila ni musaada wa matayarisho. Kaïbadilishe consignes zinazotolewa na wakala wenye ujuzi.',
   },
   userExperiment: {
     eyebrow: 'Udzisa wa wanatru',

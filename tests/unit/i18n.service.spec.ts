@@ -48,6 +48,12 @@ describe('i18n.service', () => {
       'scenarios.title',
       'scenarioPlay.confirm',
       'scenarioPlay.debrief.title',
+      'pdf.quizTitle',
+      'pdf.quizScoreLine',
+      'pdf.videoTitle',
+      'pdf.videoScoreLine',
+      'pdf.kitTitle',
+      'pdf.kitItemCount',
     ]
 
     setLocale('fr')
