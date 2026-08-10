@@ -103,6 +103,24 @@ textarea:focus-visible {
   min-height: calc(100vh - 164px);
 }
 
+.public-warning-banner {
+  background: #fff4e8;
+  border-bottom: 1px solid var(--color-warning);
+}
+
+.public-warning-banner p {
+  width: min(100% - 32px, var(--container));
+  margin: 0 auto;
+  padding: 8px 0;
+  color: var(--color-text-strong);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.public-warning-banner strong {
+  color: var(--color-warning);
+}
+
 .page {
   width: min(100% - 32px, var(--container));
   margin: 0 auto;

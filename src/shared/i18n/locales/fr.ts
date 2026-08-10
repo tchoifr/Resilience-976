@@ -8,6 +8,11 @@ export const frMessages = {
     french: 'Français',
     shimaore: 'Shimaore',
   },
+  publicWarning: {
+    label: 'Outil de sensibilisation :',
+    text:
+      'Resilience 976 ne remplace ni les alertes officielles, ni les plans de sauvegarde, ni l’avis d’un professionnel, ni l’intervention des secours.',
+  },
   navigation: {
     ariaLabel: 'Navigation principale',
     menu: 'Menu',
