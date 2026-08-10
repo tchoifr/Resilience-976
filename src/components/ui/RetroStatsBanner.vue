@@ -5,6 +5,7 @@ import { computed, onMounted, ref } from 'vue'
 interface DashboardStats {
   target: number
   totals: {
+    visits: number
     engagedVisitors: number
     journeysCompleted: number
   }
@@ -35,6 +36,7 @@ const scenarioStatsEndpoint = endpoint(
   import.meta.env.VITE_SCENARIO_STATS_ENDPOINT,
 )
 
+const visits = ref(0)
 const engagedVisitors = ref(0)
 const target = ref(5000)
 const journeysCompleted = ref(0)
@@ -42,7 +44,8 @@ const quizSessions = ref(0)
 const videoParticipants = ref(0)
 const scenarioSessions = ref(0)
 
-const digits = computed(() => String(engagedVisitors.value).padStart(6, '0').split(''))
+const digits = computed(() => String(visits.value).padStart(6, '0').split(''))
+const engagedDigits = computed(() => String(engagedVisitors.value).padStart(6, '0'))
 
 const tickerItems = computed(() => [
   `${journeysCompleted.value.toLocaleString('fr-FR')} diagnostics complétés`,
@@ -75,6 +78,7 @@ onMounted(async () => {
   ])
 
   if (dashboard) {
+    visits.value = dashboard.totals.visits
     engagedVisitors.value = dashboard.totals.engagedVisitors
     target.value = dashboard.target
     journeysCompleted.value = dashboard.totals.journeysCompleted
@@ -99,14 +103,14 @@ onMounted(async () => {
     <div
       class="retro-counter"
       role="img"
-      :aria-label="`Vous êtes le visiteur numéro ${engagedVisitors}, objectif JNR 2026 : ${target} visiteurs engagés`"
+      :aria-label="`Vous êtes le visiteur numéro ${visits}. ${engagedVisitors} visiteurs engagés, objectif JNR 2026 : ${target}`"
     >
       <span class="retro-counter__label">VOUS ÊTES LE VISITEUR N°</span>
       <div class="retro-counter__digits" aria-hidden="true">
         <span v-for="(digit, index) in digits" :key="index">{{ digit }}</span>
       </div>
       <span class="retro-counter__goal">
-        OBJECTIF JNR 2026&nbsp;: {{ target.toLocaleString('fr-FR') }} VISITEURS ENGAGÉS
+        {{ engagedDigits }} VISITEURS ENGAGÉS · OBJECTIF JNR 2026&nbsp;: {{ target.toLocaleString('fr-FR') }}
       </span>
     </div>
 
