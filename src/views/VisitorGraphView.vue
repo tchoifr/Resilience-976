@@ -416,44 +416,75 @@ onBeforeUnmount(() => {
 
         <section class="panel stack">
           <h2 class="section-title">{{ t('visitorGraph.legend.title') }}</h2>
-          <ul class="visitor-graph-legend">
-            <li>
-              <span class="visitor-graph-swatch" style="background: #00394b"></span>
-              {{ t('visitorGraph.legend.campaign') }}
-            </li>
-            <li>
-              <span class="visitor-graph-swatch" style="background: #ff8a2a"></span>
-              {{ t('visitorGraph.legend.risk') }}
-            </li>
-            <li>
-              <span class="visitor-graph-swatch" style="background: #7bb661"></span>
-              {{ t('visitorGraph.legend.strength') }}
-            </li>
-            <li>
-              <span class="visitor-graph-swatch" style="background: #e63946"></span>
-              {{ t('visitorGraph.legend.scenarioWeak') }}
-            </li>
-            <li>
-              <span class="visitor-graph-swatch" style="background: #00a1ad"></span>
-              {{ t('visitorGraph.legend.scenarioStrong') }}
-            </li>
-            <li>
-              <span class="visitor-graph-swatch" style="background: #dce8ee"></span>
-              {{ t('visitorGraph.legend.visited') }}
-            </li>
-            <li>
-              <span class="visitor-graph-swatch" style="background: #007f86"></span>
-              {{ t('visitorGraph.legend.engaged') }}
-            </li>
-            <li>
-              <span class="visitor-graph-swatch" style="background: #00a1ad"></span>
-              {{ t('visitorGraph.legend.actioned') }}
-            </li>
-            <li>
-              <span class="visitor-graph-swatch" style="background: #7bb661"></span>
-              {{ t('visitorGraph.legend.completed') }}
-            </li>
-          </ul>
+
+          <div class="visitor-graph-legend-group">
+            <h3 class="visitor-graph-legend-group__title">
+              {{ t('visitorGraph.legend.hubsTitle') }}
+            </h3>
+            <p class="muted">{{ t('visitorGraph.legend.hubsHint') }}</p>
+            <ul class="visitor-graph-legend">
+              <li>
+                <span
+                  class="visitor-graph-swatch visitor-graph-swatch--hub"
+                  style="background: #00394b"
+                ></span>
+                {{ t('visitorGraph.legend.campaign') }}
+              </li>
+              <li>
+                <span
+                  class="visitor-graph-swatch visitor-graph-swatch--hub"
+                  style="background: #ff8a2a"
+                ></span>
+                {{ t('visitorGraph.legend.risk') }}
+              </li>
+              <li>
+                <span
+                  class="visitor-graph-swatch visitor-graph-swatch--hub"
+                  style="background: #7bb661"
+                ></span>
+                {{ t('visitorGraph.legend.strength') }}
+              </li>
+              <li>
+                <span
+                  class="visitor-graph-swatch visitor-graph-swatch--hub"
+                  style="background: #e63946"
+                ></span>
+                {{ t('visitorGraph.legend.scenarioWeak') }}
+              </li>
+              <li>
+                <span
+                  class="visitor-graph-swatch visitor-graph-swatch--hub"
+                  style="background: #00a1ad"
+                ></span>
+                {{ t('visitorGraph.legend.scenarioStrong') }}
+              </li>
+            </ul>
+          </div>
+
+          <div class="visitor-graph-legend-group">
+            <h3 class="visitor-graph-legend-group__title">
+              {{ t('visitorGraph.legend.visitorsTitle') }}
+            </h3>
+            <p class="muted">{{ t('visitorGraph.legend.visitorsHint') }}</p>
+            <ul class="visitor-graph-legend">
+              <li>
+                <span class="visitor-graph-swatch" style="background: #dce8ee"></span>
+                {{ t('visitorGraph.legend.visited') }}
+              </li>
+              <li>
+                <span class="visitor-graph-swatch" style="background: #007f86"></span>
+                {{ t('visitorGraph.legend.engaged') }}
+              </li>
+              <li>
+                <span class="visitor-graph-swatch" style="background: #00a1ad"></span>
+                {{ t('visitorGraph.legend.actioned') }}
+              </li>
+              <li>
+                <span class="visitor-graph-swatch" style="background: #7bb661"></span>
+                {{ t('visitorGraph.legend.completed') }}
+              </li>
+            </ul>
+          </div>
         </section>
       </template>
     </div>
@@ -493,6 +524,16 @@ onBeforeUnmount(() => {
   max-width: 260px;
 }
 
+.visitor-graph-legend-group {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.visitor-graph-legend-group__title {
+  font-size: 1em;
+  margin: 0;
+}
+
 .visitor-graph-legend {
   display: grid;
   gap: var(--space-2);
@@ -504,14 +545,19 @@ onBeforeUnmount(() => {
 .visitor-graph-legend li {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .visitor-graph-swatch {
   display: inline-block;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
+}
+
+.visitor-graph-swatch--hub {
+  width: 26px;
+  height: 26px;
 }
 </style>
