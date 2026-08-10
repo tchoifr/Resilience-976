@@ -18,6 +18,7 @@ export const frMessages = {
     kit: 'Kit',
     resources: 'Ressources',
     videos: 'Vidéos',
+    quiz: 'Quiz',
     dashboard: 'Stats',
     experiment: 'Expérimentation',
   },
@@ -110,6 +111,11 @@ export const frMessages = {
       title: 'Capsule vidéo - Resilience 976',
       description:
         'Consultez une capsule vidéo, sa transcription, ses sources et sa question de validation.',
+    },
+    quiz: {
+      title: 'Quiz interactif - Resilience 976',
+      description:
+        'Testez vos réflexes face au cyclone, à l’inondation, au séisme et au mouvement de terrain, avec correction expliquée et attestation de participation.',
     },
     dashboard: {
       title: 'Tableau de bord - Resilience 976',
@@ -363,6 +369,13 @@ export const frMessages = {
     mention: 'Mention',
     checklistMention:
       'Cette checklist est un support personnel de préparation. Elle ne remplace pas les consignes diffusées par les autorités compétentes.',
+    quizTitle: 'Attestation de participation',
+    quizSubtitle: 'Quiz de sensibilisation aux risques',
+    quizLine1: 'Ce document atteste la participation au quiz interactif Resilience 976.',
+    quizPseudonym: 'Participant : {pseudonym}',
+    quizScoreLine: 'Score obtenu : {score}/{total}',
+    quizDisclaimer:
+      'Attestation de sensibilisation : sans valeur de certification professionnelle.',
   },
   userExperiment: {
     eyebrow: 'Expérimentation utilisateurs',
@@ -501,6 +514,42 @@ export const frMessages = {
       answerNone: 'Non fait',
       answerPartial: 'Partiel',
       answerReady: 'Fait',
+    },
+  },
+  quiz: {
+    eyebrow: 'Entrée rapide et ludique',
+    title: 'Quiz interactif',
+    intro:
+      'Répondez à un tirage aléatoire de questions sur les quatre risques couverts à Mayotte : cyclone, fortes pluies et inondation, séisme et mouvement de terrain. Chaque réponse est immédiatement expliquée et reliée à une source officielle.',
+    campaignNotice: 'Cette session est rattachée à la campagne {campaignId}.',
+    start: 'Commencer le quiz',
+    restart: 'Refaire un quiz',
+    scoreLabel: 'Score en direct',
+    questionCount: 'Question {current} sur {total}',
+    submit: 'Valider ma réponse',
+    next: 'Question suivante',
+    seeResults: 'Voir mon résultat',
+    correct: 'Bonne réponse',
+    incorrect: 'Réponse à revoir',
+    riskLabels: {
+      cyclone: 'Cyclone',
+      inondation: 'Fortes pluies et inondation',
+      seisme: 'Séisme',
+      mouvement_terrain: 'Mouvement de terrain',
+    },
+    results: {
+      title: 'Résultat du quiz',
+      summary: '{score} bonne(s) réponse(s) sur {total}.',
+      pseudonymLabel:
+        'Pseudonyme pour un classement facultatif (aucun nom complet requis)',
+      pseudonymPlaceholder: 'Ex : Manta-976',
+      saveScore: 'Enregistrer mon score',
+      savingScore: 'Enregistrement…',
+      scoreSaved: 'Score enregistré pour le classement de la campagne',
+      downloadAttestation: 'Télécharger l’attestation',
+      preparingPdf: 'Préparation du PDF…',
+      disclaimer:
+        'L’attestation mentionne le score obtenu ; elle n’a pas de valeur de certification professionnelle.',
     },
   },
 } as const

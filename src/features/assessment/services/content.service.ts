@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import actionsJson from '@/data/actions.json'
 import kitJson from '@/data/kit.json'
 import questionsJson from '@/data/questions.json'
+import quizQuestionsJson from '@/data/quiz-questions.json'
 import resourcesJson from '@/data/resources.json'
 import sourcesJson from '@/data/sources.json'
 import videosJson from '@/data/videos.json'
@@ -14,6 +15,8 @@ import swbSourcesJson from '@/data/swb/sources.json'
 import swbVideosJson from '@/data/swb/videos.json'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
+import type { QuizQuestion } from '@/features/quiz/types/quiz'
+
 import type { KitItem } from '../types/kit'
 import type { Question } from '../types/question'
 import type { RecommendationAction } from '../types/recommendation'
@@ -23,6 +26,7 @@ import {
   actionsSchema,
   kitSchema,
   questionsSchema,
+  quizQuestionsSchema,
   resourcesSchema,
   sourcesSchema,
   videosSchema,
@@ -62,6 +66,10 @@ const videosByLocale: Record<ContentLocale, VideoCapsule[]> = {
   swb: sortVideos(videosSchema.parse(swbVideosJson)),
 }
 
+// Not yet translated per locale: the quiz question bank only ships in
+// French for this first iteration.
+const quizQuestionsList: QuizQuestion[] = quizQuestionsSchema.parse(quizQuestionsJson)
+
 function forLocale<T>(byLocale: Record<ContentLocale, T>, fallback: T): T {
   return byLocale[locale.value as ContentLocale] ?? fallback
 }
@@ -72,6 +80,7 @@ export const kitItems = computed(() => forLocale(kitItemsByLocale, kitItemsByLoc
 export const resources = computed(() => forLocale(resourcesByLocale, resourcesByLocale.fr))
 export const sources = computed(() => forLocale(sourcesByLocale, sourcesByLocale.fr))
 export const videos = computed(() => forLocale(videosByLocale, videosByLocale.fr))
+export const quizQuestions = computed(() => quizQuestionsList)
 
 export const sourcesById = computed(
   () => new Map(sources.value.map((source) => [source.id, source])),

@@ -1,0 +1,242 @@
+[
+  {
+    "id": "quiz_cyclone_01",
+    "risk": "cyclone",
+    "text": "Avant l’arrivée d’un cyclone, quel geste protège le mieux votre logement ?",
+    "options": [
+      "Fixer ou rentrer les objets qui pourraient devenir des projectiles",
+      "Laisser le mobilier de jardin dehors",
+      "Ouvrir toutes les fenêtres pour équilibrer la pression"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Les objets extérieurs non fixés peuvent devenir des projectiles dangereux sous l’effet du vent. Il faut les rentrer ou les attacher solidement avant l’arrivée du cyclone.",
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_cyclone_02",
+    "risk": "cyclone",
+    "text": "Que faire pendant l’accalmie du passage de l’œil du cyclone ?",
+    "options": [
+      "Rester à l’abri, le vent va reprendre avec une autre orientation",
+      "Sortir immédiatement pour évaluer les dégâts",
+      "Ouvrir les fenêtres pour aérer le logement"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "L’accalmie de l’œil est temporaire : le vent reprend ensuite dans le sens opposé, souvent avec une intensité comparable. Il faut rester à l’abri jusqu’à la fin officielle de l’alerte.",
+    "sourceIds": ["source_meteo_france_vigilance_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_cyclone_03",
+    "risk": "cyclone",
+    "text": "Quel canal fournit un niveau d’alerte cyclonique fiable à Mayotte ?",
+    "options": [
+      "La vigilance météorologique officielle",
+      "Des messages non vérifiés partagés sur les réseaux sociaux",
+      "Les habitudes observées les années précédentes"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Seuls les canaux officiels de vigilance météorologique donnent un niveau d’alerte fiable et à jour pour Mayotte.",
+    "sourceIds": ["source_meteo_france_vigilance_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_cyclone_04",
+    "risk": "cyclone",
+    "text": "L’alerte cyclone vient d’être levée par les autorités. Quel réflexe adopter ?",
+    "options": [
+      "Rester prudent, des dangers résiduels peuvent subsister",
+      "Reprendre immédiatement toutes les activités comme avant",
+      "Ignorer les consignes suivantes des autorités"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "La fin d’une alerte ne signifie pas l’absence totale de danger (fils électriques au sol, arbres fragilisés, routes coupées). La prudence reste de mise.",
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_inondation_01",
+    "risk": "inondation",
+    "text": "Vous êtes face à une route inondée. Quelle est la bonne attitude ?",
+    "options": [
+      "Ne pas s’engager, même en véhicule",
+      "Avancer doucement pour tester la profondeur",
+      "Suivre un autre véhicule qui vient de passer"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Une faible hauteur d’eau suffit à emporter un véhicule ou à masquer une route endommagée. Il ne faut jamais s’engager sur une route inondée.",
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_inondation_02",
+    "risk": "inondation",
+    "text": "Où placer les documents importants en cas de risque d’inondation ?",
+    "options": [
+      "Dans une pochette étanche, en hauteur",
+      "Au sol, dans une pièce fermée",
+      "Dans un véhicule garé à l’extérieur"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Une pochette étanche placée en hauteur protège les documents essentiels d’une montée des eaux ou d’une infiltration.",
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_inondation_03",
+    "risk": "inondation",
+    "text": "Quel geste réduit la vulnérabilité d’un logement aux fortes pluies ?",
+    "options": [
+      "Repérer à l’avance les points faibles du logement",
+      "Attendre l’épisode pluvieux pour agir",
+      "Laisser les objets sensibles à l’extérieur"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Identifier en amont les points faibles (seuils, évacuations d’eau, ouvertures) permet d’agir avant l’épisode plutôt que dans l’urgence.",
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_inondation_04",
+    "risk": "inondation",
+    "text": "Après un épisode de fortes pluies, quelle information faut-il suivre ?",
+    "options": [
+      "Les consignes officielles diffusées localement",
+      "Des rumeurs non vérifiées",
+      "Uniquement ses habitudes personnelles"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Les autorités locales sont les mieux placées pour indiquer l’évolution de la situation (routes coupées, coupures de réseau, zones à éviter).",
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_seisme_01",
+    "risk": "seisme",
+    "text": "Pendant une secousse sismique, quel réflexe est recommandé à l’intérieur ?",
+    "options": [
+      "Se protéger sous un meuble solide, loin des fenêtres",
+      "Se précipiter dans les escaliers",
+      "Rester debout près d’une vitre"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "S’abriter sous un meuble solide et à distance des vitres limite le risque de blessure par chute d’objets ou de bris de verre.",
+    "sourceIds": ["source_prefecture_mayotte_seismes"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_seisme_02",
+    "risk": "seisme",
+    "text": "Juste après une secousse, quelle attitude est la plus sûre ?",
+    "options": [
+      "Vérifier les risques avant de sortir calmement",
+      "Utiliser l’ascenseur pour évacuer rapidement",
+      "Rallumer immédiatement le gaz"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Les ascenseurs peuvent rester bloqués après une secousse et le gaz doit être vérifié avant d’être rallumé. Une évacuation calme et prudente est recommandée.",
+    "sourceIds": ["source_prefecture_mayotte_seismes"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_seisme_03",
+    "risk": "seisme",
+    "text": "Où consulter les zones exposées au risque sismique à Mayotte ?",
+    "options": [
+      "Dans les plans de prévention des risques officiels",
+      "Sur des avis d’habitants publiés en ligne",
+      "Aucune information officielle n’existe"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Les plans de prévention des risques (PPR) publiés par les autorités identifient les zones exposées au risque sismique.",
+    "sourceIds": ["source_georisques_ppr_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_seisme_04",
+    "risk": "seisme",
+    "text": "Pourquoi fixer les meubles lourds dans son logement ?",
+    "options": [
+      "Pour limiter les chutes d’objets pendant une secousse",
+      "Pour gagner de la place au sol",
+      "Uniquement pour des raisons esthétiques"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Un meuble lourd non fixé peut basculer ou se déplacer pendant une secousse et blesser les occupants du logement.",
+    "sourceIds": ["source_prefecture_mayotte_seismes"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_mouvement_terrain_01",
+    "risk": "mouvement_terrain",
+    "text": "Quel signe peut annoncer un glissement de terrain proche d’un logement ?",
+    "options": [
+      "L’apparition de fissures dans le sol ou les murs",
+      "Une pelouse plus verte que d’habitude",
+      "Un ciel particulièrement dégagé"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Des fissures nouvelles dans le sol, les murs ou les voiries peuvent signaler un mouvement de terrain en cours et doivent être signalées.",
+    "sourceIds": ["source_prefecture_mayotte_mouvements_terrain"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_mouvement_terrain_02",
+    "risk": "mouvement_terrain",
+    "text": "Que faire en cas de doute sur la stabilité du terrain autour de son logement ?",
+    "options": [
+      "Signaler la situation et suivre les recommandations officielles",
+      "Ignorer le phénomène tant qu’il n’y a pas d’effondrement visible",
+      "Construire une extension sans vérification préalable"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Un signalement précoce permet une vérification par les services compétents avant qu’un mouvement de terrain ne s’aggrave.",
+    "sourceIds": ["source_prefecture_mayotte_mouvements_terrain"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_mouvement_terrain_03",
+    "risk": "mouvement_terrain",
+    "text": "Où consulter les zones exposées aux mouvements de terrain à Mayotte ?",
+    "options": [
+      "Dans les plans de prévention des risques (PPR) officiels",
+      "À partir d’une estimation personnelle non vérifiée",
+      "Aucun document officiel n’est disponible"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Les plans de prévention des risques naturels identifient officiellement les zones exposées aux mouvements de terrain.",
+    "sourceIds": ["source_georisques_ppr_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_mouvement_terrain_04",
+    "risk": "mouvement_terrain",
+    "text": "Après de fortes pluies en zone à risque, quelle vigilance adopter ?",
+    "options": [
+      "Redoubler d’attention aux signes de mouvement de terrain",
+      "Considérer que le risque est automatiquement écarté",
+      "Se rapprocher du talus pour l’observer de près"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Les fortes pluies augmentent le risque de mouvement de terrain : la vigilance doit être renforcée dans les jours qui suivent, sans s’approcher des zones instables.",
+    "sourceIds": ["source_prefecture_mayotte_mouvements_terrain"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  }
+]

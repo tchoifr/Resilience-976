@@ -40,6 +40,9 @@ const eventMap = {
   pdf_downloaded: 'pdf_downloaded',
   source_opened: 'source_opened',
   technical_error: 'technical_error',
+  quiz_started: 'quiz_started',
+  quiz_completed: 'quiz_completed',
+  quiz_attestation_generated: 'quiz_attestation_generated',
 }
 
 const allowedEvents = new Set(Object.keys(eventMap))
@@ -63,6 +66,7 @@ const allowedPaths = new Set([
   '/kit',
   '/ressources',
   '/videos',
+  '/quiz',
   '/tableau-de-bord',
   '/tableau-de-bord/experimentation',
   '/tableau-de-bord/diagnostics',
@@ -76,6 +80,7 @@ const actionEvents = new Set([
   'checklist_opened',
   'kit_opened',
   'pdf_downloaded',
+  'quiz_attestation_generated',
 ])
 const allowedDevices = new Set(['smartphone', 'ordinateur', 'tablette'])
 const allowedProfiles = new Set([
@@ -373,6 +378,22 @@ async function sanitizeDiagnosticResponse(input) {
   }
 }
 
+function sanitizePseudonym(value) {
+  return typeof value === 'string' ? value.trim().slice(0, 40) : ''
+}
+
+function sanitizeQuizResult(input) {
+  return {
+    id: sanitizeVisitorId(input.id),
+    createdAt: new Date().toISOString(),
+    visitorId: sanitizeVisitorId(input.visitorId),
+    campaignId: sanitizeCampaign(input.campaignId),
+    pseudonym: sanitizePseudonym(input.pseudonym),
+    score: sanitizeInteger(input.score, 0, 1000, 0),
+    total: sanitizeInteger(input.total, 0, 1000, 0),
+  }
+}
+
 function sanitizeFeedback(input) {
   return {
     id:
@@ -460,6 +481,22 @@ async function getDatabase() {
 
     CREATE INDEX IF NOT EXISTS diagnostic_responses_created_at_idx
       ON diagnostic_responses (created_at DESC);
+
+    CREATE TABLE IF NOT EXISTS quiz_results (
+      id TEXT PRIMARY KEY,
+      created_at TEXT NOT NULL,
+      visitor_id TEXT NOT NULL,
+      campaign_id TEXT NOT NULL,
+      pseudonym TEXT NOT NULL,
+      score INTEGER NOT NULL,
+      total INTEGER NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS quiz_results_created_at_idx
+      ON quiz_results (created_at DESC);
+
+    CREATE INDEX IF NOT EXISTS quiz_results_campaign_id_idx
+      ON quiz_results (campaign_id);
   `)
 
   try {
@@ -499,6 +536,35 @@ async function saveDiagnosticResponse(diagnosticResponse) {
       diagnosticResponse.campaignId,
       diagnosticResponse.version,
       JSON.stringify(diagnosticResponse.answers),
+    )
+}
+
+async function saveQuizResult(quizResult) {
+  const currentDatabase = await getDatabase()
+
+  currentDatabase
+    .prepare(
+      `
+        INSERT OR IGNORE INTO quiz_results (
+          id,
+          created_at,
+          visitor_id,
+          campaign_id,
+          pseudonym,
+          score,
+          total
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `,
+    )
+    .run(
+      quizResult.id,
+      quizResult.createdAt,
+      quizResult.visitorId,
+      quizResult.campaignId,
+      quizResult.pseudonym,
+      quizResult.score,
+      quizResult.total,
     )
 }
 
@@ -612,6 +678,71 @@ async function readDiagnosticResponseRows() {
     )
     .all()
     .map((row) => ({ answers: parseRatingsJson(row.answers_json) }))
+}
+
+async function readQuizResultRows() {
+  const currentDatabase = await getDatabase()
+
+  return currentDatabase
+    .prepare(
+      `
+        SELECT campaign_id, pseudonym, score, total, created_at
+        FROM quiz_results
+        ORDER BY created_at DESC
+      `,
+    )
+    .all()
+    .map((row) => ({
+      campaignId: row.campaign_id,
+      pseudonym: row.pseudonym,
+      score: Number(row.score),
+      total: Number(row.total),
+      createdAt: row.created_at,
+    }))
+}
+
+function buildQuizStats(rows) {
+  const campaigns = new Map()
+
+  for (const row of rows) {
+    const current = campaigns.get(row.campaignId) ?? {
+      campaignId: row.campaignId,
+      participants: 0,
+      scoreSum: 0,
+      topScores: [],
+    }
+
+    current.participants += 1
+    current.scoreSum += row.total === 0 ? 0 : Math.round((row.score / row.total) * 100)
+
+    if (row.pseudonym) {
+      current.topScores.push({
+        pseudonym: row.pseudonym,
+        score: row.score,
+        total: row.total,
+      })
+    }
+
+    campaigns.set(row.campaignId, current)
+  }
+
+  return {
+    generatedAt: new Date().toISOString(),
+    total: rows.length,
+    campaigns: Array.from(campaigns.values())
+      .map((campaign) => ({
+        campaignId: campaign.campaignId,
+        participants: campaign.participants,
+        averageScorePercent:
+          campaign.participants === 0
+            ? 0
+            : Math.round(campaign.scoreSum / campaign.participants),
+        topScores: campaign.topScores
+          .sort((a, b) => b.score / b.total - a.score / a.total)
+          .slice(0, 10),
+      }))
+      .sort((a, b) => b.participants - a.participants),
+  }
 }
 
 async function readFeedbackRows() {
@@ -1001,6 +1132,27 @@ const server = createServer(async (request, response) => {
 
       await saveDiagnosticResponse(diagnosticResponse)
       sendJson(response, 201, { ok: true, id: diagnosticResponse.id }, origin)
+      return
+    }
+
+    if (request.method === 'POST' && requestUrl.pathname === '/api/quiz-results') {
+      const body = await readBody(request)
+      const quizResult = sanitizeQuizResult(body)
+
+      if (quizResult.total === 0) {
+        sendJson(response, 400, { error: 'invalid_quiz_result' }, origin)
+        return
+      }
+
+      await saveQuizResult(quizResult)
+      sendJson(response, 201, { ok: true, id: quizResult.id }, origin)
+      return
+    }
+
+    if (request.method === 'GET' && requestUrl.pathname === '/api/quiz-results/stats') {
+      const rows = await readQuizResultRows()
+
+      sendJson(response, 200, buildQuizStats(rows), origin)
       return
     }
 

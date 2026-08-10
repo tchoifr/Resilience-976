@@ -35,6 +35,12 @@ interface ChecklistPdfInput {
   totalCount: number
 }
 
+interface QuizAttestationInput {
+  score: number
+  total: number
+  pseudonym: string
+}
+
 interface PdfOutputOptions {
   mode?: 'download' | 'print'
 }
@@ -349,6 +355,76 @@ function addChecklistCoverPage(pdf: jsPDF, input: ChecklistPdfInput) {
     size: 8.5,
     color: colors.muted,
   })
+}
+
+function addQuizAttestationPage(pdf: jsPDF, input: QuizAttestationInput) {
+  const currentDate = new Date().toLocaleDateString(t('pdf.dateLocale'))
+  const percent = input.total === 0 ? 0 : Math.round((input.score / input.total) * 100)
+
+  addDiplomaFrame(pdf)
+  addMiniLogo(pdf, 31, 25)
+
+  setTextColor(pdf, colors.primaryDark)
+  pdf.setFont('helvetica', 'bold')
+  pdf.setFontSize(16)
+  pdf.text(t('brand.name'), 54, 33)
+  pdf.setFontSize(10)
+  pdf.text(t('pdf.brandSubtitle'), 54, 40)
+
+  addCenteredText(pdf, t('pdf.quizTitle'), 72, {
+    size: 25,
+    bold: true,
+    color: colors.primaryDark,
+  })
+  addCenteredText(pdf, t('pdf.quizSubtitle'), 84, {
+    size: 12,
+    color: colors.muted,
+  })
+
+  addCenteredText(pdf, t('pdf.quizLine1'), 104, {
+    size: 11,
+  })
+  if (input.pseudonym) {
+    addCenteredText(pdf, t('pdf.quizPseudonym', { pseudonym: input.pseudonym }), 112, {
+      size: 11,
+      bold: true,
+    })
+  }
+
+  addSeal(pdf, percent)
+
+  addCenteredText(
+    pdf,
+    t('pdf.quizScoreLine', { score: input.score, total: input.total }),
+    174,
+    {
+      size: 18,
+      bold: true,
+      color: colors.primary,
+    },
+  )
+
+  setFillColor(pdf, [237, 247, 247])
+  setDrawColor(pdf, colors.border)
+  pdf.roundedRect(38, 201, 134, 24, 3, 3, 'FD')
+  addCenteredText(pdf, t('pdf.generatedAt', { date: currentDate }), 211, {
+    size: 10,
+    bold: true,
+  })
+
+  addCenteredText(pdf, t('pdf.quizDisclaimer'), 260, {
+    size: 8.5,
+    color: colors.muted,
+  })
+}
+
+export function generateQuizAttestationPdf(
+  input: QuizAttestationInput,
+  options: PdfOutputOptions = {},
+): void {
+  const pdf = new jsPDF({ unit: 'mm', format: 'a4' })
+  addQuizAttestationPage(pdf, input)
+  outputPdf(pdf, 'attestation-quiz-resilience-976.pdf', options)
 }
 
 export function generateAssessmentPdf(input: PdfInput, options: PdfOutputOptions = {}): void {

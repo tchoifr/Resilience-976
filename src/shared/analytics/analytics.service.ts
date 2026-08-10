@@ -12,6 +12,9 @@ export type AnalyticsEventName =
   | 'kit_opened'
   | 'source_opened'
   | 'technical_error'
+  | 'quiz_started'
+  | 'quiz_completed'
+  | 'quiz_attestation_generated'
 
 export interface AnalyticsEvent {
   name: AnalyticsEventName

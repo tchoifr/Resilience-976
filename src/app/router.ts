@@ -64,6 +64,13 @@ const router = createRouter({
       },
     },
     {
+      path: '/quiz',
+      component: () => import('@/views/QuizView.vue'),
+      meta: {
+        seoKey: 'quiz',
+      },
+    },
+    {
       path: '/tableau-de-bord',
       component: () => import('@/views/DashboardView.vue'),
       meta: {
