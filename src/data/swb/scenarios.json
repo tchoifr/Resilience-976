@@ -1,0 +1,211 @@
+[
+  {
+    "id": "scenario_cyclone",
+    "title": "Alerte ya cyclone imeandzishwa",
+    "intro": "Uko harimwa nyumba yaho wakati alerte ya cyclone inatangazwa na wakala. Maamuzi yaho yatabadilisha usalama waho wakati wa tadjiri.",
+    "domain": "behaviors",
+    "videoId": "VID-09",
+    "steps": [
+      {
+        "id": "cyclone_step_1",
+        "prompt": "Alerte imeandzishwa papahi. Trongo gani ufanya kwanza ?",
+        "options": [
+          { "id": "secure_outside", "label": "Ingiza au fungatera zitru za hunze na hakikisha madirisha", "score": 100 },
+          { "id": "wait_and_see", "label": "Lindra kuona kama hali inazidi kabla ya kufanya trongo", "score": 50 },
+          { "id": "ignore", "label": "Usifanye trongo, fikiri kwamba haihusiani na wewe", "score": 0 }
+        ],
+        "explanation": "Kufungatera hunze ya nyumba papahi alerte inatoa wakati wa kufanya trongo kwa utulivu, kabla pepo kufanya kutoka kuwa hatari."
+      },
+      {
+        "id": "cyclone_step_2",
+        "prompt": "Pepo inaongezeka nguvu hunze. Bassi gani ufanya ?",
+        "options": [
+          { "id": "stay_inside", "label": "Bakia harimwa nyumba, mbali na madirisha", "score": 100 },
+          { "id": "check_roof", "label": "Toka kuhakikisha hali ya paa", "score": 0 },
+          { "id": "open_windows", "label": "Fungua madirisha ili kusawazisha upepo", "score": 0 }
+        ],
+        "explanation": "Kubakia harimwa shiri, mbali na madirisha, kunalinda dhidi ya zitru zirukazo na kioo kivunjikacho : kutoka au kufungua madirisha wakati wa tadjiri ni hatari."
+      },
+      {
+        "id": "cyclone_step_3",
+        "prompt": "Utulivu wa papahi unafika (œil ya cyclone). Trongo gani ufanya ?",
+        "options": [
+          { "id": "stay_sheltered", "label": "Bakia harimwa shiri, pepo itarudi na upande wangina", "score": 100 },
+          { "id": "go_outside", "label": "Toka kuangalia madhara wakati wa utulivu", "score": 0 },
+          { "id": "invite_neighbors", "label": "Alika majirani kuja kuona hunze", "score": 0 }
+        ],
+        "explanation": "Utulivu wa œil ya cyclone ni wa muda mfupi : pepo itarudi upande mwingine, mara nyengi na nguvu sawa."
+      }
+    ],
+    "sourceIds": ["source_prefecture_mayotte", "source_meteo_france_vigilance_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "scenario_coupure_electricite",
+    "title": "Coupure ya umeme inaanza",
+    "intro": "Umeme umekatika harimwa nyumba yaho tangu muda. Maamuzi yaho yataamua kama hali inabakia rahisi au inazidi.",
+    "domain": "energy_communication",
+    "videoId": "VID-07",
+    "steps": [
+      {
+        "id": "power_step_1",
+        "prompt": "Umeme umekatika tangu saa moja. Unamulikaje ?",
+        "options": [
+          { "id": "flashlight", "label": "Tumia taa ya mkono au taa ya piles", "score": 100 },
+          { "id": "candles_everywhere", "label": "Washa mishumaa harimwa vyumba vyote", "score": 50 },
+          { "id": "overload_strip", "label": "Unganisha vyombo vyote harimwa multiprise ya haraka", "score": 0 }
+        ],
+        "explanation": "Taa ya piles inaepusha hatari ya moto inayotokana na mishumaa au unganisho wa haraka wakati wa coupure ndefu."
+      },
+      {
+        "id": "power_step_2",
+        "prompt": "Frigo haifanyi kazi tangu masaa mengi. Trongo gani ufanya ?",
+        "options": [
+          { "id": "limit_opening", "label": "Punguza kufungua na kula kwanza shahula zinazoharibika haraka", "score": 100 },
+          { "id": "check_often", "label": "Fungua mara kwa mara kuhakikisha hali ya shahula", "score": 0 },
+          { "id": "no_change", "label": "Usibadilishe desturi zaho za kula", "score": 50 }
+        ],
+        "explanation": "Kupunguza kufungua kunabakisha baridi muda mrefu na kunapunguza hatari ya kula shahula zilizoharibika."
+      },
+      {
+        "id": "power_step_3",
+        "prompt": "Lazima uarifu mutru wa karibu kuhusu hali lakini réseau ya simu imejaa. Trongo gani ufanya ?",
+        "options": [
+          { "id": "radio_or_later", "label": "Fuata radio ya piles na jaribu tena baadaye", "score": 100 },
+          { "id": "call_repeatedly", "label": "Piga simu tena na tena mpaka upate ligne", "score": 50 },
+          { "id": "do_nothing", "label": "Usijaribu trongo", "score": 0 }
+        ],
+        "explanation": "Réseau iliyojaa inapungua kidogo kidogo : radio ya piles inaruhusu kubakia na habari bila kuzidisha réseau ya simu."
+      }
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "scenario_coupure_eau",
+    "title": "Coupure ya maji inafika",
+    "intro": "Maji ya bomba hayafanyi kazi tena harimwa nyumba yaho. Maamuzi yaho yataamua raha na usalama wa afya yaho.",
+    "domain": "water_food",
+    "videoId": "VID-08",
+    "steps": [
+      {
+        "id": "water_step_1",
+        "prompt": "Maji ya robinet hayatoki tena. Trongo gani ufanya ?",
+        "options": [
+          { "id": "use_reserves", "label": "Tumia akiba ya maji safi iliyotayarishwa kabla", "score": 100 },
+          { "id": "wait_passively", "label": "Lindra bila kufanya trongo mpaka maji yarudi", "score": 50 },
+          { "id": "stagnant_water", "label": "Tumia maji yaliyotuama yaliyo karibu", "score": 0 }
+        ],
+        "explanation": "Akiba ya maji safi iliyotayarishwa kabla inaepusha kutumia maji yasiyohakikishwa, hatari kwa afya."
+      },
+      {
+        "id": "water_step_2",
+        "prompt": "Lazima upike na uoge na akiba ndogo. Trongo gani upe kipaumbele ?",
+        "options": [
+          { "id": "prioritize_drinking", "label": "Toa kipaumbele maji safi ya kunywa na kupika, punguza matumizi ya usafi", "score": 100 },
+          { "id": "use_without_distinction", "label": "Tumia maji yaliyopo bila kutofautisha matumizi", "score": 0 },
+          { "id": "avoid_hygiene", "label": "Epuka kabisa kuoga kwa tahadhari kubwa mno", "score": 50 }
+        ],
+        "explanation": "Kubakisha maji safi kwa kunywa na kupika, huku ukipunguza matumizi ya usafi, kunaruhusu kudumu muda mrefu bila hatari."
+      },
+      {
+        "id": "water_step_3",
+        "prompt": "Jirani anasema uzushi kwamba maji yatarudi papahi. Trongo gani ufanya ?",
+        "options": [
+          { "id": "check_official", "label": "Hakikisha habari harimwa marke rasmi kabla ya kufanya trongo", "score": 100 },
+          { "id": "follow_rumor", "label": "Fuata uzushi moja kwa moja", "score": 0 },
+          { "id": "ignore_all", "label": "Puuza habari zote, hata zile rasmi", "score": 50 }
+        ],
+        "explanation": "Habari rasmi tu ndizo zinazothibitisha kwa uhakika kurudi kwa huduma muhimu."
+      }
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "scenario_documents",
+    "title": "Kulinda zisahani kabla ya hatari kutangazwa",
+    "intro": "Tadjiri ya hatari inatangazwa ha secteur yaho. Maamuzi yaho yataamua kama zisahani zaho muhimu zinabakia salama.",
+    "domain": "health_documents",
+    "videoId": "VID-04",
+    "steps": [
+      {
+        "id": "docs_step_1",
+        "prompt": "Unajua kwamba tadjiri ya hatari imetangazwa. Unafanya nini na zisahani zaho muhimu ?",
+        "options": [
+          { "id": "waterproof_pouch", "label": "Kusanya harimwa pochette isiyopitisha maji, rahisi kubeba", "score": 100 },
+          { "id": "spread_around", "label": "Kusambaza kidogo kila mahali harimwa nyumba « kama ikitokea »", "score": 50 },
+          { "id": "leave_as_is", "label": "Kubakisha mahali pao pa desturi", "score": 0 }
+        ],
+        "explanation": "Pochette moja isiyopitisha maji, rahisi kubeba, inalinda zisahani na inaepusha kupoteza wakati kuzitafuta wakati wa dharura."
+      },
+      {
+        "id": "docs_step_2",
+        "prompt": "Lazima utoke papahi. Trongo gani ufanya ?",
+        "options": [
+          { "id": "take_pouch", "label": "Beba moja kwa moja pochette iliyotayarishwa kabla", "score": 100 },
+          { "id": "copy_in_a_hurry", "label": "Poteza wakati kunakili yote papahi kabla ya kutoka", "score": 50 },
+          { "id": "leave_without_thinking", "label": "Toka bila kufikiria zisahani", "score": 0 }
+        ],
+        "explanation": "Pochette iliyotayarishwa kabla inaruhusu kutoka papahi bila kupoteza wakati au kubakisha zisahani muhimu."
+      },
+      {
+        "id": "docs_step_3",
+        "prompt": "Ukirudi harimwa nyumba baada ya tadjiri, trongo gani ufanya ?",
+        "options": [
+          { "id": "check_and_store", "label": "Hakikisha hali ya zisahani na uzirudishe harimwa shiri", "score": 100 },
+          { "id": "leave_unchecked", "label": "Kubakisha bila hakikisho", "score": 0 }
+        ],
+        "explanation": "Kuhakikisha hali ya zisahani baada ya tadjiri kunaruhusu kutambua madhara na kuzilinda tena."
+      }
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "scenario_aide_vulnerable",
+    "title": "Kusaidia mutru dhaifu wa karibu",
+    "intro": "Mutru mzuku aliyetengwa anaishi karibu na nyumba yaho. Maamuzi yaho yataamua kama anabakia salama wakati na baada ya tadjiri.",
+    "domain": "household",
+    "videoId": "VID-06",
+    "steps": [
+      {
+        "id": "helper_step_1",
+        "prompt": "Kabla ya tadjiri, trongo gani ufanya ?",
+        "options": [
+          { "id": "offer_consented_help", "label": "Mpe msaada rahisi, na ridhaa yake", "score": 100 },
+          { "id": "decide_for_her", "label": "Amua badala yake bila kumuuliza maoni", "score": 50 },
+          { "id": "do_nothing", "label": "Usifanye trongo, sio jukumu lako", "score": 0 }
+        ],
+        "explanation": "Kutoa msaada rahisi na wa ridhaa kunaheshimu uhuru wake huku ukipunguza kutengwa kwake kabla ya tadjiri."
+      },
+      {
+        "id": "helper_step_2",
+        "prompt": "Wakati wa tadjiri, unapoteza mawasiliano naye. Trongo gani ufanya ?",
+        "options": [
+          { "id": "call_and_alert", "label": "Jaribu kumfikia na uarifu wasaidizi wenye ujuzi kama inahitajika", "score": 100 },
+          { "id": "go_out_during_event", "label": "Toka papahi kumuona wakati wa tadjiri hatari", "score": 0 },
+          { "id": "wait_passively", "label": "Usifanye trongo na lindra mwisho wa tadjiri", "score": 50 }
+        ],
+        "explanation": "Kuarifu wasaidizi wenye ujuzi ni salama zaidi kuliko kujiweka hatarini kwa kutoka wakati wa tadjiri hatari."
+      },
+      {
+        "id": "helper_step_3",
+        "prompt": "Baada ya tadjiri, trongo gani ufanya ?",
+        "options": [
+          { "id": "check_and_orient", "label": "Muulize habari zake na umuelekeze kwa misaada iliyopo", "score": 100 },
+          { "id": "decide_without_asking", "label": "Mtunze bila kumuuliza kamwe mahitaji yake ya kweli", "score": 50 },
+          { "id": "consider_done", "label": "Fikiri kwamba sio tena jambo lako", "score": 0 }
+        ],
+        "explanation": "Kuuliza habari na kuelekeza kwa misaada iliyopo kunaendeleza msaada bila kuchukua nafasi ya mifumo rasmi."
+      }
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  }
+]

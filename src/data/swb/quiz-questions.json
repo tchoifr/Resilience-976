@@ -1,0 +1,242 @@
+[
+  {
+    "id": "quiz_cyclone_01",
+    "risk": "cyclone",
+    "text": "Kabla ya cyclone kufika, trongo gani inalinda vizuri nyumba yaho ?",
+    "options": [
+      "Fungatera au ingiza zitru zaweza kuruka na pepo",
+      "Bakisa vyombo vya bustani hunze",
+      "Fungua madirisha yote ili kusawazisha upepo"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Zitru za hunze zisizofungatwa ziweza kuruka na pepo na kuwa hatari. Lazima uziingize au uzifungate imara kabla ya cyclone kufika.",
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_cyclone_02",
+    "risk": "cyclone",
+    "text": "Trongo gani ya fanya wakati wa utulivu wa œil ya cyclone ?",
+    "options": [
+      "Bakia harimwa shiri, pepo itarudi na upande wangina",
+      "Toka papahi ili kuangalia madhara",
+      "Fungua madirisha ili kupepesha nyumba"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Utulivu wa œil ni wa muda mfupi : pepo itarudi upande mwingine, mara nyengi na nguvu sawa. Lazima bakia harimwa shiri hadi mwisho rasmi wa alerte.",
+    "sourceIds": ["source_meteo_france_vigilance_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_cyclone_03",
+    "risk": "cyclone",
+    "text": "Marke gani inatoa alerte ya cyclone ya kuaminika Maore ?",
+    "options": [
+      "Vigilance météorologique rasmi",
+      "Mahujumbe yasiyohakikishwa harimwa réseaux sociaux",
+      "Desturi za miaka iliyopita"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Marke rasmi tu za vigilance météorologique zinatoa alerte ya kuaminika na ya sasa ha Maore.",
+    "sourceIds": ["source_meteo_france_vigilance_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_cyclone_04",
+    "risk": "cyclone",
+    "text": "Alerte ya cyclone imemalidzwa na wakala rasmi. Bassi gani ya fanya ?",
+    "options": [
+      "Bakia makini, taãbu zingine ziweza bakia",
+      "Rudia papahi zi shughuli zote kama kabla",
+      "Puuza consignes zingine za wakala"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Mwisho wa alerte kaimaanishi kaïna taãbu tena (nyaya za umeme dohoni, mihi ilioparaliwa, ndziya zikatwa). Lazima bakia makini.",
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_inondation_01",
+    "risk": "inondation",
+    "text": "Uko mbele ya ndziya iliyofurika maji. Bassi gani ndjema ?",
+    "options": [
+      "Usiingie, hata na gari",
+      "Songa pole pole kujaribu kina",
+      "Fuata gari lingine lililopita"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Kina kidogo cha maji kinatosha kubeba gari au kuficha ndziya iliyoharibika. Kaïlazimu kabisa uingie harimwa ndziya iliyofurika.",
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_inondation_02",
+    "risk": "inondation",
+    "text": "Wapi weka zisahani muhimu wakati wa hatari ya mafuriko ?",
+    "options": [
+      "Harimwa pochette isiyopitisha maji, juu",
+      "Dohoni, harimwa chumba kifungwa",
+      "Harimwa gari lililoegeshwa hunze"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Pochette isiyopitisha maji, iliyowekwa juu, inalinda zisahani muhimu dhidi ya maji kupanda au kuingia.",
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_inondation_03",
+    "risk": "inondation",
+    "text": "Trongo gani inapunguza hatari ya nyumba dhidi ya mvua nyengi ?",
+    "options": [
+      "Tambua kabla trongo dhaifu za nyumba",
+      "Lindra mvua ije ndipo ufanye trongo",
+      "Bakisa zitru muhimu hunze"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Kutambua kabla trongo dhaifu (milango, mahali maji yanapotoka, madirisha) kunaruhusu ufanye trongo kabla, sio wakati wa dharura.",
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_inondation_04",
+    "risk": "inondation",
+    "text": "Baada ya mvua nyengi, habari gani ya fuata ?",
+    "options": [
+      "Consignes rasmi zinazotangazwa harimwa mji",
+      "Uzushi usiohakikishwa",
+      "Desturi zake tu binafsi"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Wakala wa mji ndio wenye habari nzuri zaidi kuhusu hali (ndziya zikatwa, marke zikatwa, mahali ya kuepuka).",
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_seisme_01",
+    "risk": "seisme",
+    "text": "Wakati wa tetemeko la ardhi, bassi gani ndjema harimwa nyumba ?",
+    "options": [
+      "Jilinde chini ya kiti imara, mbali na madirisha",
+      "Kimbia harimwa ngazi",
+      "Bakia wima karibu na kioo"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Kujilinda chini ya kiti imara, mbali na madirisha, kunapunguza hatari ya kuumia na zitru zianguzao au kioo kivunjikacho.",
+    "sourceIds": ["source_prefecture_mayotte_seismes"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_seisme_02",
+    "risk": "seisme",
+    "text": "Papahi baada ya tetemeko, bassi gani salama zaidi ?",
+    "options": [
+      "Hakikisha hatari kabla ya kutoka pole pole",
+      "Tumia ascenseur ili kutoka papahi",
+      "Washa gaz papahi"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Ascenseur inaweza bakia imefungwa baada ya tetemeko na gaz lazima ihakikishwe kabla ya kuwashwa. Kutoka pole pole na makini ndio ndjema.",
+    "sourceIds": ["source_prefecture_mayotte_seismes"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_seisme_03",
+    "risk": "seisme",
+    "text": "Wapi tazama mahali penye hatari ya tetemeko Maore ?",
+    "options": [
+      "Harimwa plans za PPR rasmi",
+      "Harimwa maoni ya wakazi harimwa internet",
+      "Kaïna habari rasmi iliyopo"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Plans za PPR zilizotangazwa na wakala zinaonyesha mahali penye hatari ya tetemeko.",
+    "sourceIds": ["source_georisques_ppr_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_seisme_04",
+    "risk": "seisme",
+    "text": "Mbona fungatera vyombo vizito harimwa nyumba ?",
+    "options": [
+      "Ili kupunguza zitru zianguzao wakati wa tetemeko",
+      "Ili kupata nafasi dohoni",
+      "Kwa sababu ya urembo tu"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Kiti kizito kisichofungatwa kiweza pindua au songa wakati wa tetemeko na kuumiza watru wa nyumba.",
+    "sourceIds": ["source_prefecture_mayotte_seismes"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_mouvement_terrain_01",
+    "risk": "mouvement_terrain",
+    "text": "Alama gani inaweza onyesha mudongo unaoenda karibu na nyumba ?",
+    "options": [
+      "Nyufa mpya dohoni au harimwa kuta",
+      "Nyasi ya kijani zaidi ya desturi",
+      "Anga safi hasa"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Nyufa mpya dohoni, kuta au ndziya ziweza onyesha mudongo unaoenda na lazima zitangazwe.",
+    "sourceIds": ["source_prefecture_mayotte_mouvements_terrain"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_mouvement_terrain_02",
+    "risk": "mouvement_terrain",
+    "text": "Trongo gani ya fanya wakati wa shaka kuhusu udongo karibu na nyumba ?",
+    "options": [
+      "Tangaza hali na fuata mapendekezo rasmi",
+      "Puuza mpaka kuanguka kunaonekana",
+      "Djenga nyongeza bila hakikisho kabla"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Kutangaza mapema kunaruhusu hakikisho na huduma zenye ujuzi kabla mudongo unaoenda kuzidi.",
+    "sourceIds": ["source_prefecture_mayotte_mouvements_terrain"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_mouvement_terrain_03",
+    "risk": "mouvement_terrain",
+    "text": "Wapi tazama mahali penye hatari ya mudongo unaoenda Maore ?",
+    "options": [
+      "Harimwa plans za PPR rasmi",
+      "Kwa makadirio binafsi yasiyohakikishwa",
+      "Kaïna document rasmi iliyopo"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Plans za PPR zinaonyesha rasmi mahali penye hatari ya mudongo unaoenda.",
+    "sourceIds": ["source_georisques_ppr_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "quiz_mouvement_terrain_04",
+    "risk": "mouvement_terrain",
+    "text": "Baada ya mvua nyengi harimwa mahali penye hatari, umakini gani ufanye ?",
+    "options": [
+      "Ongeza umakini ha alama za mudongo unaoenda",
+      "Fikiri kwamba hatari imeondoka papahi",
+      "Karibia talus ili kuangalia karibu"
+    ],
+    "correctOptionIndex": 0,
+    "explanation": "Mvua nyengi zinaongeza hatari ya mudongo unaoenda : umakini lazima uongezwe siku zinazofuata, bila kukaribia mahali pasipo imara.",
+    "sourceIds": ["source_prefecture_mayotte_mouvements_terrain"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  }
+]

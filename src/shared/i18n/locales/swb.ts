@@ -248,6 +248,8 @@ export const swbMessages = {
       documents: 'zisahani',
       household: 'agoni',
     },
+    downloadPdf: 'Shukidza trongo yangu ya PDF',
+    preparingPdf: 'daradjiri ya PDF...',
   },
   legal: {
     eyebrow: 'habari ya shi tsi halali',
@@ -277,6 +279,8 @@ export const swbMessages = {
     globalProgress: 'irengeledza mundro wa telefou',
     completedCount: 'Pevonicha {completed} bumba za pare zadziha {total}',
     resetProgress: 'Namugawia vhale',
+    downloadAttestation: 'Shukidza mkataba',
+    preparingPdf: 'daradjiri ya PDF...',
     watch: 'engedza',
     officialExternal: 'mindru ya dzinatera moni na entreprise ya sirini',
     integratedVideo: 'Insaha video ndziro',
@@ -314,6 +318,61 @@ export const swbMessages = {
       not_started: 'Agonia',
       started: 'aandrisa',
       completed: 'aja ikamilishiha',
+    },
+  },
+  // Brouillon non relu par un locuteur natif, comme le reste de ce fichier :
+  // ces deux blocs (quiz, mises en situation) n'existaient pas du tout avant.
+  quiz: {
+    eyebrow: 'Mwingizo ya haraka',
+    title: 'Quiz ya mahojiano',
+    intro:
+      'Djawabu zi swala zisongorwe kwa bahati kuhusu zi hatari nne za Maore : cyclone, mvua nyengi na maji, tetemeko la ardhi na mudongo unaoenda. Kula djawabu inaelezwa hivi na ishindranishwa na ziashi rasmi.',
+    campaignNotice: 'Session ini ishindranishwa na campagne {campaignId}.',
+    start: 'Andrisa quiz',
+    restart: 'Fanya quiz yangina',
+    scoreLabel: 'Score ya wakati halisi',
+    questionCount: 'Parate {current} / {total}',
+    submit: 'Nisidze djawabu langu',
+    next: 'Suala lingine',
+    seeResults: 'Ngalia matokeo yangu',
+    correct: 'Djawabu tsahihi',
+    incorrect: 'Djawabu ya kuangaliya tena',
+    riskLabels: {
+      cyclone: 'Cyclone',
+      inondation: 'Mvua nyengi na maji',
+      seisme: 'Tetemeko la ardhi',
+      mouvement_terrain: 'Mudongo unaoenda',
+    },
+    results: {
+      title: 'Matokeo ya quiz',
+      summary: '{score} djawabu tsahihi kutoka {total}.',
+      downloadAttestation: 'Shukidza attestation',
+      preparingPdf: 'daradjiri ya PDF...',
+      disclaimer:
+        'Attestation ini inaonyesha score iparihiwe ; kaïna thamani ya certification ya kazi.',
+    },
+  },
+  scenarios: {
+    eyebrow: 'Mihutasa ya maesha',
+    title: 'Mihutasa ya maesha',
+    intro:
+      'Zi mihutasa fupi ambazo kula uamuzi unabadilisha matokeo, ikifuatiwa na maelezo kuhusu bassi safi zaidi, ishindranishwa na mabumba ya formation.',
+    start: 'Andrisa mihutasa ini',
+    relatedCapsule: 'Bumba ishindranishwa',
+  },
+  scenarioPlay: {
+    backToList: 'Rudi harimwa mihutasa ya maesha',
+    stepCount: 'Hatua {current} / {total}',
+    confirm: 'Hakikisha uamuzi unu',
+    next: 'Hatua yangina',
+    seeDebrief: 'Ngalia debrief',
+    debrief: {
+      title: 'Debrief',
+      scoreLabel: 'Score ya usalama',
+      yourChoice: 'Uamuzi waho',
+      safestBehavior: 'Bassi safi zaidi',
+      watchCapsule: 'Ngalia bumba ishindranishwa',
+      restart: 'Fanya mihutasa ini yangina',
     },
   },
   notFound: {
@@ -362,6 +421,25 @@ export const swbMessages = {
     mention: 'ufalume',
     checklistMention:
       'mwandro unu, mutayarishiyo mutayarishiyo wa patana na wanyahe wala kayija na zi trongo zatolewa na wakala hodari.',
+    quizTitle: 'Mkataba wa ushiriki',
+    quizSubtitle: 'Quiz ya mwongozo kuhusu hatari za Maore',
+    quizLine1: 'Waraka unu unathibitisha ushiriki harimwa quiz ya Resilience 976.',
+    quizScoreLine: 'Score iparihiwe : {score}/{total}',
+    quizDisclaimer: 'Mkataba wa mwongozo : kaïna thamani ya certification ya kazi.',
+    videoTitle: 'Mkataba wa ushiriki',
+    videoSubtitle: 'Mafunzo ya video yamalidzwa',
+    videoLine1:
+      'Waraka unu unathibitisha kwamba mafunzo ya video ya Resilience 976 yamalidzwa yote.',
+    videoScoreLine: 'Bumba {total} zamalidzwa',
+    videoDisclaimer: 'Mkataba wa mwongozo : kaïna thamani ya certification ya kazi.',
+    kitTitle: 'trongo yangu ya mila',
+    kitSubtitle: 'Kiasi kihesabiwa kutokana na komba la dagoni',
+    kitItemCount: 'vitru harimwa trongo',
+    kitHint: 'Tika rangowa, ou ourgue aou graphique aou yi para.',
+    kitDisclaimer:
+      'Kiasi kilichoonyeshwa ni mwongozo tu, lazima kirekebishwe na kuhakikishwa na mapendekezo rasmi ya sasa.',
+    kitMention:
+      'Trongo ini ya mila ni musaada wa matayarisho. Kaïbadilishe consignes zinazotolewa na wakala wenye ujuzi.',
   },
   userExperiment: {
     eyebrow: 'Udzisa wa wanatru',
