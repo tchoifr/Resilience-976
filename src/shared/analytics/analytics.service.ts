@@ -15,6 +15,8 @@ export type AnalyticsEventName =
   | 'quiz_started'
   | 'quiz_completed'
   | 'quiz_attestation_generated'
+  | 'scenario_started'
+  | 'scenario_completed'
 
 export interface AnalyticsEvent {
   name: AnalyticsEventName

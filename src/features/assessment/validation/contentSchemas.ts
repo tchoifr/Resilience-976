@@ -135,6 +135,33 @@ export const quizQuestionSchema = z
 
 export const quizQuestionsSchema = z.array(quizQuestionSchema).min(1)
 
+export const scenarioOptionSchema = z.object({
+  id: z.string().min(1),
+  label: z.string().min(1),
+  score: z.number().min(0).max(100),
+})
+
+export const scenarioStepSchema = z.object({
+  id: z.string().min(1),
+  prompt: z.string().min(1),
+  options: z.array(scenarioOptionSchema).min(2),
+  explanation: z.string().min(1),
+})
+
+export const scenarioSchema = z.object({
+  id: z.string().min(1),
+  title: z.string().min(1),
+  intro: z.string().min(1),
+  domain: questionSchema.shape.domain,
+  videoId: z.string().min(1),
+  steps: z.array(scenarioStepSchema).min(1),
+  sourceIds: z.array(z.string().min(1)),
+  validationStatus: validationStatusSchema,
+  revisionDate: z.string().min(1),
+})
+
+export const scenariosSchema = z.array(scenarioSchema).min(1)
+
 export const questionsSchema = z.array(questionSchema).min(1)
 export const actionsSchema = z.array(actionSchema).min(1)
 export const kitSchema = z.array(kitItemSchema).min(1)

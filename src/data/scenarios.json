@@ -1,0 +1,211 @@
+[
+  {
+    "id": "scenario_cyclone",
+    "title": "Une alerte cyclone est déclenchée",
+    "intro": "Vous êtes chez vous quand l’alerte cyclone est diffusée par les autorités. Vos décisions vont influencer votre sécurité pendant l’épisode.",
+    "domain": "behaviors",
+    "videoId": "VID-09",
+    "steps": [
+      {
+        "id": "cyclone_step_1",
+        "prompt": "L’alerte vient d’être déclenchée. Que faites-vous en premier ?",
+        "options": [
+          { "id": "secure_outside", "label": "Rentrer ou fixer les objets extérieurs et vérifier les ouvertures", "score": 100 },
+          { "id": "wait_and_see", "label": "Attendre de voir si la situation empire avant d’agir", "score": 50 },
+          { "id": "ignore", "label": "Ne rien faire, penser que ça ne concerne que d’autres zones", "score": 0 }
+        ],
+        "explanation": "Sécuriser les abords du logement dès l’alerte laisse le temps d’agir sereinement, avant que le vent ne rende toute sortie dangereuse."
+      },
+      {
+        "id": "cyclone_step_2",
+        "prompt": "Le vent forcit fortement à l’extérieur. Quelle attitude adoptez-vous ?",
+        "options": [
+          { "id": "stay_inside", "label": "Rester à l’intérieur, loin des fenêtres", "score": 100 },
+          { "id": "check_roof", "label": "Sortir pour vérifier l’état du toit", "score": 0 },
+          { "id": "open_windows", "label": "Ouvrir les fenêtres pour équilibrer la pression", "score": 0 }
+        ],
+        "explanation": "Rester à l’abri, loin des fenêtres, protège des projections et des bris de verre : sortir ou ouvrir les fenêtres pendant l’épisode est dangereux."
+      },
+      {
+        "id": "cyclone_step_3",
+        "prompt": "Une accalmie soudaine survient (l’œil du cyclone). Que faites-vous ?",
+        "options": [
+          { "id": "stay_sheltered", "label": "Rester à l’abri, le vent va reprendre avec une autre orientation", "score": 100 },
+          { "id": "go_outside", "label": "Sortir évaluer les dégâts pendant l’accalmie", "score": 0 },
+          { "id": "invite_neighbors", "label": "Inviter des voisins à venir voir dehors", "score": 0 }
+        ],
+        "explanation": "L’accalmie de l’œil du cyclone est temporaire : le vent reprend ensuite dans l’autre sens, souvent avec la même intensité."
+      }
+    ],
+    "sourceIds": ["source_prefecture_mayotte", "source_meteo_france_vigilance_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "scenario_coupure_electricite",
+    "title": "Une coupure d’électricité s’installe",
+    "intro": "L’électricité est coupée chez vous depuis un moment. Vos choix vont déterminer si la situation reste gérable ou se dégrade.",
+    "domain": "energy_communication",
+    "videoId": "VID-07",
+    "steps": [
+      {
+        "id": "power_step_1",
+        "prompt": "L’électricité est coupée depuis une heure. Comment vous éclairez-vous ?",
+        "options": [
+          { "id": "flashlight", "label": "Utiliser une lampe torche ou une lampe à piles", "score": 100 },
+          { "id": "candles_everywhere", "label": "Allumer des bougies dans toutes les pièces", "score": 50 },
+          { "id": "overload_strip", "label": "Brancher tous les appareils sur une multiprise improvisée", "score": 0 }
+        ],
+        "explanation": "Une lampe à piles évite les risques d’incendie liés aux bougies ou aux branchements improvisés en situation de coupure prolongée."
+      },
+      {
+        "id": "power_step_2",
+        "prompt": "Le réfrigérateur ne fonctionne plus depuis plusieurs heures. Que faites-vous ?",
+        "options": [
+          { "id": "limit_opening", "label": "Limiter les ouvertures et consommer en priorité les aliments périssables", "score": 100 },
+          { "id": "check_often", "label": "Ouvrir régulièrement pour vérifier l’état des aliments", "score": 0 },
+          { "id": "no_change", "label": "Ne rien changer à ses habitudes de consommation", "score": 50 }
+        ],
+        "explanation": "Limiter les ouvertures conserve le froid plus longtemps et réduit le risque de consommer des aliments périmés."
+      },
+      {
+        "id": "power_step_3",
+        "prompt": "Vous devez informer un proche de la situation mais le réseau mobile est saturé. Que faites-vous ?",
+        "options": [
+          { "id": "radio_or_later", "label": "Suivre une radio à piles et retenter le contact plus tard", "score": 100 },
+          { "id": "call_repeatedly", "label": "Rappeler en continu jusqu’à obtenir une ligne", "score": 50 },
+          { "id": "do_nothing", "label": "Ne rien tenter", "score": 0 }
+        ],
+        "explanation": "Un réseau saturé se libère progressivement : une radio à piles permet de rester informé sans surcharger davantage le réseau mobile."
+      }
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "scenario_coupure_eau",
+    "title": "Une coupure d’eau survient",
+    "intro": "L’eau courante ne fonctionne plus chez vous. Vos décisions vont conditionner votre confort et votre sécurité sanitaire.",
+    "domain": "water_food",
+    "videoId": "VID-08",
+    "steps": [
+      {
+        "id": "water_step_1",
+        "prompt": "L’eau du robinet ne coule plus. Que faites-vous ?",
+        "options": [
+          { "id": "use_reserves", "label": "Utiliser les réserves d’eau potable prévues à l’avance", "score": 100 },
+          { "id": "wait_passively", "label": "Attendre sans réagir que l’eau revienne", "score": 50 },
+          { "id": "stagnant_water", "label": "Utiliser l’eau stagnante disponible à proximité", "score": 0 }
+        ],
+        "explanation": "Les réserves d’eau potable prévues à l’avance évitent de recourir à une eau non contrôlée, risquée pour la santé."
+      },
+      {
+        "id": "water_step_2",
+        "prompt": "Vous devez cuisiner et vous laver avec une réserve limitée. Que privilégiez-vous ?",
+        "options": [
+          { "id": "prioritize_drinking", "label": "Prioriser l’eau potable pour boire et cuisiner, limiter l’usage pour l’hygiène", "score": 100 },
+          { "id": "use_without_distinction", "label": "Utiliser l’eau disponible sans distinction d’usage", "score": 0 },
+          { "id": "avoid_hygiene", "label": "Éviter complètement de se laver par précaution excessive", "score": 50 }
+        ],
+        "explanation": "Réserver l’eau potable à la boisson et à la cuisine tout en réduisant les usages d’hygiène permet de tenir plus longtemps sans risque."
+      },
+      {
+        "id": "water_step_3",
+        "prompt": "Un voisin relaie une rumeur sur le retour imminent de l’eau. Que faites-vous ?",
+        "options": [
+          { "id": "check_official", "label": "Vérifier l’information auprès des canaux officiels avant d’agir", "score": 100 },
+          { "id": "follow_rumor", "label": "Suivre directement la rumeur", "score": 0 },
+          { "id": "ignore_all", "label": "Ignorer toute information, y compris officielle", "score": 50 }
+        ],
+        "explanation": "Seules les informations officielles confirment de façon fiable le rétablissement d’un service essentiel."
+      }
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "scenario_documents",
+    "title": "Protéger ses documents avant un risque annoncé",
+    "intro": "Un épisode à risque est annoncé pour votre secteur. Vos choix vont déterminer si vos documents essentiels restent en sécurité.",
+    "domain": "health_documents",
+    "videoId": "VID-04",
+    "steps": [
+      {
+        "id": "docs_step_1",
+        "prompt": "Vous apprenez qu’un épisode à risque est annoncé. Que faites-vous de vos documents importants ?",
+        "options": [
+          { "id": "waterproof_pouch", "label": "Les rassembler dans une pochette étanche facile à emporter", "score": 100 },
+          { "id": "spread_around", "label": "Les répartir un peu partout dans la maison « au cas où »", "score": 50 },
+          { "id": "leave_as_is", "label": "Les laisser à leur place habituelle", "score": 0 }
+        ],
+        "explanation": "Une pochette étanche unique et facile à emporter protège les documents et évite de perdre du temps à les chercher en urgence."
+      },
+      {
+        "id": "docs_step_2",
+        "prompt": "Vous devez évacuer rapidement. Que faites-vous ?",
+        "options": [
+          { "id": "take_pouch", "label": "Emporter directement la pochette déjà préparée", "score": 100 },
+          { "id": "copy_in_a_hurry", "label": "Perdre du temps à tout copier en urgence avant de partir", "score": 50 },
+          { "id": "leave_without_thinking", "label": "Partir sans se soucier des documents", "score": 0 }
+        ],
+        "explanation": "Une pochette préparée à l’avance permet d’évacuer vite sans perdre de temps ni laisser de documents essentiels sur place."
+      },
+      {
+        "id": "docs_step_3",
+        "prompt": "De retour chez vous après l’événement, que faites-vous ?",
+        "options": [
+          { "id": "check_and_store", "label": "Vérifier l’état des documents et les remettre à l’abri", "score": 100 },
+          { "id": "leave_unchecked", "label": "Les laisser tels quels sans vérification", "score": 0 }
+        ],
+        "explanation": "Vérifier l’état des documents après un événement permet de repérer d’éventuels dommages et de les protéger à nouveau."
+      }
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "scenario_aide_vulnerable",
+    "title": "Aider une personne vulnérable de son entourage",
+    "intro": "Une personne âgée isolée vit près de chez vous. Vos décisions vont déterminer si elle reste en sécurité pendant et après l’événement.",
+    "domain": "household",
+    "videoId": "VID-06",
+    "steps": [
+      {
+        "id": "helper_step_1",
+        "prompt": "Avant l’événement, que faites-vous ?",
+        "options": [
+          { "id": "offer_consented_help", "label": "Lui proposer une aide simple, avec son accord", "score": 100 },
+          { "id": "decide_for_her", "label": "Décider à sa place sans lui demander son avis", "score": 50 },
+          { "id": "do_nothing", "label": "Ne rien faire, ce n’est pas votre responsabilité", "score": 0 }
+        ],
+        "explanation": "Proposer une aide simple et consentie respecte son autonomie tout en réduisant son isolement avant l’événement."
+      },
+      {
+        "id": "helper_step_2",
+        "prompt": "Pendant l’événement, vous perdez le contact avec elle. Que faites-vous ?",
+        "options": [
+          { "id": "call_and_alert", "label": "Essayer de la joindre et alerter les secours compétents si nécessaire", "score": 100 },
+          { "id": "go_out_during_event", "label": "Sortir immédiatement la voir pendant l’épisode dangereux", "score": 0 },
+          { "id": "wait_passively", "label": "Ne rien faire et attendre la fin de l’événement", "score": 50 }
+        ],
+        "explanation": "Alerter les secours compétents est plus sûr que de s’exposer soi-même en sortant pendant un épisode dangereux."
+      },
+      {
+        "id": "helper_step_3",
+        "prompt": "Après l’événement, que faites-vous ?",
+        "options": [
+          { "id": "check_and_orient", "label": "Prendre de ses nouvelles et l’orienter vers les aides disponibles", "score": 100 },
+          { "id": "decide_without_asking", "label": "S’occuper d’elle sans jamais la consulter sur ses besoins réels", "score": 50 },
+          { "id": "consider_done", "label": "Considérer que ce n’est plus votre sujet", "score": 0 }
+        ],
+        "explanation": "Prendre des nouvelles et orienter vers les aides disponibles prolonge le soutien sans se substituer aux dispositifs officiels."
+      }
+    ],
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  }
+]

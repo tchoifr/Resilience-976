@@ -71,6 +71,20 @@ const router = createRouter({
       },
     },
     {
+      path: '/mises-en-situation',
+      component: () => import('@/views/ScenariosView.vue'),
+      meta: {
+        seoKey: 'scenarios',
+      },
+    },
+    {
+      path: '/mises-en-situation/:id',
+      component: () => import('@/views/ScenarioPlayView.vue'),
+      meta: {
+        seoKey: 'scenarioPlay',
+      },
+    },
+    {
       path: '/tableau-de-bord',
       component: () => import('@/views/DashboardView.vue'),
       meta: {

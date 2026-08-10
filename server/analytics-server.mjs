@@ -47,6 +47,8 @@ const eventMap = {
   quiz_started: 'quiz_started',
   quiz_completed: 'quiz_completed',
   quiz_attestation_generated: 'quiz_attestation_generated',
+  scenario_started: 'scenario_started',
+  scenario_completed: 'scenario_completed',
 }
 
 const allowedEvents = new Set(Object.keys(eventMap))
@@ -71,6 +73,7 @@ const allowedPaths = new Set([
   '/ressources',
   '/videos',
   '/quiz',
+  '/mises-en-situation',
   '/tableau-de-bord',
   '/tableau-de-bord/experimentation',
   '/tableau-de-bord/diagnostics',
