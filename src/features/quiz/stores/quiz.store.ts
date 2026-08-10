@@ -11,6 +11,7 @@ interface QuizStoreState {
   selectedIndex: number | null
   isAnswered: boolean
   results: boolean[]
+  answers: Record<string, number>
   status: QuizStatus
 }
 
@@ -21,6 +22,7 @@ function createInitialState(): QuizStoreState {
     selectedIndex: null,
     isAnswered: false,
     results: [],
+    answers: {},
     status: 'idle',
   }
 }
@@ -42,6 +44,7 @@ export const useQuizStore = defineStore('quiz', {
       this.selectedIndex = null
       this.isAnswered = false
       this.results = []
+      this.answers = {}
       this.status = this.session.length > 0 ? 'playing' : 'idle'
     },
     select(optionIndex: number) {
@@ -56,8 +59,14 @@ export const useQuizStore = defineStore('quiz', {
         return
       }
 
+      const originalIndex = this.currentItem.originalIndexes[this.selectedIndex]
+
       this.isAnswered = true
       this.results[this.currentIndex] = this.selectedIndex === this.currentItem.correctOptionIndex
+
+      if (originalIndex !== undefined) {
+        this.answers[this.currentItem.question.id] = originalIndex
+      }
     },
     nextQuestion() {
       if (!this.isAnswered) {

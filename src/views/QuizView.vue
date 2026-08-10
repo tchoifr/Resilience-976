@@ -47,7 +47,11 @@ function nextQuestion() {
 
   if (wasLastQuestion) {
     trackEvent('quiz_completed')
-    syncQuizResult({ score: quizStore.score, total: quizStore.total })
+    syncQuizResult({
+      score: quizStore.score,
+      total: quizStore.total,
+      answers: quizStore.answers,
+    })
   }
 }
 

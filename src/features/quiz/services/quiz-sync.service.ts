@@ -12,6 +12,9 @@ const quizSyncEndpoint = import.meta.env.VITE_QUIZ_SYNC_ENDPOINT ?? defaultQuizS
 export interface QuizResultInput {
   score: number
   total: number
+  // questionId -> selected option index (in the question's original,
+  // unshuffled option order), so per-question stats can be computed later.
+  answers: Record<string, number>
 }
 
 // No name is ever collected: a school, company or local authority can
@@ -28,6 +31,7 @@ export function syncQuizResult(input: QuizResultInput): void {
     campaignId: getCampaignId(),
     score: input.score,
     total: input.total,
+    answers: input.answers,
   }
 
   void fetch(quizSyncEndpoint, {

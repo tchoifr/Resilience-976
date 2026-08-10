@@ -18,4 +18,8 @@ export interface QuizSessionItem {
   question: QuizQuestion
   options: string[]
   correctOptionIndex: number
+  // Maps a shuffled option position back to its original index in
+  // question.options, so an answer can be recorded and later scored
+  // against the (unshuffled) question bank.
+  originalIndexes: number[]
 }

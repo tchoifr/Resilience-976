@@ -32,6 +32,7 @@ function buildSessionItem(question: QuizQuestion): QuizSessionItem {
     question,
     options,
     correctOptionIndex: shuffledIndexes.indexOf(question.correctOptionIndex),
+    originalIndexes: shuffledIndexes,
   }
 }
 

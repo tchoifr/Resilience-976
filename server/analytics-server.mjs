@@ -18,6 +18,9 @@ const DATABASE_FILE = resolve(
 const QUESTIONS_FILE = resolve(
   process.env.QUESTIONS_DATA_FILE ?? 'src/data/questions.json',
 )
+const QUIZ_QUESTIONS_FILE = resolve(
+  process.env.QUIZ_QUESTIONS_DATA_FILE ?? 'src/data/quiz-questions.json',
+)
 const ALLOWED_ORIGINS = (
   process.env.ANALYTICS_ALLOWED_ORIGINS ??
   'http://127.0.0.1:5173,http://localhost:5173'
@@ -236,6 +239,42 @@ async function getQuestionsIndex() {
   return questionsIndex
 }
 
+let quizQuestionsIndex = null
+
+async function getQuizQuestionsIndex() {
+  if (quizQuestionsIndex) {
+    return quizQuestionsIndex
+  }
+
+  const questions = JSON.parse(await readFile(QUIZ_QUESTIONS_FILE, 'utf8'))
+  const byId = new Map(questions.map((question) => [question.id, question]))
+
+  quizQuestionsIndex = { questions, byId }
+  return quizQuestionsIndex
+}
+
+async function sanitizeQuizAnswers(input) {
+  const { byId } = await getQuizQuestionsIndex()
+  const answers = input && typeof input === 'object' ? input : {}
+  const sanitized = {}
+
+  for (const [questionId, optionIndex] of Object.entries(answers)) {
+    const question = byId.get(questionId)
+    const index = Number(optionIndex)
+
+    if (
+      question &&
+      Number.isInteger(index) &&
+      index >= 0 &&
+      index < question.options.length
+    ) {
+      sanitized[questionId] = index
+    }
+  }
+
+  return sanitized
+}
+
 async function sanitizeDiagnosticAnswers(input) {
   const { validAnswersByQuestion } = await getQuestionsIndex()
   const answers = input && typeof input === 'object' ? input : {}
@@ -378,19 +417,15 @@ async function sanitizeDiagnosticResponse(input) {
   }
 }
 
-function sanitizePseudonym(value) {
-  return typeof value === 'string' ? value.trim().slice(0, 40) : ''
-}
-
-function sanitizeQuizResult(input) {
+async function sanitizeQuizResult(input) {
   return {
     id: sanitizeVisitorId(input.id),
     createdAt: new Date().toISOString(),
     visitorId: sanitizeVisitorId(input.visitorId),
     campaignId: sanitizeCampaign(input.campaignId),
-    pseudonym: sanitizePseudonym(input.pseudonym),
     score: sanitizeInteger(input.score, 0, 1000, 0),
     total: sanitizeInteger(input.total, 0, 1000, 0),
+    answers: await sanitizeQuizAnswers(input.answers),
   }
 }
 
@@ -487,9 +522,9 @@ async function getDatabase() {
       created_at TEXT NOT NULL,
       visitor_id TEXT NOT NULL,
       campaign_id TEXT NOT NULL,
-      pseudonym TEXT NOT NULL,
       score INTEGER NOT NULL,
-      total INTEGER NOT NULL
+      total INTEGER NOT NULL,
+      answers_json TEXT NOT NULL
     );
 
     CREATE INDEX IF NOT EXISTS quiz_results_created_at_idx
@@ -550,9 +585,9 @@ async function saveQuizResult(quizResult) {
           created_at,
           visitor_id,
           campaign_id,
-          pseudonym,
           score,
-          total
+          total,
+          answers_json
         )
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `,
@@ -562,9 +597,9 @@ async function saveQuizResult(quizResult) {
       quizResult.createdAt,
       quizResult.visitorId,
       quizResult.campaignId,
-      quizResult.pseudonym,
       quizResult.score,
       quizResult.total,
+      JSON.stringify(quizResult.answers),
     )
 }
 
@@ -686,7 +721,7 @@ async function readQuizResultRows() {
   return currentDatabase
     .prepare(
       `
-        SELECT campaign_id, pseudonym, score, total, created_at
+        SELECT campaign_id, score, total, answers_json, created_at
         FROM quiz_results
         ORDER BY created_at DESC
       `,
@@ -694,41 +729,72 @@ async function readQuizResultRows() {
     .all()
     .map((row) => ({
       campaignId: row.campaign_id,
-      pseudonym: row.pseudonym,
       score: Number(row.score),
       total: Number(row.total),
+      answers: parseRatingsJson(row.answers_json),
       createdAt: row.created_at,
     }))
 }
 
-function buildQuizStats(rows) {
-  const campaigns = new Map()
+function buildQuizQuestionBreakdown(rows, quizIndex) {
+  const optionCountsByQuestion = new Map()
 
   for (const row of rows) {
+    for (const [questionId, optionIndex] of Object.entries(row.answers)) {
+      if (!optionCountsByQuestion.has(questionId)) {
+        optionCountsByQuestion.set(questionId, new Map())
+      }
+
+      const optionCounts = optionCountsByQuestion.get(questionId)
+      optionCounts.set(optionIndex, (optionCounts.get(optionIndex) ?? 0) + 1)
+    }
+  }
+
+  return quizIndex.questions.map((question) => {
+    const optionCounts = optionCountsByQuestion.get(question.id) ?? new Map()
+    const totalAnswered = Array.from(optionCounts.values()).reduce(
+      (sum, count) => sum + count,
+      0,
+    )
+
+    return {
+      id: question.id,
+      risk: question.risk,
+      totalAnswered,
+      correctCount: optionCounts.get(question.correctOptionIndex) ?? 0,
+      options: question.options.map((label, index) => ({
+        index,
+        label,
+        count: optionCounts.get(index) ?? 0,
+      })),
+    }
+  })
+}
+
+function buildQuizStats(rows, quizIndex) {
+  const campaigns = new Map()
+  let scorePercentSum = 0
+
+  for (const row of rows) {
+    const scorePercent = row.total === 0 ? 0 : Math.round((row.score / row.total) * 100)
+    scorePercentSum += scorePercent
+
     const current = campaigns.get(row.campaignId) ?? {
       campaignId: row.campaignId,
       participants: 0,
-      scoreSum: 0,
-      topScores: [],
+      scorePercentSum: 0,
     }
 
     current.participants += 1
-    current.scoreSum += row.total === 0 ? 0 : Math.round((row.score / row.total) * 100)
-
-    if (row.pseudonym) {
-      current.topScores.push({
-        pseudonym: row.pseudonym,
-        score: row.score,
-        total: row.total,
-      })
-    }
-
+    current.scorePercentSum += scorePercent
     campaigns.set(row.campaignId, current)
   }
 
   return {
     generatedAt: new Date().toISOString(),
     total: rows.length,
+    averageScorePercent:
+      rows.length === 0 ? 0 : Math.round(scorePercentSum / rows.length),
     campaigns: Array.from(campaigns.values())
       .map((campaign) => ({
         campaignId: campaign.campaignId,
@@ -736,12 +802,10 @@ function buildQuizStats(rows) {
         averageScorePercent:
           campaign.participants === 0
             ? 0
-            : Math.round(campaign.scoreSum / campaign.participants),
-        topScores: campaign.topScores
-          .sort((a, b) => b.score / b.total - a.score / a.total)
-          .slice(0, 10),
+            : Math.round(campaign.scorePercentSum / campaign.participants),
       }))
       .sort((a, b) => b.participants - a.participants),
+    questionBreakdown: buildQuizQuestionBreakdown(rows, quizIndex),
   }
 }
 
@@ -1137,7 +1201,7 @@ const server = createServer(async (request, response) => {
 
     if (request.method === 'POST' && requestUrl.pathname === '/api/quiz-results') {
       const body = await readBody(request)
-      const quizResult = sanitizeQuizResult(body)
+      const quizResult = await sanitizeQuizResult(body)
 
       if (quizResult.total === 0) {
         sendJson(response, 400, { error: 'invalid_quiz_result' }, origin)
@@ -1150,9 +1214,12 @@ const server = createServer(async (request, response) => {
     }
 
     if (request.method === 'GET' && requestUrl.pathname === '/api/quiz-results/stats') {
-      const rows = await readQuizResultRows()
+      const [rows, quizIndex] = await Promise.all([
+        readQuizResultRows(),
+        getQuizQuestionsIndex(),
+      ])
 
-      sendJson(response, 200, buildQuizStats(rows), origin)
+      sendJson(response, 200, buildQuizStats(rows, quizIndex), origin)
       return
     }
 
