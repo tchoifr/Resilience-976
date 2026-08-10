@@ -2,6 +2,7 @@
 import { RouterLink } from 'vue-router'
 
 import AppAlert from '@/components/ui/AppAlert.vue'
+import RetroStatsBanner from '@/components/ui/RetroStatsBanner.vue'
 import { useAssessmentStore } from '@/features/assessment/stores/assessment.store'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
@@ -86,6 +87,8 @@ const journeySteps = [
           </picture>
         </div>
       </div>
+
+      <RetroStatsBanner />
 
       <section class="journey-panel" :aria-label="t('home.journeyAria')">
         <h2>{{ t('home.journeyTitle') }}</h2>
