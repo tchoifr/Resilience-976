@@ -154,45 +154,6 @@ onMounted(async () => {
         </article>
       </section>
 
-      <div class="cluster">
-        <RouterLink
-          class="link-button link-button--secondary"
-          to="/tableau-de-bord/diagnostics"
-        >
-          Statistiques du diagnostic
-        </RouterLink>
-        <RouterLink
-          class="link-button link-button--secondary"
-          to="/tableau-de-bord/quiz"
-        >
-          Statistiques du quiz
-        </RouterLink>
-        <RouterLink
-          class="link-button link-button--secondary"
-          to="/tableau-de-bord/formations"
-        >
-          Statistiques des formations
-        </RouterLink>
-        <RouterLink
-          class="link-button link-button--secondary"
-          to="/tableau-de-bord/mises-en-situation"
-        >
-          Statistiques des mises en situation
-        </RouterLink>
-        <RouterLink
-          class="link-button link-button--secondary"
-          to="/tableau-de-bord/kit"
-        >
-          Statistiques du kit
-        </RouterLink>
-        <RouterLink
-          class="link-button link-button--secondary"
-          to="/tableau-de-bord/experimentation"
-        >
-          Statistiques du formulaire
-        </RouterLink>
-      </div>
-
       <p v-if="populationSource" class="muted">
         Objectif calculé sur la base de la population de Mayotte (323 153
         habitants au 1er janvier 2026).
@@ -220,6 +181,63 @@ onMounted(async () => {
             <span>{{ step.label }}</span>
             <small>{{ step.help }}</small>
           </article>
+        </div>
+      </section>
+
+      <section class="stack">
+        <h2 class="section-title">Statistiques agrégées</h2>
+        <div class="cluster">
+          <RouterLink
+            class="link-button link-button--secondary"
+            to="/tableau-de-bord/diagnostics"
+          >
+            Statistiques du diagnostic
+          </RouterLink>
+          <RouterLink
+            class="link-button link-button--secondary"
+            to="/tableau-de-bord/quiz"
+          >
+            Statistiques du quiz
+          </RouterLink>
+          <RouterLink
+            class="link-button link-button--secondary"
+            to="/tableau-de-bord/formations"
+          >
+            Statistiques des formations
+          </RouterLink>
+          <RouterLink
+            class="link-button link-button--secondary"
+            to="/tableau-de-bord/mises-en-situation"
+          >
+            Statistiques des mises en situation
+          </RouterLink>
+          <RouterLink
+            class="link-button link-button--secondary"
+            to="/tableau-de-bord/kit"
+          >
+            Statistiques du kit
+          </RouterLink>
+          <RouterLink
+            class="link-button link-button--secondary"
+            to="/tableau-de-bord/experimentation"
+          >
+            Statistiques du formulaire
+          </RouterLink>
+        </div>
+      </section>
+
+      <section class="stack">
+        <h2 class="section-title">Visiteurs individuels</h2>
+        <div class="cluster">
+          <RouterLink
+            class="link-button link-button--secondary"
+            to="/tableau-de-bord/graphe-visiteurs"
+          >
+            Graphe des visiteurs
+          </RouterLink>
+          <RouterLink class="link-button link-button--secondary" to="/tableau-de-bord/visiteur">
+            Rechercher un visiteur
+          </RouterLink>
         </div>
       </section>
     </div>

@@ -157,6 +157,16 @@ export const frMessages = {
       description:
         'Résultats agrégés des profils de foyer utilisés pour personnaliser le kit d’urgence.',
     },
+    visitorGraph: {
+      title: 'Graphe des visiteurs - Resilience 976',
+      description:
+        'Vue relationnelle des visiteurs anonymes regroupés par campagne de mobilisation.',
+    },
+    visitorProfile: {
+      title: 'Données d’un visiteur - Resilience 976',
+      description:
+        'Recherche des données enregistrées pour un identifiant de visiteur anonyme donné.',
+    },
     dashboard: {
       title: 'Tableau de bord - Resilience 976',
       description:
@@ -707,6 +717,66 @@ export const frMessages = {
       withElderly: 'Avec personnes âgées',
       withPets: 'Avec animaux',
       withSpecialNeeds: 'Avec besoins particuliers',
+    },
+  },
+  visitorGraph: {
+    eyebrow: 'Vue relationnelle',
+    title: 'Graphe des visiteurs par campagne',
+    intro:
+      'Chaque point est un visiteur anonyme (identifiant local, sans donnée personnelle), relié au nœud de la campagne dont il fait partie. Deux visiteurs ne sont jamais reliés directement entre eux : ils partagent seulement une campagne.',
+    backToDashboard: 'Retour au tableau de bord',
+    searchVisitor: 'Rechercher un visiteur',
+    loading: 'Chargement',
+    noData: 'Aucun visiteur enregistré pour le moment.',
+    summary: {
+      totalVisitors: 'Visiteurs',
+      totalCampaigns: 'Campagnes',
+    },
+    legend: {
+      title: 'Légende',
+      campaign: 'Campagne (taille = nombre de participants)',
+      visited: 'Visiteur — page vue seulement',
+      engaged: 'Visiteur — diagnostic commencé',
+      actioned: 'Visiteur — plan, checklist, kit ou PDF ouvert',
+      completed: 'Visiteur — diagnostic terminé',
+    },
+    statusShort: {
+      visited: 'page vue',
+      engaged: 'diagnostic commencé',
+      actioned: 'action réalisée',
+      completed: 'diagnostic terminé',
+    },
+    tooltip: {
+      campaign: 'Campagne',
+      visitors: 'visiteur(s)',
+      clickHint: 'Cliquer pour voir toutes ses données',
+    },
+  },
+  visitorProfile: {
+    eyebrow: 'Recherche par identifiant',
+    title: 'Données d’un visiteur',
+    intro:
+      'Recherchez un visiteur par son identifiant local (anonyme, sans donnée personnelle) pour voir tout ce qui a été enregistré à son sujet.',
+    backToDashboard: 'Retour au tableau de bord',
+    backToGraph: 'Retour au graphe',
+    inputLabel: 'Identifiant du visiteur',
+    inputPlaceholder: 'Identifiant du visiteur',
+    search: 'Rechercher',
+    loading: 'Recherche…',
+    invalidId: 'Cet identifiant n’a pas un format valide.',
+    technicalError: 'La recherche a échoué. Réessayez.',
+    notFound: 'Aucune donnée trouvée pour cet identifiant.',
+    empty: 'Rien à afficher pour cette section.',
+    campaign: 'Campagne',
+    answersCount: 'réponse(s)',
+    quizCorrect: 'quiz réussi',
+    sections: {
+      diagnostic: 'Diagnostics',
+      quiz: 'Quiz',
+      scenarios: 'Mises en situation',
+      videos: 'Vidéos',
+      kit: 'Kit d’urgence',
+      timeline: 'Historique des événements',
     },
   },
   quiz: {

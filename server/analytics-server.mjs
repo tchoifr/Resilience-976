@@ -91,6 +91,8 @@ const allowedPaths = new Set([
   '/declaration-accessibilite',
   '/support',
   '/tableau-de-bord/kit',
+  '/tableau-de-bord/graphe-visiteurs',
+  '/tableau-de-bord/visiteur',
 ])
 
 const actionEvents = new Set([
@@ -235,6 +237,13 @@ function sanitizeVisitorId(value) {
   return typeof value === 'string' && /^[a-f0-9-]{36}$/.test(value)
     ? value
     : randomUUID()
+}
+
+// Unlike sanitizeVisitorId (which silently substitutes a fresh id when the
+// input is malformed, fine for write paths), a lookup must be able to say
+// "that's not a valid id" instead of quietly generating a random one.
+function isValidVisitorId(value) {
+  return typeof value === 'string' && /^[a-f0-9-]{36}$/.test(value)
 }
 
 let questionsIndex = null
@@ -1496,6 +1505,219 @@ function uniqueVisitorIds(events, matchesEvent) {
   )
 }
 
+// Graphe en etoile plutot qu'en clique : chaque visiteur (anonyme, deja
+// collecte) n'est relie qu'au noeud de sa campagne, jamais aux autres
+// visiteurs directement. Une clique par campagne donnerait O(n^2) aretes
+// (une campagne de 200 personnes en donnerait ~20 000) et suggererait des
+// relations pair-a-pair qui n'existent pas dans la donnee : deux visiteurs
+// d'une meme campagne ne sont pas "lies" l'un a l'autre, ils partagent
+// seulement une campagne.
+function buildVisitorGraph(events) {
+  const engagedVisitorIds = uniqueVisitorIds(
+    events,
+    (event) => event.name === 'diagnostic_started',
+  )
+  const completedVisitorIds = uniqueVisitorIds(
+    events,
+    (event) => event.name === 'diagnostic_completed',
+  )
+  const actionVisitorIds = uniqueVisitorIds(events, (event) =>
+    actionEvents.has(event.name),
+  )
+
+  const campaignByVisitor = new Map()
+
+  for (const event of events) {
+    campaignByVisitor.set(event.visitorId, event.campaignId)
+  }
+
+  function statusFor(visitorId) {
+    if (completedVisitorIds.has(visitorId)) {
+      return 'completed'
+    }
+
+    if (actionVisitorIds.has(visitorId)) {
+      return 'actioned'
+    }
+
+    if (engagedVisitorIds.has(visitorId)) {
+      return 'engaged'
+    }
+
+    return 'visited'
+  }
+
+  const visitorIds = Array.from(campaignByVisitor.keys())
+  const campaignCounts = new Map()
+
+  for (const visitorId of visitorIds) {
+    const campaignId = campaignByVisitor.get(visitorId)
+    campaignCounts.set(campaignId, (campaignCounts.get(campaignId) ?? 0) + 1)
+  }
+
+  const campaignNodes = Array.from(campaignCounts.entries()).map(
+    ([campaignId, visitorCount]) => ({
+      id: `campaign:${campaignId}`,
+      type: 'campaign',
+      campaignId,
+      visitorCount,
+    }),
+  )
+
+  const visitorNodes = visitorIds.map((visitorId) => ({
+    id: `visitor:${visitorId}`,
+    type: 'visitor',
+    campaignId: campaignByVisitor.get(visitorId),
+    status: statusFor(visitorId),
+  }))
+
+  const edges = visitorIds.map((visitorId) => ({
+    source: `visitor:${visitorId}`,
+    target: `campaign:${campaignByVisitor.get(visitorId)}`,
+  }))
+
+  return {
+    generatedAt: new Date().toISOString(),
+    totalVisitors: visitorIds.length,
+    totalCampaigns: campaignCounts.size,
+    nodes: [...campaignNodes, ...visitorNodes],
+    edges,
+  }
+}
+
+// Full pull for one visitor id, across every table that keys on it. Still no
+// personal data (there is none to pull), but this is a much more granular
+// view than any other dashboard screen exposes, hence the id itself has to
+// be known/typed in rather than browsable from a list.
+async function getVisitorProfile(visitorId) {
+  const currentDatabase = await getDatabase()
+
+  const diagnosticResponses = currentDatabase
+    .prepare(
+      `
+        SELECT id, created_at, campaign_id, version, answers_json
+        FROM diagnostic_responses
+        WHERE visitor_id = ?
+        ORDER BY created_at DESC
+      `,
+    )
+    .all(visitorId)
+    .map((row) => ({
+      id: row.id,
+      createdAt: row.created_at,
+      campaignId: row.campaign_id,
+      version: row.version,
+      answers: parseRatingsJson(row.answers_json),
+    }))
+
+  const quizResults = currentDatabase
+    .prepare(
+      `
+        SELECT id, created_at, campaign_id, score, total, answers_json
+        FROM quiz_results
+        WHERE visitor_id = ?
+        ORDER BY created_at DESC
+      `,
+    )
+    .all(visitorId)
+    .map((row) => ({
+      id: row.id,
+      createdAt: row.created_at,
+      campaignId: row.campaign_id,
+      score: Number(row.score),
+      total: Number(row.total),
+      answers: parseRatingsJson(row.answers_json),
+    }))
+
+  const scenarioResults = currentDatabase
+    .prepare(
+      `
+        SELECT id, created_at, campaign_id, scenario_id, score, choices_json
+        FROM scenario_results
+        WHERE visitor_id = ?
+        ORDER BY created_at DESC
+      `,
+    )
+    .all(visitorId)
+    .map((row) => ({
+      id: row.id,
+      createdAt: row.created_at,
+      campaignId: row.campaign_id,
+      scenarioId: row.scenario_id,
+      score: Number(row.score),
+      choices: parseRatingsJson(row.choices_json),
+    }))
+
+  const videoProgress = currentDatabase
+    .prepare(
+      `
+        SELECT video_id, campaign_id, status, quiz_answered_correctly, updated_at
+        FROM video_progress
+        WHERE visitor_id = ?
+        ORDER BY updated_at DESC
+      `,
+    )
+    .all(visitorId)
+    .map((row) => ({
+      videoId: row.video_id,
+      campaignId: row.campaign_id,
+      status: row.status,
+      quizAnsweredCorrectly: Boolean(row.quiz_answered_correctly),
+      updatedAt: row.updated_at,
+    }))
+
+  const kitProfileRow = currentDatabase
+    .prepare(
+      `
+        SELECT campaign_id, adults, children, elderly, pets, special_needs, updated_at
+        FROM kit_profiles
+        WHERE visitor_id = ?
+      `,
+    )
+    .get(visitorId)
+  const kitProfile = kitProfileRow
+    ? {
+        campaignId: kitProfileRow.campaign_id,
+        adults: Number(kitProfileRow.adults),
+        children: Number(kitProfileRow.children),
+        elderly: Number(kitProfileRow.elderly),
+        pets: Number(kitProfileRow.pets),
+        specialNeeds: Boolean(kitProfileRow.special_needs),
+        updatedAt: kitProfileRow.updated_at,
+      }
+    : null
+
+  const events = await readEvents()
+  const timeline = events
+    .filter((event) => event.visitorId === visitorId)
+    .map((event) => ({
+      name: event.name,
+      path: event.path,
+      campaignId: event.campaignId,
+      createdAt: event.createdAt,
+    }))
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+
+  const found =
+    diagnosticResponses.length > 0 ||
+    quizResults.length > 0 ||
+    scenarioResults.length > 0 ||
+    videoProgress.length > 0 ||
+    kitProfile !== null ||
+    timeline.length > 0
+
+  return {
+    visitorId,
+    found,
+    diagnosticResponses,
+    quizResults,
+    scenarioResults,
+    videoProgress,
+    kitProfile,
+    timeline,
+  }
+}
+
 function buildDashboard(events, updatedAt, feedbackDatabaseCount = 0) {
   // Funnel steps count unique visitors, not raw events: a visitor who
   // resumes, refreshes /resultats, or fires several actionEvents (e.g. a
@@ -1774,6 +1996,26 @@ const server = createServer(async (request, response) => {
         buildDiagnosticStats(rows, index, totalStarted),
         origin,
       )
+      return
+    }
+
+    if (request.method === 'GET' && requestUrl.pathname === '/api/visitors/graph') {
+      const events = await readEvents()
+
+      sendJson(response, 200, buildVisitorGraph(events), origin)
+      return
+    }
+
+    if (request.method === 'GET' && requestUrl.pathname === '/api/visitors/profile') {
+      const visitorId = requestUrl.searchParams.get('visitorId') ?? ''
+
+      if (!isValidVisitorId(visitorId)) {
+        sendJson(response, 400, { error: 'invalid_visitor_id' }, origin)
+        return
+      }
+
+      const profile = await getVisitorProfile(visitorId)
+      sendJson(response, 200, profile, origin)
       return
     }
 
