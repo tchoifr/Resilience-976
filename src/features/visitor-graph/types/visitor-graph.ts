@@ -1,24 +1,31 @@
 export type VisitorStatus = 'visited' | 'engaged' | 'actioned' | 'completed'
+export type VisitorGraphEdgeType = 'campaign' | 'risk'
 
 export interface VisitorGraphNodeData {
   id: string
-  type: 'campaign' | 'visitor'
-  campaignId: string
-  // Present only on type: 'campaign'.
+  type: 'campaign' | 'visitor' | 'risk'
+  // Present on type: 'campaign' and type: 'visitor'.
+  campaignId?: string
+  // Present only on type: 'campaign' and type: 'risk'.
   visitorCount?: number
   // Present only on type: 'visitor'.
   status?: VisitorStatus
+  // Present only on type: 'risk' — the diagnostic domain slug, translate via
+  // getDomainLabel().
+  domain?: string
 }
 
 export interface VisitorGraphEdgeData {
   source: string
   target: string
+  type: VisitorGraphEdgeType
 }
 
 export interface VisitorGraphResponse {
   generatedAt: string
   totalVisitors: number
   totalCampaigns: number
+  totalRiskDomains: number
   nodes: VisitorGraphNodeData[]
   edges: VisitorGraphEdgeData[]
 }

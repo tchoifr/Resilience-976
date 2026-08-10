@@ -1512,7 +1512,46 @@ function uniqueVisitorIds(events, matchesEvent) {
 // relations pair-a-pair qui n'existent pas dans la donnee : deux visiteurs
 // d'une meme campagne ne sont pas "lies" l'un a l'autre, ils partagent
 // seulement une campagne.
-function buildVisitorGraph(events) {
+async function readLatestDiagnosticAnswersByVisitor() {
+  const currentDatabase = await getDatabase()
+  const rows = currentDatabase
+    .prepare(
+      `
+        SELECT visitor_id, answers_json
+        FROM diagnostic_responses
+        ORDER BY created_at DESC
+      `,
+    )
+    .all()
+
+  const byVisitor = new Map()
+
+  for (const row of rows) {
+    // Rows are newest-first: the first one seen per visitor is their latest.
+    if (!byVisitor.has(row.visitor_id)) {
+      byVisitor.set(row.visitor_id, parseRatingsJson(row.answers_json))
+    }
+  }
+
+  return byVisitor
+}
+
+// The domain with the lowest computed score in a visitor's most recent
+// diagnostic — same calculation the diagnostic stats screen already uses,
+// just picking the minimum instead of averaging.
+function computeWeakestDomain(answers, questionsById) {
+  const { domainScores } = calculateDiagnosticScore(answers, questionsById)
+  const entries = Object.entries(domainScores)
+
+  if (entries.length === 0) {
+    return null
+  }
+
+  entries.sort((a, b) => a[1] - b[1])
+  return entries[0][0]
+}
+
+function buildVisitorGraph(events, diagnosticAnswersByVisitor, questionsIndex) {
   const engagedVisitorIds = uniqueVisitorIds(
     events,
     (event) => event.name === 'diagnostic_started',
@@ -1571,17 +1610,54 @@ function buildVisitorGraph(events) {
     status: statusFor(visitorId),
   }))
 
-  const edges = visitorIds.map((visitorId) => ({
+  const campaignEdges = visitorIds.map((visitorId) => ({
     source: `visitor:${visitorId}`,
     target: `campaign:${campaignByVisitor.get(visitorId)}`,
+    type: 'campaign',
+  }))
+
+  // Second, independent star per weakest diagnostic domain: same
+  // one-hop-to-a-hub shape as the campaign links, so it doesn't reintroduce
+  // the O(n^2) clique problem. Only visitors with a synced diagnostic
+  // response get one of these edges — the rest simply have none.
+  const riskCounts = new Map()
+  const riskEdges = []
+
+  for (const visitorId of visitorIds) {
+    const answers = diagnosticAnswersByVisitor.get(visitorId)
+
+    if (!answers) {
+      continue
+    }
+
+    const domain = computeWeakestDomain(answers, questionsIndex.byId)
+
+    if (!domain) {
+      continue
+    }
+
+    riskCounts.set(domain, (riskCounts.get(domain) ?? 0) + 1)
+    riskEdges.push({
+      source: `visitor:${visitorId}`,
+      target: `risk:${domain}`,
+      type: 'risk',
+    })
+  }
+
+  const riskNodes = Array.from(riskCounts.entries()).map(([domain, visitorCount]) => ({
+    id: `risk:${domain}`,
+    type: 'risk',
+    domain,
+    visitorCount,
   }))
 
   return {
     generatedAt: new Date().toISOString(),
     totalVisitors: visitorIds.length,
     totalCampaigns: campaignCounts.size,
-    nodes: [...campaignNodes, ...visitorNodes],
-    edges,
+    totalRiskDomains: riskCounts.size,
+    nodes: [...campaignNodes, ...visitorNodes, ...riskNodes],
+    edges: [...campaignEdges, ...riskEdges],
   }
 }
 
@@ -2000,9 +2076,18 @@ const server = createServer(async (request, response) => {
     }
 
     if (request.method === 'GET' && requestUrl.pathname === '/api/visitors/graph') {
-      const events = await readEvents()
+      const [events, diagnosticAnswersByVisitor, questionsIndex] = await Promise.all([
+        readEvents(),
+        readLatestDiagnosticAnswersByVisitor(),
+        getQuestionsIndex(),
+      ])
 
-      sendJson(response, 200, buildVisitorGraph(events), origin)
+      sendJson(
+        response,
+        200,
+        buildVisitorGraph(events, diagnosticAnswersByVisitor, questionsIndex),
+        origin,
+      )
       return
     }
 

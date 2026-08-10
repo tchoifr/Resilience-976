@@ -32,7 +32,7 @@ export function createSimulationNodes(
       vx: 0,
       vy: 0,
       radius:
-        node.type === 'campaign'
+        node.type === 'campaign' || node.type === 'risk'
           ? CAMPAIGN_BASE_RADIUS + Math.sqrt(node.visitorCount ?? 0) * 2
           : VISITOR_RADIUS,
     }

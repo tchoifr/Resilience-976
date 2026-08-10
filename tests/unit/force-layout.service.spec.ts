@@ -22,10 +22,10 @@ function buildStarGraph(): { nodes: VisitorGraphNodeData[]; edges: VisitorGraphE
     { id: 'visitor:4', type: 'visitor', campaignId: 'B', status: 'actioned' },
   ]
   const edges: VisitorGraphEdgeData[] = [
-    { source: 'visitor:1', target: 'campaign:A' },
-    { source: 'visitor:2', target: 'campaign:A' },
-    { source: 'visitor:3', target: 'campaign:A' },
-    { source: 'visitor:4', target: 'campaign:B' },
+    { source: 'visitor:1', target: 'campaign:A', type: 'campaign' },
+    { source: 'visitor:2', target: 'campaign:A', type: 'campaign' },
+    { source: 'visitor:3', target: 'campaign:A', type: 'campaign' },
+    { source: 'visitor:4', target: 'campaign:B', type: 'campaign' },
   ]
 
   return { nodes, edges }

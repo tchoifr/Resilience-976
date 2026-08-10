@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /* global fetch, cancelAnimationFrame, requestAnimationFrame, ResizeObserver, HTMLCanvasElement */
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 
 import {
@@ -12,7 +12,7 @@ import type {
   VisitorGraphResponse,
   VisitorStatus,
 } from '@/features/visitor-graph/types/visitor-graph'
-import { useI18n } from '@/shared/i18n/i18n.service'
+import { getDomainLabel, useI18n } from '@/shared/i18n/i18n.service'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -30,6 +30,8 @@ const stats = ref<VisitorGraphResponse | null>(null)
 const canvasEl = ref<HTMLCanvasElement | null>(null)
 const hoveredNode = ref<SimulationNode | null>(null)
 const tooltipPosition = ref({ x: 0, y: 0 })
+const showCampaignLinks = ref(true)
+const showRiskLinks = ref(true)
 
 let simulationNodes: SimulationNode[] = []
 let edges: VisitorGraphResponse['edges'] = []
@@ -43,11 +45,51 @@ const statusColor: Record<VisitorStatus, string> = {
   completed: '#7bb661',
 }
 const campaignColor = '#00394b'
+const riskColor = '#ff8a2a'
 const edgeColor = 'rgba(38, 56, 77, 0.15)'
 
 const rawId = computed(() => {
   const id = hoveredNode.value?.id ?? ''
   return id.slice(id.indexOf(':') + 1)
+})
+
+// Weakest domain for the hovered visitor, looked up from the full (never
+// filtered) edge list — informational in the tooltip regardless of whether
+// the risk links are currently toggled on.
+const hoveredVisitorRiskDomain = computed(() => {
+  if (hoveredNode.value?.type !== 'visitor' || !stats.value) {
+    return null
+  }
+
+  const riskEdge = stats.value.edges.find(
+    (edge) => edge.type === 'risk' && edge.source === hoveredNode.value?.id,
+  )
+
+  return riskEdge ? riskEdge.target.slice(riskEdge.target.indexOf(':') + 1) : null
+})
+
+const visibleNodes = computed(() => {
+  if (!stats.value) {
+    return []
+  }
+
+  return stats.value.nodes.filter((node) => {
+    if (node.type === 'campaign') return showCampaignLinks.value
+    if (node.type === 'risk') return showRiskLinks.value
+    return true
+  })
+})
+
+const visibleEdges = computed(() => {
+  if (!stats.value) {
+    return []
+  }
+
+  return stats.value.edges.filter((edge) => {
+    if (edge.type === 'campaign') return showCampaignLinks.value
+    if (edge.type === 'risk') return showRiskLinks.value
+    return true
+  })
 })
 
 function draw() {
@@ -87,7 +129,11 @@ function draw() {
     context.beginPath()
     context.arc(node.x, node.y, node.radius, 0, Math.PI * 2)
     context.fillStyle =
-      node.type === 'campaign' ? campaignColor : statusColor[node.status ?? 'visited']
+      node.type === 'campaign'
+        ? campaignColor
+        : node.type === 'risk'
+          ? riskColor
+          : statusColor[node.status ?? 'visited']
     context.fill()
 
     if (node.id === hoveredNode.value?.id) {
@@ -116,8 +162,8 @@ function startSimulation() {
     return
   }
 
-  simulationNodes = createSimulationNodes(stats.value.nodes, canvas.width, canvas.height)
-  edges = stats.value.edges
+  simulationNodes = createSimulationNodes(visibleNodes.value, canvas.width, canvas.height)
+  edges = visibleEdges.value
 
   if (animationFrame === null) {
     animationFrame = requestAnimationFrame(tick)
@@ -137,6 +183,14 @@ function resizeCanvas() {
 
   startSimulation()
 }
+
+// Toggling a link type swaps which nodes/edges are simulated, not just
+// which are drawn — a hidden hub still pulling on visitors via physics
+// would be a confusing, invisible force. Re-seeding is a deliberate,
+// visible re-layout rather than trying to preserve position continuity.
+watch([showCampaignLinks, showRiskLinks], () => {
+  startSimulation()
+})
 
 // Visitors are checked before campaigns: their radius is much smaller, so a
 // visitor sitting near a hub's edge would otherwise always lose to the hub.
@@ -241,7 +295,22 @@ onBeforeUnmount(() => {
             <span>{{ t('visitorGraph.summary.totalCampaigns') }}</span>
             <strong>{{ stats.totalCampaigns }}</strong>
           </article>
+          <article class="metric-card metric-card--neutral">
+            <span>{{ t('visitorGraph.summary.totalRiskDomains') }}</span>
+            <strong>{{ stats.totalRiskDomains }}</strong>
+          </article>
         </section>
+
+        <div class="cluster">
+          <label class="visitor-graph-toggle">
+            <input v-model="showCampaignLinks" type="checkbox" />
+            {{ t('visitorGraph.toggles.campaign') }}
+          </label>
+          <label class="visitor-graph-toggle">
+            <input v-model="showRiskLinks" type="checkbox" />
+            {{ t('visitorGraph.toggles.risk') }}
+          </label>
+        </div>
 
         <section class="panel dashboard-panel">
           <canvas
@@ -262,12 +331,20 @@ onBeforeUnmount(() => {
               <strong>{{ hoveredNode.campaignId }}</strong>
               <span>{{ hoveredNode.visitorCount }} {{ t('visitorGraph.tooltip.visitors') }}</span>
             </template>
+            <template v-else-if="hoveredNode.type === 'risk'">
+              <strong>{{ getDomainLabel(hoveredNode.domain ?? '') }}</strong>
+              <span>{{ hoveredNode.visitorCount }} {{ t('visitorGraph.tooltip.visitors') }}</span>
+            </template>
             <template v-else>
               <strong>{{ rawId }}</strong>
               <span
                 >{{ t('visitorGraph.tooltip.campaign') }} {{ hoveredNode.campaignId }} —
                 {{ t(`visitorGraph.statusShort.${hoveredNode.status}`) }}</span
               >
+              <span v-if="hoveredVisitorRiskDomain">
+                {{ t('visitorGraph.tooltip.weakestDomain') }}
+                {{ getDomainLabel(hoveredVisitorRiskDomain) }}
+              </span>
               <span class="muted">{{ t('visitorGraph.tooltip.clickHint') }}</span>
             </template>
           </div>
@@ -279,6 +356,10 @@ onBeforeUnmount(() => {
             <li>
               <span class="visitor-graph-swatch" style="background: #00394b"></span>
               {{ t('visitorGraph.legend.campaign') }}
+            </li>
+            <li>
+              <span class="visitor-graph-swatch" style="background: #ff8a2a"></span>
+              {{ t('visitorGraph.legend.risk') }}
             </li>
             <li>
               <span class="visitor-graph-swatch" style="background: #dce8ee"></span>
@@ -314,6 +395,12 @@ onBeforeUnmount(() => {
 
 .visitor-graph-canvas--pointer {
   cursor: pointer;
+}
+
+.visitor-graph-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .visitor-graph-tooltip {

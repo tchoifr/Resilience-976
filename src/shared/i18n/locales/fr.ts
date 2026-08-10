@@ -723,7 +723,7 @@ export const frMessages = {
     eyebrow: 'Vue relationnelle',
     title: 'Graphe des visiteurs par campagne',
     intro:
-      'Chaque point est un visiteur anonyme (identifiant local, sans donnée personnelle), relié au nœud de la campagne dont il fait partie. Deux visiteurs ne sont jamais reliés directement entre eux : ils partagent seulement une campagne.',
+      'Chaque point est un visiteur anonyme (identifiant local, sans donnée personnelle). Deux liens possibles, activables séparément : la campagne dont il fait partie, ou le domaine de préparation le plus faible de son dernier diagnostic. Deux visiteurs ne sont jamais reliés directement entre eux : ils partagent seulement un nœud commun.',
     backToDashboard: 'Retour au tableau de bord',
     searchVisitor: 'Rechercher un visiteur',
     loading: 'Chargement',
@@ -731,10 +731,16 @@ export const frMessages = {
     summary: {
       totalVisitors: 'Visiteurs',
       totalCampaigns: 'Campagnes',
+      totalRiskDomains: 'Domaines de risque représentés',
+    },
+    toggles: {
+      campaign: 'Liens par campagne',
+      risk: 'Liens par profil de risque similaire',
     },
     legend: {
       title: 'Légende',
       campaign: 'Campagne (taille = nombre de participants)',
+      risk: 'Domaine de préparation le plus faible (taille = nombre de visiteurs)',
       visited: 'Visiteur — page vue seulement',
       engaged: 'Visiteur — diagnostic commencé',
       actioned: 'Visiteur — plan, checklist, kit ou PDF ouvert',
@@ -749,6 +755,7 @@ export const frMessages = {
     tooltip: {
       campaign: 'Campagne',
       visitors: 'visiteur(s)',
+      weakestDomain: 'Domaine le plus faible :',
       clickHint: 'Cliquer pour voir toutes ses données',
     },
   },
