@@ -8,6 +8,10 @@ export const frMessages = {
     french: 'Français',
     shimaore: 'Shimaore',
   },
+  theme: {
+    switchToDark: 'Passer au thème sombre',
+    switchToLight: 'Passer au thème clair',
+  },
   publicWarning: {
     label: 'Outil de sensibilisation :',
     text:

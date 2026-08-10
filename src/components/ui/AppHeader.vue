@@ -5,6 +5,7 @@ import { useRoute } from 'vue-router'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
 import LanguageSwitcher from './LanguageSwitcher.vue'
+import ThemeSwitcher from './ThemeSwitcher.vue'
 
 const route = useRoute()
 const isMenuOpen = ref(false)
@@ -72,6 +73,7 @@ watch(
           {{ t(link.labelKey) }}
         </RouterLink>
         <LanguageSwitcher />
+        <ThemeSwitcher />
       </nav>
     </div>
   </header>

@@ -8,6 +8,10 @@ export const swbMessages = {
     french: 'umufarantsa',
     shimaore: 'shimaore',
   },
+  theme: {
+    switchToDark: 'Badilisha thème noir',
+    switchToLight: 'Badilisha thème clair',
+  },
   // Brouillon non relu par un locuteur natif (comme le reste de ce fichier),
   // mais celui-ci porte le disclaimer de sécurité affiché en permanence sur
   // le site : priorité à faire relire avant toute mise en avant publique.
