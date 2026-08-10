@@ -127,14 +127,7 @@ onMounted(async () => {
   gap: 18px;
   align-items: center;
   justify-content: center;
-  background: #0d0d10;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.035) 0px,
-    rgba(255, 255, 255, 0.035) 1px,
-    transparent 1px,
-    transparent 3px
-  );
+  background: var(--color-primary-dark);
   border-radius: var(--radius-md);
   padding: 20px;
   animation: retro-banner-in 0.5s ease-out;
@@ -158,12 +151,9 @@ onMounted(async () => {
 }
 
 .retro-counter {
-  background: linear-gradient(#111, #000);
-  border: 4px solid #7a7a78;
-  border-radius: 4px;
-  box-shadow:
-    inset 0 0 0 2px #2a2a28,
-    inset 0 2px 10px rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-sm);
   padding: 14px 20px 16px;
   text-align: center;
   flex-shrink: 0;
@@ -171,10 +161,10 @@ onMounted(async () => {
 
 .retro-counter__label {
   display: block;
-  font-family: Verdana, Geneva, sans-serif;
-  font-size: 0.6rem;
+  font-size: 0.68rem;
+  font-weight: 700;
   letter-spacing: 0.06em;
-  color: #9fb8b4;
+  color: rgba(255, 255, 255, 0.75);
   margin-bottom: 8px;
 }
 
@@ -189,28 +179,28 @@ onMounted(async () => {
   font-family: ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
   font-weight: 700;
   font-size: 1.6rem;
-  color: #33ff6a;
-  background: #041505;
-  border: 1px solid #163d1c;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--color-teal);
   border-radius: 2px;
   padding: 2px 3px;
   min-width: 20px;
-  text-shadow: 0 0 6px rgba(51, 255, 106, 0.85);
+  text-shadow: 0 0 8px rgba(0, 161, 173, 0.85);
   font-variant-numeric: tabular-nums;
 }
 
 .retro-counter__goal {
   display: block;
-  font-family: Verdana, Geneva, sans-serif;
-  font-size: 0.56rem;
-  color: #7f9490;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .retro-ticker {
   width: 100%;
   max-width: 480px;
-  background: #000080;
-  border: 3px solid #ffd400;
+  background: var(--color-primary);
+  border-radius: var(--radius-sm);
   overflow: hidden;
   padding: 10px 0;
 }
@@ -224,12 +214,11 @@ onMounted(async () => {
 }
 
 .retro-ticker__track span {
-  font-family: Verdana, Geneva, sans-serif;
   font-weight: 700;
   font-size: 0.85rem;
-  color: #ffe063;
+  color: #ffffff;
   padding-right: 40px;
-  border-right: 2px dotted #4d5bb0;
+  border-right: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 @keyframes retro-ticker-scroll {

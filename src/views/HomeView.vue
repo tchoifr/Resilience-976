@@ -88,8 +88,6 @@ const journeySteps = [
         </div>
       </div>
 
-      <RetroStatsBanner />
-
       <section class="journey-panel" :aria-label="t('home.journeyAria')">
         <h2>{{ t('home.journeyTitle') }}</h2>
         <ol class="journey-steps">
@@ -106,6 +104,8 @@ const journeySteps = [
       <AppAlert :title="t('home.privacyTitle')" variant="info">
         {{ t('home.privacy') }}
       </AppAlert>
+
+      <RetroStatsBanner />
     </div>
   </section>
 </template>
