@@ -2,6 +2,8 @@
 /* global fetch */
 import { computed, onMounted, ref } from 'vue'
 
+import { getVisitorId } from '@/shared/analytics/analytics.service'
+
 interface DashboardStats {
   target: number
   totals: {
@@ -46,6 +48,9 @@ const scenarioSessions = ref(0)
 
 const digits = computed(() => String(visits.value).padStart(6, '0').split(''))
 const engagedDigits = computed(() => String(engagedVisitors.value).padStart(6, '0'))
+
+const visitorId = getVisitorId()
+const shortVisitorId = visitorId.replace(/-/g, '').slice(0, 8).toUpperCase()
 
 const tickerItems = computed(() => [
   `${journeysCompleted.value.toLocaleString('fr-FR')} diagnostics complétés`,
@@ -100,6 +105,11 @@ onMounted(async () => {
 
 <template>
   <div class="retro-banner">
+    <div class="retro-id-badge" role="img" :aria-label="`Identifiant visiteur ${visitorId}`">
+      <span class="retro-id-badge__label">ID VISITEUR</span>
+      <span class="retro-id-badge__value">{{ shortVisitorId }}</span>
+    </div>
+
     <div
       class="retro-counter"
       role="img"
@@ -152,6 +162,35 @@ onMounted(async () => {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+.retro-id-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--color-teal);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  flex-shrink: 0;
+}
+
+.retro-id-badge__label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.retro-id-badge__value {
+  font-family: ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.1em;
+  color: var(--color-teal);
+  text-shadow: 0 0 8px rgba(0, 161, 173, 0.85);
 }
 
 .retro-counter {
