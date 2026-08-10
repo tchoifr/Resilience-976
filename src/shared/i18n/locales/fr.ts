@@ -25,7 +25,6 @@ export const frMessages = {
     videos: 'Vidéos',
     quiz: 'Quiz',
     scenarios: 'Mises en situation',
-    dashboard: 'Stats',
     experiment: 'Expérimentation',
   },
   footer: {

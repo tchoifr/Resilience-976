@@ -18,7 +18,6 @@ export const swbMessages = {
     kit: 'shiri',
     resources: 'zi mali',
     videos: 'zisahani',
-    dashboard: 'stats',
     experiment: 'testi',
   },
   footer: {
