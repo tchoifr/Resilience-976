@@ -106,6 +106,13 @@ const router = createRouter({
       },
     },
     {
+      path: '/tableau-de-bord/formations',
+      component: () => import('@/views/VideoStatsView.vue'),
+      meta: {
+        seoKey: 'videoStats',
+      },
+    },
+    {
       path: '/mentions-legales',
       component: () => import('@/views/LegalView.vue'),
       meta: {

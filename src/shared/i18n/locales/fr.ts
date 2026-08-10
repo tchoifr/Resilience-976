@@ -120,7 +120,12 @@ export const frMessages = {
     quizStats: {
       title: 'Statistiques du quiz - Resilience 976',
       description:
-        'Résultats agrégés du quiz interactif : score moyen, résultats par campagne et détail par question.',
+        'Résultats agrégés du quiz interactif : sessions enregistrées et détail par question.',
+    },
+    videoStats: {
+      title: 'Statistiques des formations - Resilience 976',
+      description:
+        'Résultats agrégés des capsules vidéo : parcours enregistrés et détail par capsule.',
     },
     dashboard: {
       title: 'Tableau de bord - Resilience 976',
@@ -533,6 +538,24 @@ export const frMessages = {
     },
     questionBreakdown: {
       title: 'Détail par question',
+    },
+  },
+  videoStats: {
+    eyebrow: 'Statistiques des formations',
+    title: 'Résultats agrégés des capsules vidéo',
+    intro:
+      'Indicateurs calculés à partir des parcours de formation enregistrés. Aucune donnée nominative n’est affichée.',
+    backToDashboard: 'Retour au tableau de bord',
+    loading: 'Chargement',
+    noData: 'Aucun parcours de formation enregistré pour le moment.',
+    summary: {
+      total: 'Parcours enregistrés',
+    },
+    breakdown: {
+      title: 'Détail par capsule',
+      started: 'Commencé',
+      completed: 'Terminé',
+      quizCorrect: 'quiz réussi(s)',
     },
   },
   quiz: {
