@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /* global fetch, cancelAnimationFrame, requestAnimationFrame, ResizeObserver, HTMLCanvasElement */
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
 
 import {
   createSimulationNodes,
@@ -15,6 +15,7 @@ import type {
 import { useI18n } from '@/shared/i18n/i18n.service'
 
 const { t } = useI18n()
+const router = useRouter()
 
 const defaultGraphEndpoint = import.meta.env.PROD
   ? 'https://resilience-976-analytics.onrender.com/api/visitors/graph'
@@ -27,6 +28,8 @@ const graphEnabled = import.meta.env.DEV
 const isLoading = ref(true)
 const stats = ref<VisitorGraphResponse | null>(null)
 const canvasEl = ref<HTMLCanvasElement | null>(null)
+const hoveredNode = ref<SimulationNode | null>(null)
+const tooltipPosition = ref({ x: 0, y: 0 })
 
 let simulationNodes: SimulationNode[] = []
 let edges: VisitorGraphResponse['edges'] = []
@@ -41,6 +44,11 @@ const statusColor: Record<VisitorStatus, string> = {
 }
 const campaignColor = '#00394b'
 const edgeColor = 'rgba(38, 56, 77, 0.15)'
+
+const rawId = computed(() => {
+  const id = hoveredNode.value?.id ?? ''
+  return id.slice(id.indexOf(':') + 1)
+})
 
 function draw() {
   const canvas = canvasEl.value
@@ -81,6 +89,12 @@ function draw() {
     context.fillStyle =
       node.type === 'campaign' ? campaignColor : statusColor[node.status ?? 'visited']
     context.fill()
+
+    if (node.id === hoveredNode.value?.id) {
+      context.lineWidth = 2
+      context.strokeStyle = '#10233f'
+      context.stroke()
+    }
   }
 }
 
@@ -122,6 +136,36 @@ function resizeCanvas() {
   canvas.height = 480
 
   startSimulation()
+}
+
+// Visitors are checked before campaigns: their radius is much smaller, so a
+// visitor sitting near a hub's edge would otherwise always lose to the hub.
+function findNodeAt(x: number, y: number): SimulationNode | null {
+  const visitors = simulationNodes.filter((node) => node.type === 'visitor')
+  const campaigns = simulationNodes.filter((node) => node.type === 'campaign')
+
+  for (const node of [...visitors, ...campaigns]) {
+    if (Math.hypot(node.x - x, node.y - y) <= node.radius + 2) {
+      return node
+    }
+  }
+
+  return null
+}
+
+function handleMouseMove(event: MouseEvent) {
+  hoveredNode.value = findNodeAt(event.offsetX, event.offsetY)
+  tooltipPosition.value = { x: event.clientX, y: event.clientY }
+}
+
+function handleMouseLeave() {
+  hoveredNode.value = null
+}
+
+function handleClick() {
+  if (hoveredNode.value?.type === 'visitor') {
+    void router.push(`/tableau-de-bord/visiteur/${rawId.value}`)
+  }
 }
 
 onMounted(async () => {
@@ -177,6 +221,9 @@ onBeforeUnmount(() => {
         <RouterLink class="link-button link-button--secondary" to="/tableau-de-bord">
           {{ t('visitorGraph.backToDashboard') }}
         </RouterLink>
+        <RouterLink class="link-button link-button--secondary" to="/tableau-de-bord/visiteur">
+          {{ t('visitorGraph.searchVisitor') }}
+        </RouterLink>
       </div>
 
       <p v-if="isLoading" class="muted">{{ t('visitorGraph.loading') }}</p>
@@ -197,7 +244,33 @@ onBeforeUnmount(() => {
         </section>
 
         <section class="panel dashboard-panel">
-          <canvas ref="canvasEl" class="visitor-graph-canvas"></canvas>
+          <canvas
+            ref="canvasEl"
+            class="visitor-graph-canvas"
+            :class="{ 'visitor-graph-canvas--pointer': hoveredNode }"
+            @mousemove="handleMouseMove"
+            @mouseleave="handleMouseLeave"
+            @click="handleClick"
+          ></canvas>
+
+          <div
+            v-if="hoveredNode"
+            class="visitor-graph-tooltip"
+            :style="{ left: `${tooltipPosition.x + 14}px`, top: `${tooltipPosition.y + 14}px` }"
+          >
+            <template v-if="hoveredNode.type === 'campaign'">
+              <strong>{{ hoveredNode.campaignId }}</strong>
+              <span>{{ hoveredNode.visitorCount }} {{ t('visitorGraph.tooltip.visitors') }}</span>
+            </template>
+            <template v-else>
+              <strong>{{ rawId }}</strong>
+              <span
+                >{{ t('visitorGraph.tooltip.campaign') }} {{ hoveredNode.campaignId }} —
+                {{ t(`visitorGraph.statusShort.${hoveredNode.status}`) }}</span
+              >
+              <span class="muted">{{ t('visitorGraph.tooltip.clickHint') }}</span>
+            </template>
+          </div>
         </section>
 
         <section class="panel stack">
@@ -237,6 +310,24 @@ onBeforeUnmount(() => {
   display: block;
   border-radius: var(--radius-sm);
   background: var(--color-surface);
+}
+
+.visitor-graph-canvas--pointer {
+  cursor: pointer;
+}
+
+.visitor-graph-tooltip {
+  position: fixed;
+  z-index: 20;
+  display: grid;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-text-strong);
+  color: #ffffff;
+  font-size: 0.85em;
+  pointer-events: none;
+  max-width: 260px;
 }
 
 .visitor-graph-legend {

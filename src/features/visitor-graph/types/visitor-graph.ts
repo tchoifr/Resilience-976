@@ -31,3 +31,65 @@ export interface SimulationNode extends VisitorGraphNodeData {
   vy: number
   radius: number
 }
+
+export interface VisitorDiagnosticResponse {
+  id: string
+  createdAt: string
+  campaignId: string
+  version: string
+  answers: Record<string, string>
+}
+
+export interface VisitorQuizResult {
+  id: string
+  createdAt: string
+  campaignId: string
+  score: number
+  total: number
+  answers: Record<string, number>
+}
+
+export interface VisitorScenarioResult {
+  id: string
+  createdAt: string
+  campaignId: string
+  scenarioId: string
+  score: number
+  choices: Record<string, string>
+}
+
+export interface VisitorVideoProgress {
+  videoId: string
+  campaignId: string
+  status: 'started' | 'completed'
+  quizAnsweredCorrectly: boolean
+  updatedAt: string
+}
+
+export interface VisitorKitProfile {
+  campaignId: string
+  adults: number
+  children: number
+  elderly: number
+  pets: number
+  specialNeeds: boolean
+  updatedAt: string
+}
+
+export interface VisitorTimelineEvent {
+  name: string
+  path: string
+  campaignId: string
+  createdAt: string
+}
+
+export interface VisitorProfileResponse {
+  visitorId: string
+  found: boolean
+  diagnosticResponses: VisitorDiagnosticResponse[]
+  quizResults: VisitorQuizResult[]
+  scenarioResults: VisitorScenarioResult[]
+  videoProgress: VisitorVideoProgress[]
+  kitProfile: VisitorKitProfile | null
+  timeline: VisitorTimelineEvent[]
+}

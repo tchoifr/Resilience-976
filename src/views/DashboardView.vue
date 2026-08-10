@@ -197,6 +197,9 @@ onMounted(async () => {
         >
           Graphe des visiteurs
         </RouterLink>
+        <RouterLink class="link-button link-button--secondary" to="/tableau-de-bord/visiteur">
+          Rechercher un visiteur
+        </RouterLink>
       </div>
 
       <p v-if="populationSource" class="muted">
