@@ -4,6 +4,14 @@
     "label": "Réserve d’eau selon recommandation officielle validée",
     "category": "water_food",
     "conditions": [],
+    "quantityRule": {
+      "fields": ["adults", "children", "elderly"],
+      "amountPerUnit": 3,
+      "perDay": true,
+      "durationDays": 3,
+      "unit": "L",
+      "detail": "3 L / jour / personne × 3 jours"
+    },
     "sourceIds": ["source_gouvernement_risques"],
     "validationStatus": "to_validate"
   },
@@ -12,6 +20,14 @@
     "label": "Aliments simples et habituels du foyer",
     "category": "water_food",
     "conditions": [],
+    "quantityRule": {
+      "fields": ["adults", "children", "elderly"],
+      "amountPerUnit": 3,
+      "perDay": true,
+      "durationDays": 3,
+      "unit": "repas",
+      "detail": "3 repas / jour / personne × 3 jours"
+    },
     "sourceIds": ["source_gouvernement_risques"],
     "validationStatus": "to_validate"
   },
@@ -52,6 +68,7 @@
     "label": "Éléments adaptés aux enfants",
     "category": "household",
     "conditions": [{ "field": "children", "operator": ">", "value": 0 }],
+    "countField": "children",
     "sourceIds": ["source_croix_rouge"],
     "validationStatus": "to_validate"
   },
@@ -60,6 +77,7 @@
     "label": "Éléments utiles aux personnes âgées ou dépendantes",
     "category": "household",
     "conditions": [{ "field": "elderly", "operator": ">", "value": 0 }],
+    "countField": "elderly",
     "sourceIds": ["source_croix_rouge"],
     "validationStatus": "to_validate"
   },
@@ -76,6 +94,7 @@
     "label": "Nécessaire pour les animaux du foyer",
     "category": "household",
     "conditions": [{ "field": "pets", "operator": ">", "value": 0 }],
+    "countField": "pets",
     "sourceIds": ["source_croix_rouge"],
     "validationStatus": "to_validate"
   }

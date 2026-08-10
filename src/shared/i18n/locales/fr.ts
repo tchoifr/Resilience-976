@@ -153,6 +153,11 @@ export const frMessages = {
       description:
         'Résultats agrégés des mises en situation : sessions enregistrées et détail par scénario.',
     },
+    kitStats: {
+      title: 'Statistiques du kit - Resilience 976',
+      description:
+        'Résultats agrégés des profils de foyer utilisés pour personnaliser le kit d’urgence.',
+    },
     dashboard: {
       title: 'Tableau de bord - Resilience 976',
       description:
@@ -307,6 +312,8 @@ export const frMessages = {
       documents: 'Documents',
       household: 'Foyer',
     },
+    downloadPdf: 'Télécharger mon kit en PDF',
+    preparingPdf: 'Préparation du PDF…',
   },
   legal: {
     eyebrow: 'Mentions légales',
@@ -485,6 +492,14 @@ export const frMessages = {
     videoScoreLine: '{total} capsules complétées',
     videoDisclaimer:
       'Attestation de sensibilisation : sans valeur de certification professionnelle.',
+    kitTitle: 'Kit d’urgence personnalisé',
+    kitSubtitle: 'Quantités calculées selon la composition du foyer',
+    kitItemCount: 'éléments dans le kit',
+    kitHint: 'À garder accessible, à imprimer ou à glisser dans le kit.',
+    kitDisclaimer:
+      'Les quantités indiquées sont des repères de sensibilisation, à adapter et à vérifier avec les recommandations officielles en vigueur.',
+    kitMention:
+      'Ce kit personnalisé est un support de préparation. Il ne remplace pas les consignes diffusées par les autorités compétentes.',
   },
   userExperiment: {
     eyebrow: 'Expérimentation utilisateurs',
@@ -672,6 +687,27 @@ export const frMessages = {
     breakdown: {
       title: 'Détail par scénario',
       sessions: 'session(s)',
+    },
+  },
+  kitStats: {
+    eyebrow: 'Statistiques du kit',
+    title: 'Résultats agrégés des profils de foyer',
+    intro:
+      'Indicateurs calculés à partir des compositions de foyer enregistrées sur la page kit. Aucune donnée nominative n’est affichée.',
+    backToDashboard: 'Retour au tableau de bord',
+    loading: 'Chargement',
+    noData: 'Aucun profil de foyer enregistré pour le moment.',
+    summary: {
+      total: 'Profils enregistrés',
+      averageSize: 'Taille moyenne du foyer',
+      people: 'personne(s)',
+    },
+    breakdown: {
+      title: 'Composition des foyers',
+      withChildren: 'Avec enfants',
+      withElderly: 'Avec personnes âgées',
+      withPets: 'Avec animaux',
+      withSpecialNeeds: 'Avec besoins particuliers',
     },
   },
   quiz: {

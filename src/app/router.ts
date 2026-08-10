@@ -134,6 +134,13 @@ const router = createRouter({
       },
     },
     {
+      path: '/tableau-de-bord/kit',
+      component: () => import('@/views/KitStatsView.vue'),
+      meta: {
+        seoKey: 'kitStats',
+      },
+    },
+    {
       path: '/mentions-legales',
       component: () => import('@/views/LegalView.vue'),
       meta: {

@@ -18,6 +18,7 @@ export type AnalyticsEventName =
   | 'scenario_started'
   | 'scenario_completed'
   | 'video_attestation_generated'
+  | 'kit_pdf_generated'
 
 export interface AnalyticsEvent {
   name: AnalyticsEventName

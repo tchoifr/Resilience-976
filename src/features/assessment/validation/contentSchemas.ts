@@ -45,11 +45,22 @@ export const kitConditionSchema = z.object({
   value: z.union([z.number(), z.boolean()]),
 })
 
+export const kitQuantityRuleSchema = z.object({
+  fields: z.array(kitConditionSchema.shape.field).min(1),
+  amountPerUnit: z.number().positive(),
+  perDay: z.boolean(),
+  durationDays: z.number().positive().optional(),
+  unit: z.string().min(1),
+  detail: z.string().min(1),
+})
+
 export const kitItemSchema = z.object({
   id: z.string().min(1),
   label: z.string().min(1),
   category: z.string().min(1),
   conditions: z.array(kitConditionSchema),
+  quantityRule: kitQuantityRuleSchema.optional(),
+  countField: kitConditionSchema.shape.field.optional(),
   sourceIds: z.array(z.string().min(1)),
   validationStatus: validationStatusSchema,
 })
