@@ -311,6 +311,8 @@ export const frMessages = {
     globalProgress: 'Parcours vidéo complété',
     completedCount: '{completed} capsule(s) terminée(s) sur {total}',
     resetProgress: 'Réinitialiser la progression',
+    downloadAttestation: 'Télécharger l’attestation',
+    preparingPdf: 'Préparation du PDF…',
     watch: 'Regarder',
     officialExternal: 'Vidéo officielle externe',
     integratedVideo: 'Vidéo intégrée',
@@ -400,6 +402,13 @@ export const frMessages = {
     quizLine1: 'Ce document atteste la participation au quiz interactif Resilience 976.',
     quizScoreLine: 'Score obtenu : {score}/{total}',
     quizDisclaimer:
+      'Attestation de sensibilisation : sans valeur de certification professionnelle.',
+    videoTitle: 'Attestation de participation',
+    videoSubtitle: 'Parcours de micro-formation complété',
+    videoLine1:
+      'Ce document atteste que le parcours de micro-formation Resilience 976 a été complété intégralement.',
+    videoScoreLine: '{total} capsules complétées',
+    videoDisclaimer:
       'Attestation de sensibilisation : sans valeur de certification professionnelle.',
   },
   userExperiment: {

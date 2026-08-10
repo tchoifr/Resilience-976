@@ -40,6 +40,10 @@ interface QuizAttestationInput {
   total: number
 }
 
+interface VideoAttestationInput {
+  totalCount: number
+}
+
 interface PdfOutputOptions {
   mode?: 'download' | 'print'
 }
@@ -418,6 +422,64 @@ export function generateQuizAttestationPdf(
   const pdf = new jsPDF({ unit: 'mm', format: 'a4' })
   addQuizAttestationPage(pdf, input)
   outputPdf(pdf, 'attestation-quiz-resilience-976.pdf', options)
+}
+
+function addVideoAttestationPage(pdf: jsPDF, input: VideoAttestationInput) {
+  const currentDate = new Date().toLocaleDateString(t('pdf.dateLocale'))
+
+  addDiplomaFrame(pdf)
+  addMiniLogo(pdf, 31, 25)
+
+  setTextColor(pdf, colors.primaryDark)
+  pdf.setFont('helvetica', 'bold')
+  pdf.setFontSize(16)
+  pdf.text(t('brand.name'), 54, 33)
+  pdf.setFontSize(10)
+  pdf.text(t('pdf.brandSubtitle'), 54, 40)
+
+  addCenteredText(pdf, t('pdf.videoTitle'), 72, {
+    size: 25,
+    bold: true,
+    color: colors.primaryDark,
+  })
+  addCenteredText(pdf, t('pdf.videoSubtitle'), 84, {
+    size: 12,
+    color: colors.muted,
+  })
+
+  addCenteredText(pdf, t('pdf.videoLine1'), 104, {
+    size: 11,
+  })
+
+  addSeal(pdf, 100)
+
+  addCenteredText(pdf, t('pdf.videoScoreLine', { total: input.totalCount }), 174, {
+    size: 18,
+    bold: true,
+    color: colors.primary,
+  })
+
+  setFillColor(pdf, [237, 247, 247])
+  setDrawColor(pdf, colors.border)
+  pdf.roundedRect(38, 201, 134, 24, 3, 3, 'FD')
+  addCenteredText(pdf, t('pdf.generatedAt', { date: currentDate }), 211, {
+    size: 10,
+    bold: true,
+  })
+
+  addCenteredText(pdf, t('pdf.videoDisclaimer'), 260, {
+    size: 8.5,
+    color: colors.muted,
+  })
+}
+
+export function generateVideoAttestationPdf(
+  input: VideoAttestationInput,
+  options: PdfOutputOptions = {},
+): void {
+  const pdf = new jsPDF({ unit: 'mm', format: 'a4' })
+  addVideoAttestationPage(pdf, input)
+  outputPdf(pdf, 'attestation-formations-resilience-976.pdf', options)
 }
 
 export function generateAssessmentPdf(input: PdfInput, options: PdfOutputOptions = {}): void {

@@ -52,6 +52,7 @@ const eventMap = {
   quiz_attestation_generated: 'quiz_attestation_generated',
   scenario_started: 'scenario_started',
   scenario_completed: 'scenario_completed',
+  video_attestation_generated: 'video_attestation_generated',
 }
 
 const allowedEvents = new Set(Object.keys(eventMap))
@@ -94,6 +95,7 @@ const actionEvents = new Set([
   'kit_opened',
   'pdf_downloaded',
   'quiz_attestation_generated',
+  'video_attestation_generated',
 ])
 const allowedDevices = new Set(['smartphone', 'ordinateur', 'tablette'])
 const allowedProfiles = new Set([
