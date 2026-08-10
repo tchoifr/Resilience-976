@@ -12,12 +12,6 @@ const { t } = useI18n()
 interface QuizStats {
   generatedAt: string
   total: number
-  averageScorePercent: number
-  campaigns: Array<{
-    campaignId: string
-    participants: number
-    averageScorePercent: number
-  }>
   questionBreakdown: Array<{
     id: string
     risk: string
@@ -107,24 +101,6 @@ onMounted(async () => {
             <span>{{ t('quizStats.summary.total') }}</span>
             <strong>{{ stats.total }}</strong>
           </article>
-          <article class="metric-card metric-card--green">
-            <span>{{ t('quizStats.summary.averageScore') }}</span>
-            <strong>{{ stats.averageScorePercent }}/100</strong>
-          </article>
-        </section>
-
-        <section class="panel dashboard-panel">
-          <h2>{{ t('quizStats.campaigns.title') }}</h2>
-          <p v-if="stats.campaigns.length === 0" class="muted">
-            {{ t('quizStats.campaigns.noCampaign') }}
-          </p>
-          <section v-else class="dashboard-summary" aria-label="Résultats par campagne">
-            <article v-for="campaign in stats.campaigns" :key="campaign.campaignId" class="metric-card metric-card--neutral">
-              <span>{{ campaign.campaignId }}</span>
-              <strong>{{ campaign.averageScorePercent }}/100</strong>
-              <small>{{ campaign.participants }} {{ t('quizStats.campaigns.participants') }}</small>
-            </article>
-          </section>
         </section>
 
         <section class="panel dashboard-panel">

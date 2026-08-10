@@ -530,12 +530,6 @@ export const frMessages = {
     noData: 'Aucune session de quiz enregistrée pour le moment.',
     summary: {
       total: 'Sessions enregistrées',
-      averageScore: 'Score moyen',
-    },
-    campaigns: {
-      title: 'Résultats par campagne',
-      participants: 'participant(s)',
-      noCampaign: 'Aucune campagne distincte enregistrée pour le moment.',
     },
     questionBreakdown: {
       title: 'Détail par question',
