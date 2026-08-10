@@ -53,6 +53,7 @@ const eventMap = {
   scenario_started: 'scenario_started',
   scenario_completed: 'scenario_completed',
   video_attestation_generated: 'video_attestation_generated',
+  kit_pdf_generated: 'kit_pdf_generated',
 }
 
 const allowedEvents = new Set(Object.keys(eventMap))
@@ -89,6 +90,7 @@ const allowedPaths = new Set([
   '/politique-de-confidentialite',
   '/declaration-accessibilite',
   '/support',
+  '/tableau-de-bord/kit',
 ])
 
 const actionEvents = new Set([
@@ -99,6 +101,7 @@ const actionEvents = new Set([
   'pdf_downloaded',
   'quiz_attestation_generated',
   'video_attestation_generated',
+  'kit_pdf_generated',
 ])
 const allowedDevices = new Set(['smartphone', 'ordinateur', 'tablette'])
 const allowedProfiles = new Set([
@@ -363,6 +366,19 @@ async function sanitizeScenarioResult(input) {
     scenarioId: scenario ? scenario.id : null,
     score: sanitizeInteger(input.score, 0, 100, 0),
     choices: scenario ? sanitizeScenarioChoices(input.choices, scenario) : {},
+  }
+}
+
+function sanitizeKitProfile(input) {
+  return {
+    visitorId: sanitizeVisitorId(input.visitorId),
+    campaignId: sanitizeCampaign(input.campaignId),
+    adults: sanitizeInteger(input.adults, 0, 20, 0),
+    children: sanitizeInteger(input.children, 0, 20, 0),
+    elderly: sanitizeInteger(input.elderly, 0, 20, 0),
+    pets: sanitizeInteger(input.pets, 0, 20, 0),
+    specialNeeds: input.specialNeeds === true,
+    updatedAt: new Date().toISOString(),
   }
 }
 
@@ -652,6 +668,17 @@ async function getDatabase() {
 
     CREATE INDEX IF NOT EXISTS scenario_results_scenario_id_idx
       ON scenario_results (scenario_id);
+
+    CREATE TABLE IF NOT EXISTS kit_profiles (
+      visitor_id TEXT PRIMARY KEY,
+      campaign_id TEXT NOT NULL,
+      adults INTEGER NOT NULL,
+      children INTEGER NOT NULL,
+      elderly INTEGER NOT NULL,
+      pets INTEGER NOT NULL,
+      special_needs INTEGER NOT NULL,
+      updated_at TEXT NOT NULL
+    );
   `)
 
   try {
@@ -802,6 +829,45 @@ async function saveScenarioResult(scenarioResult) {
       scenarioResult.scenarioId,
       scenarioResult.score,
       JSON.stringify(scenarioResult.choices),
+    )
+}
+
+async function saveKitProfile(kitProfile) {
+  const currentDatabase = await getDatabase()
+
+  currentDatabase
+    .prepare(
+      `
+        INSERT INTO kit_profiles (
+          visitor_id,
+          campaign_id,
+          adults,
+          children,
+          elderly,
+          pets,
+          special_needs,
+          updated_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT (visitor_id) DO UPDATE SET
+          campaign_id = excluded.campaign_id,
+          adults = excluded.adults,
+          children = excluded.children,
+          elderly = excluded.elderly,
+          pets = excluded.pets,
+          special_needs = excluded.special_needs,
+          updated_at = excluded.updated_at
+      `,
+    )
+    .run(
+      kitProfile.visitorId,
+      kitProfile.campaignId,
+      kitProfile.adults,
+      kitProfile.children,
+      kitProfile.elderly,
+      kitProfile.pets,
+      kitProfile.specialNeeds ? 1 : 0,
+      kitProfile.updatedAt,
     )
 }
 
@@ -1141,6 +1207,48 @@ function buildScenarioStats(rows, scenariosIndex) {
       sessions: sessionsByScenario.get(scenario.id) ?? 0,
       stepBreakdown: buildScenarioStepBreakdown(rows, scenario),
     })),
+  }
+}
+
+async function readKitProfileRows() {
+  const currentDatabase = await getDatabase()
+
+  return currentDatabase
+    .prepare(
+      `
+        SELECT adults, children, elderly, pets, special_needs
+        FROM kit_profiles
+      `,
+    )
+    .all()
+    .map((row) => ({
+      adults: Number(row.adults),
+      children: Number(row.children),
+      elderly: Number(row.elderly),
+      pets: Number(row.pets),
+      specialNeeds: Boolean(row.special_needs),
+    }))
+}
+
+function percent(count, total) {
+  return total === 0 ? 0 : Math.round((count / total) * 100)
+}
+
+function buildKitStats(rows) {
+  const total = rows.length
+  const householdSizeSum = rows.reduce(
+    (sum, row) => sum + row.adults + row.children + row.elderly,
+    0,
+  )
+
+  return {
+    generatedAt: new Date().toISOString(),
+    total,
+    averageHouseholdSize: total === 0 ? 0 : Math.round((householdSizeSum / total) * 10) / 10,
+    withChildrenPercent: percent(rows.filter((row) => row.children > 0).length, total),
+    withElderlyPercent: percent(rows.filter((row) => row.elderly > 0).length, total),
+    withPetsPercent: percent(rows.filter((row) => row.pets > 0).length, total),
+    withSpecialNeedsPercent: percent(rows.filter((row) => row.specialNeeds).length, total),
   }
 }
 
@@ -1603,6 +1711,22 @@ const server = createServer(async (request, response) => {
       ])
 
       sendJson(response, 200, buildScenarioStats(rows, scenariosIndexResult), origin)
+      return
+    }
+
+    if (request.method === 'POST' && requestUrl.pathname === '/api/kit-profiles') {
+      const body = await readBody(request)
+      const kitProfile = sanitizeKitProfile(body)
+
+      await saveKitProfile(kitProfile)
+      sendJson(response, 201, { ok: true }, origin)
+      return
+    }
+
+    if (request.method === 'GET' && requestUrl.pathname === '/api/kit-profiles/stats') {
+      const rows = await readKitProfileRows()
+
+      sendJson(response, 200, buildKitStats(rows), origin)
       return
     }
 

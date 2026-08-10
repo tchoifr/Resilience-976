@@ -44,6 +44,15 @@ interface VideoAttestationInput {
   totalCount: number
 }
 
+interface KitPdfInput {
+  householdSummary: string
+  itemCount: number
+  itemsByCategory: Array<{
+    categoryLabel: string
+    items: Array<{ label: string; quantityText: string | null }>
+  }>
+}
+
 interface PdfOutputOptions {
   mode?: 'download' | 'print'
 }
@@ -480,6 +489,76 @@ export function generateVideoAttestationPdf(
   const pdf = new jsPDF({ unit: 'mm', format: 'a4' })
   addVideoAttestationPage(pdf, input)
   outputPdf(pdf, 'attestation-formations-resilience-976.pdf', options)
+}
+
+function addKitCoverPage(pdf: jsPDF, input: KitPdfInput) {
+  const currentDate = new Date().toLocaleDateString(t('pdf.dateLocale'))
+
+  addDiplomaFrame(pdf)
+  addMiniLogo(pdf, 31, 25)
+
+  setTextColor(pdf, colors.primaryDark)
+  pdf.setFont('helvetica', 'bold')
+  pdf.setFontSize(16)
+  pdf.text(t('brand.name'), 54, 33)
+  pdf.setFontSize(10)
+  pdf.text(t('pdf.brandSubtitle'), 54, 40)
+
+  addCenteredText(pdf, t('pdf.kitTitle'), 76, {
+    size: 24,
+    bold: true,
+    color: colors.primaryDark,
+  })
+  addCenteredText(pdf, t('pdf.kitSubtitle'), 89, {
+    size: 11,
+    color: colors.muted,
+  })
+  addCenteredText(pdf, input.householdSummary, 100, {
+    size: 10,
+  })
+
+  setFillColor(pdf, colors.primary)
+  pdf.roundedRect(62, 118, 86, 38, 4, 4, 'F')
+  setTextColor(pdf, [255, 255, 255])
+  pdf.setFont('helvetica', 'bold')
+  pdf.setFontSize(22)
+  pdf.text(`${input.itemCount}`, 105, 134, { align: 'center' })
+  pdf.setFontSize(10)
+  pdf.text(t('pdf.kitItemCount'), 105, 146, { align: 'center' })
+
+  addCenteredText(pdf, t('pdf.kitHint'), 178, {
+    size: 11,
+  })
+  addCenteredText(pdf, t('pdf.generatedAt', { date: currentDate }), 211, {
+    size: 10,
+    bold: true,
+  })
+  addCenteredText(pdf, t('pdf.kitDisclaimer'), 260, {
+    size: 8.5,
+    color: colors.muted,
+  })
+}
+
+export function generateKitPdf(input: KitPdfInput, options: PdfOutputOptions = {}): void {
+  const pdf = new jsPDF({ unit: 'mm', format: 'a4' })
+  addKitCoverPage(pdf, input)
+
+  pdf.addPage()
+  addAnnexHeader(pdf)
+  const { addTitle, addText } = createAnnexWriter(pdf)
+
+  for (const category of input.itemsByCategory) {
+    addTitle(category.categoryLabel)
+
+    for (const item of category.items) {
+      addText(item.quantityText ? `${item.label} — ${item.quantityText}` : item.label)
+    }
+  }
+
+  addTitle(t('pdf.mention'))
+  addText(t('pdf.kitMention'))
+
+  outputPdf(pdf, 'kit-urgence-resilience-976.pdf', options)
 }
 
 export function generateAssessmentPdf(input: PdfInput, options: PdfOutputOptions = {}): void {

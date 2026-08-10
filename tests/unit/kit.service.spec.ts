@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getKitItems } from '@/features/assessment/services/kit.service'
+import { computeQuantity, getKitItems } from '@/features/assessment/services/kit.service'
 import type { Household, KitItem } from '@/features/assessment/types/kit'
 
 const items: KitItem[] = [
@@ -17,6 +17,7 @@ const items: KitItem[] = [
     label: 'Enfants',
     category: 'household',
     conditions: [{ field: 'children', operator: '>', value: 0 }],
+    countField: 'children',
     sourceIds: ['source_01'],
     validationStatus: 'to_validate',
   },
@@ -25,6 +26,22 @@ const items: KitItem[] = [
     label: 'Besoins particuliers',
     category: 'household',
     conditions: [{ field: 'specialNeeds', operator: '=', value: true }],
+    sourceIds: ['source_01'],
+    validationStatus: 'to_validate',
+  },
+  {
+    id: 'water',
+    label: 'Eau',
+    category: 'water_food',
+    conditions: [],
+    quantityRule: {
+      fields: ['adults', 'children', 'elderly'],
+      amountPerUnit: 3,
+      perDay: true,
+      durationDays: 3,
+      unit: 'L',
+      detail: '3 L / jour / personne x 3 jours',
+    },
     sourceIds: ['source_01'],
     validationStatus: 'to_validate',
   },
@@ -51,5 +68,41 @@ describe('getKitItems', () => {
 
   it('exclut les elements conditionnels quand le foyer ne correspond pas', () => {
     expect(getKitItems(items, household).map((item) => item.id)).not.toContain('special')
+  })
+
+  it('expose le nombre de personnes concernees pour un champ de comptage', () => {
+    const result = getKitItems(items, household).find((item) => item.id === 'children')
+
+    expect(result?.affectedCount).toBe(1)
+  })
+
+  it('calcule la quantite en fonction de la composition du foyer', () => {
+    const result = getKitItems(items, { ...household, adults: 2, elderly: 1 }).find(
+      (item) => item.id === 'water',
+    )
+
+    // (2 adultes + 1 enfant + 1 personne agee) x 3 L x 3 jours
+    expect(result?.computedQuantity).toEqual({
+      amount: 36,
+      unit: 'L',
+      detail: '3 L / jour / personne x 3 jours',
+    })
+  })
+})
+
+describe('computeQuantity', () => {
+  it('additionne uniquement les champs listes dans la regle', () => {
+    const result = computeQuantity(
+      {
+        fields: ['pets'],
+        amountPerUnit: 1,
+        perDay: false,
+        unit: 'kg',
+        detail: '1 kg par animal',
+      },
+      { adults: 4, children: 4, elderly: 4, pets: 2, specialNeeds: false },
+    )
+
+    expect(result).toEqual({ amount: 2, unit: 'kg', detail: '1 kg par animal' })
   })
 })
