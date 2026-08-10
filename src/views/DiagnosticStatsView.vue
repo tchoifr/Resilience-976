@@ -37,24 +37,6 @@ const statsEnabled = import.meta.env.DEV
 const stats = ref<DiagnosticStats | null>(null)
 const isLoading = ref(true)
 
-const summaryCards = computed(() => [
-  {
-    label: t('diagnosticStats.summary.totalStarted'),
-    value: stats.value ? stats.value.totalStarted.toLocaleString('fr-FR') : '—',
-    tone: 'neutral',
-  },
-  {
-    label: t('diagnosticStats.summary.total'),
-    value: stats.value ? stats.value.total.toLocaleString('fr-FR') : '—',
-    tone: 'primary',
-  },
-  {
-    label: t('diagnosticStats.summary.averageScore'),
-    value: stats.value ? `${stats.value.averageGlobalScore}/100` : '—',
-    tone: 'green',
-  },
-])
-
 const domainOrder: AssessmentDomain[] = [
   'household',
   'housing',
@@ -152,18 +134,6 @@ onMounted(async () => {
       </p>
 
       <template v-else>
-        <section class="dashboard-summary" aria-label="Indicateurs principaux">
-          <article
-            v-for="card in summaryCards"
-            :key="card.label"
-            class="metric-card"
-            :class="`metric-card--${card.tone}`"
-          >
-            <span>{{ card.label }}</span>
-            <strong>{{ card.value }}</strong>
-          </article>
-        </section>
-
         <section class="panel dashboard-panel">
           <h2>{{ t('diagnosticStats.domains.title') }}</h2>
           <BarChart :items="domainItems" suffix="/100" :max="100" />
