@@ -136,6 +136,11 @@ onMounted(async () => {
 
 <style scoped>
 .retro-banner {
+  /* Without this, .retro-banner (a grid item of .home-screen) keeps the
+     automatic min-width of its content, so the ticker's max-content track
+     further down can force this whole banner (and the page) to overflow
+     on narrow screens even though .retro-ticker itself clips its track. */
+  min-width: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 18px;
@@ -240,6 +245,7 @@ onMounted(async () => {
 }
 
 .retro-ticker {
+  min-width: 0;
   width: 100%;
   max-width: 480px;
   background: var(--color-primary);
