@@ -9,10 +9,12 @@ import {
   loadVideoProgress,
 } from '@/features/assessment/services/video-progress.service'
 import type { VideoProgressState } from '@/features/assessment/types/video'
+import { trackEvent } from '@/shared/analytics/analytics.service'
 import { getDomainLabel, useI18n } from '@/shared/i18n/i18n.service'
 
 const { t } = useI18n()
 const progressState = ref<VideoProgressState>(loadVideoProgress())
+const isGeneratingPdf = ref(false)
 
 const completedCount = computed(
   () =>
@@ -20,6 +22,9 @@ const completedCount = computed(
 )
 const progressPercent = computed(() =>
   videos.value.length === 0 ? 0 : Math.round((completedCount.value / videos.value.length) * 100),
+)
+const isJourneyComplete = computed(
+  () => videos.value.length > 0 && completedCount.value === videos.value.length,
 )
 
 function progressLabel(videoId: string): string {
@@ -31,6 +36,26 @@ function progressLabel(videoId: string): string {
 function resetProgress() {
   clearVideoProgress()
   progressState.value = {}
+}
+
+async function downloadAttestation() {
+  if (isGeneratingPdf.value) {
+    return
+  }
+
+  isGeneratingPdf.value = true
+
+  try {
+    const { generateVideoAttestationPdf } = await import(
+      '@/features/assessment/services/pdf.service'
+    )
+
+    generateVideoAttestationPdf({ totalCount: videos.value.length })
+    trackEvent('video_attestation_generated')
+    trackEvent('pdf_downloaded')
+  } finally {
+    isGeneratingPdf.value = false
+  }
 }
 </script>
 
@@ -53,6 +78,11 @@ function resetProgress() {
         <p class="muted">
           {{ t('videos.completedCount', { completed: completedCount, total: videos.length }) }}
         </p>
+        <div v-if="isJourneyComplete" class="cluster">
+          <AppButton :disabled="isGeneratingPdf" @click="downloadAttestation">
+            {{ isGeneratingPdf ? t('videos.preparingPdf') : t('videos.downloadAttestation') }}
+          </AppButton>
+        </div>
       </section>
 
       <div class="grid grid--3 video-grid">

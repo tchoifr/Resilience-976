@@ -103,6 +103,23 @@ textarea:focus-visible {
   min-height: calc(100vh - 164px);
 }
 
+.public-warning-banner {
+  background: var(--color-primary-dark);
+}
+
+.public-warning-banner p {
+  width: min(100% - 32px, var(--container));
+  margin: 0 auto;
+  padding: 10px 0;
+  color: #ffffff;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.public-warning-banner strong {
+  color: var(--color-teal);
+}
+
 .page {
   width: min(100% - 32px, var(--container));
   margin: 0 auto;
@@ -653,6 +670,39 @@ textarea:focus-visible {
 .app-footer p {
   margin: 0;
   font-size: 1.05rem;
+}
+
+.footer-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: #eff9fb;
+  border: 1px solid #cce8ed;
+  color: var(--color-text-strong);
+  flex-shrink: 0;
+}
+
+.footer-social-link svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.footer-legal-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.footer-legal-nav a {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .hero {

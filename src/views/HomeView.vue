@@ -2,6 +2,7 @@
 import { RouterLink } from 'vue-router'
 
 import AppAlert from '@/components/ui/AppAlert.vue'
+import RetroStatsBanner from '@/components/ui/RetroStatsBanner.vue'
 import { useAssessmentStore } from '@/features/assessment/stores/assessment.store'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
@@ -103,6 +104,8 @@ const journeySteps = [
       <AppAlert :title="t('home.privacyTitle')" variant="info">
         {{ t('home.privacy') }}
       </AppAlert>
+
+      <RetroStatsBanner />
     </div>
   </section>
 </template>

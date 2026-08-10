@@ -8,6 +8,11 @@ export const frMessages = {
     french: 'Français',
     shimaore: 'Shimaore',
   },
+  publicWarning: {
+    label: 'Outil de sensibilisation :',
+    text:
+      'Resilience 976 ne remplace ni les alertes officielles, ni les plans de sauvegarde, ni l’avis d’un professionnel, ni l’intervention des secours.',
+  },
   navigation: {
     ariaLabel: 'Navigation principale',
     menu: 'Menu',
@@ -25,10 +30,15 @@ export const frMessages = {
   },
   footer: {
     baseline: 'Plateforme publique, gratuite, sans compte.',
-    legal: 'Mentions légales et confidentialité',
+    legal: 'Mentions légales',
+    privacy: 'Politique de confidentialité',
+    accessibility: 'Déclaration d’accessibilité',
+    support: 'Support',
+    linkedin: 'Suivre Resilience 976 sur LinkedIn',
     publicService: 'Plateforme publique et gratuite',
     noPersonalData: 'Sans compte, sans donnée personnelle',
     slogan: 'Ensemble, soyons prêts face aux risques.',
+    ariaLabel: 'Liens réglementaires',
   },
   common: {
     progress: 'Progression',
@@ -168,6 +178,21 @@ export const frMessages = {
       description:
         'Responsabilité, confidentialité et limites du service Resilience 976.',
     },
+    privacy: {
+      title: 'Politique de confidentialité - Resilience 976',
+      description:
+        'Quelles données sont traitées par Resilience 976, pourquoi, et comment les effacer.',
+    },
+    accessibility: {
+      title: 'Déclaration d’accessibilité - Resilience 976',
+      description:
+        'État de conformité accessibilité de Resilience 976 et moyens de signaler un problème.',
+    },
+    support: {
+      title: 'Support - Resilience 976',
+      description:
+        'Comment signaler une erreur ou proposer une correction sur Resilience 976.',
+    },
     notFound: {
       title: 'Page introuvable - Resilience 976',
       description: 'La page demandée n’existe pas.',
@@ -298,6 +323,56 @@ export const frMessages = {
     sources:
       'Les questions, actions, quantités et sources doivent être validées par un référent métier avant publication officielle.',
   },
+  privacy: {
+    eyebrow: 'Politique de confidentialité',
+    title: 'Quelles données sont traitées, et pourquoi',
+    intro:
+      'Resilience 976 est conçu pour fonctionner sans compte et avec le minimum de données possible. Cette page explique précisément ce qui est conservé, où, et pendant combien de temps.',
+    localTitle: 'Données conservées uniquement sur votre appareil',
+    local:
+      'Les réponses au diagnostic, la checklist, le kit personnalisé, la progression des capsules vidéo, du quiz et des mises en situation sont enregistrées dans le navigateur (localStorage) de cet appareil. Elles ne sont jamais transmises sous une forme qui vous identifie.',
+    anonymousTitle: 'Statistiques anonymes d’usage',
+    anonymous:
+      'Un identifiant technique aléatoire (sans lien avec votre identité) est généré et conservé dans le navigateur. Il permet de compter les visites, les parcours terminés et les scores agrégés, afin de suivre l’objectif de sensibilisation du projet. Il ne permet pas de vous identifier personnellement.',
+    campaignTitle: 'Codes de campagne',
+    campaign:
+      'Quand la plateforme est diffusée par un établissement scolaire, une entreprise ou une collectivité via un lien dédié, un code de campagne facultatif est associé aux statistiques agrégées de cette diffusion. Aucun nom, aucune liste de participants n’est collecté.',
+    noCookiesTitle: 'Pas de cookie, pas de compte',
+    noCookies:
+      'Le site ne dépose aucun cookie de suivi et ne demande ni compte, ni email, ni nom pour être utilisé.',
+    retentionTitle: 'Durée de conservation',
+    retention:
+      'Les données locales restent sur votre appareil jusqu’à ce que vous les effaciez. Les statistiques agrégées sont conservées le temps nécessaire au suivi du projet.',
+    rightsTitle: 'Effacer vos données',
+    rights:
+      'Vous pouvez effacer à tout moment les données conservées sur cet appareil depuis les résultats ou les mentions légales.',
+    contactNote: 'Pour toute question sur ces données, consultez la page support.',
+  },
+  accessibility: {
+    eyebrow: 'Déclaration d’accessibilité',
+    title: 'État d’accessibilité de Resilience 976',
+    intro:
+      'Resilience 976 est un service en cours de développement. Cette déclaration reflète l’état réel du site, sans anticiper un audit qui n’a pas encore eu lieu.',
+    statusTitle: 'État de conformité',
+    status:
+      'Aucun audit formel selon le référentiel général d’amélioration de l’accessibilité (RGAA) n’a été réalisé à ce stade. L’état de conformité n’est donc pas encore évalué. Une démarche de mise en accessibilité est prévue avant une diffusion officielle plus large.',
+    knownIssuesTitle: 'Difficultés connues',
+    knownIssues:
+      'Certains contenus (transcriptions de vidéos, contrastes, navigation au clavier) n’ont pas encore fait l’objet d’une vérification systématique. Cette liste sera complétée au fil des vérifications.',
+    contactTitle: 'Signaler un problème d’accessibilité',
+    contact:
+      'Si vous rencontrez un obstacle pour accéder à un contenu ou une fonctionnalité, vous pouvez le signaler via le canal de contact indiqué sur la page support.',
+  },
+  support: {
+    eyebrow: 'Support',
+    title: 'Signaler une erreur ou proposer une correction',
+    intro:
+      'Resilience 976 s’appuie sur des sources publiques et un contenu en cours de validation. Si vous repérez une erreur, une information obsolète ou une amélioration possible, vous pouvez le signaler.',
+    channelTitle: 'Canal de contact',
+    channelText:
+      'Les signalements et propositions de correction se font via LinkedIn.',
+    linkedinLabel: 'Contacter via LinkedIn',
+  },
   resources: {
     eyebrow: 'Ressources',
     title: 'Fiches pratiques et sources',
@@ -311,6 +386,8 @@ export const frMessages = {
     globalProgress: 'Parcours vidéo complété',
     completedCount: '{completed} capsule(s) terminée(s) sur {total}',
     resetProgress: 'Réinitialiser la progression',
+    downloadAttestation: 'Télécharger l’attestation',
+    preparingPdf: 'Préparation du PDF…',
     watch: 'Regarder',
     officialExternal: 'Vidéo officielle externe',
     integratedVideo: 'Vidéo intégrée',
@@ -400,6 +477,13 @@ export const frMessages = {
     quizLine1: 'Ce document atteste la participation au quiz interactif Resilience 976.',
     quizScoreLine: 'Score obtenu : {score}/{total}',
     quizDisclaimer:
+      'Attestation de sensibilisation : sans valeur de certification professionnelle.',
+    videoTitle: 'Attestation de participation',
+    videoSubtitle: 'Parcours de micro-formation complété',
+    videoLine1:
+      'Ce document atteste que le parcours de micro-formation Resilience 976 a été complété intégralement.',
+    videoScoreLine: '{total} capsules complétées',
+    videoDisclaimer:
       'Attestation de sensibilisation : sans valeur de certification professionnelle.',
   },
   userExperiment: {

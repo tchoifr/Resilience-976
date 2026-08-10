@@ -4,6 +4,7 @@ import { RouterView } from 'vue-router'
 
 import AppFooter from '@/components/ui/AppFooter.vue'
 import AppHeader from '@/components/ui/AppHeader.vue'
+import PublicWarningBanner from '@/components/ui/PublicWarningBanner.vue'
 import { useAssessmentStore } from '@/features/assessment/stores/assessment.store'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
@@ -28,4 +29,5 @@ watch(locale, () => {
     <RouterView />
   </main>
   <AppFooter />
+  <PublicWarningBanner />
 </template>

@@ -52,6 +52,7 @@ const eventMap = {
   quiz_attestation_generated: 'quiz_attestation_generated',
   scenario_started: 'scenario_started',
   scenario_completed: 'scenario_completed',
+  video_attestation_generated: 'video_attestation_generated',
 }
 
 const allowedEvents = new Set(Object.keys(eventMap))
@@ -85,6 +86,9 @@ const allowedPaths = new Set([
   '/tableau-de-bord/mises-en-situation',
   '/experimentation-utilisateurs',
   '/mentions-legales',
+  '/politique-de-confidentialite',
+  '/declaration-accessibilite',
+  '/support',
 ])
 
 const actionEvents = new Set([
@@ -94,6 +98,7 @@ const actionEvents = new Set([
   'kit_opened',
   'pdf_downloaded',
   'quiz_attestation_generated',
+  'video_attestation_generated',
 ])
 const allowedDevices = new Set(['smartphone', 'ordinateur', 'tablette'])
 const allowedProfiles = new Set([

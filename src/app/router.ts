@@ -141,6 +141,27 @@ const router = createRouter({
       },
     },
     {
+      path: '/politique-de-confidentialite',
+      component: () => import('@/views/PrivacyView.vue'),
+      meta: {
+        seoKey: 'privacy',
+      },
+    },
+    {
+      path: '/declaration-accessibilite',
+      component: () => import('@/views/AccessibilityView.vue'),
+      meta: {
+        seoKey: 'accessibility',
+      },
+    },
+    {
+      path: '/support',
+      component: () => import('@/views/SupportView.vue'),
+      meta: {
+        seoKey: 'support',
+      },
+    },
+    {
       path: '/:pathMatch(.*)*',
       component: () => import('@/views/NotFoundView.vue'),
       meta: {
