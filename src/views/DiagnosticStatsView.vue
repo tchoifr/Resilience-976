@@ -13,6 +13,7 @@ const { t } = useI18n()
 
 interface DiagnosticStats {
   generatedAt: string
+  totalStarted: number
   total: number
   averageGlobalScore: number
   domainAverages: Record<string, number>
@@ -37,6 +38,11 @@ const stats = ref<DiagnosticStats | null>(null)
 const isLoading = ref(true)
 
 const summaryCards = computed(() => [
+  {
+    label: t('diagnosticStats.summary.totalStarted'),
+    value: stats.value ? stats.value.totalStarted.toLocaleString('fr-FR') : '—',
+    tone: 'neutral',
+  },
   {
     label: t('diagnosticStats.summary.total'),
     value: stats.value ? stats.value.total.toLocaleString('fr-FR') : '—',

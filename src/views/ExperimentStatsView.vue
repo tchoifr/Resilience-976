@@ -102,7 +102,11 @@ const summaryCards = computed(() => [
   {
     label: t('experimentStats.summary.medianDuration'),
     value: stats.value
-      ? `${stats.value.medianDurationMinutes} ${t('experimentStats.summary.minutesSuffix')}`
+      ? `${
+          stats.value.medianDurationMinutes % 1 === 0.5
+            ? Math.ceil(stats.value.medianDurationMinutes)
+            : Math.floor(stats.value.medianDurationMinutes)
+        } ${t('experimentStats.summary.minutesSuffix')}`
       : '—',
     tone: 'neutral',
   },

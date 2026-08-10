@@ -302,7 +302,7 @@ function calculateDiagnosticScore(answers, questionsById) {
   return { globalScore, domainScores }
 }
 
-function buildDiagnosticStats(rows, index) {
+function buildDiagnosticStats(rows, index, totalStarted = 0) {
   const total = rows.length
   const domainSums = {}
   const domainCounts = {}
@@ -352,6 +352,7 @@ function buildDiagnosticStats(rows, index) {
 
   return {
     generatedAt: new Date().toISOString(),
+    totalStarted,
     total,
     averageGlobalScore: total === 0 ? 0 : Math.round(globalScoreSum / total),
     domainAverages,
@@ -1031,12 +1032,22 @@ const server = createServer(async (request, response) => {
       request.method === 'GET' &&
       requestUrl.pathname === '/api/diagnostic-responses/stats'
     ) {
-      const [rows, index] = await Promise.all([
+      const [rows, index, events] = await Promise.all([
         readDiagnosticResponseRows(),
         getQuestionsIndex(),
+        readEvents(),
       ])
+      const totalStarted = uniqueVisitorIds(
+        events,
+        (event) => event.name === 'diagnostic_started',
+      ).size
 
-      sendJson(response, 200, buildDiagnosticStats(rows, index), origin)
+      sendJson(
+        response,
+        200,
+        buildDiagnosticStats(rows, index, totalStarted),
+        origin,
+      )
       return
     }
 

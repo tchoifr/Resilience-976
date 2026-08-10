@@ -181,6 +181,8 @@ export const frMessages = {
     missingAnswer: 'Sélectionnez une réponse pour continuer.',
     previous: 'Précédent',
     next: 'Continuer',
+    confirm: 'Confirmer le diagnostic',
+    confirmedMessage: 'Vos réponses sont confirmées.',
     results: 'Voir mes résultats',
     noQuestionError: 'Aucune question disponible',
   },
@@ -484,6 +486,7 @@ export const frMessages = {
     loading: 'Chargement',
     noData: 'Aucun diagnostic enregistré pour le moment.',
     summary: {
+      totalStarted: 'Diagnostics commencés',
       total: 'Diagnostics enregistrés',
       averageScore: 'Score global moyen',
     },

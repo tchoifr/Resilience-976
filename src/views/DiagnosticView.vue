@@ -45,6 +45,7 @@ const progress = computed(() =>
 )
 const isLastQuestion = computed(() => assessmentStore.currentIndex >= questions.value.length - 1)
 const canContinue = computed(() => !currentQuestion.value.required || Boolean(selectedAnswer.value))
+const isConfirmed = computed(() => isLastQuestion.value && Boolean(assessmentStore.completedAt))
 
 onMounted(() => {
   // Only a genuine first entry counts as a start; resuming an
@@ -66,20 +67,32 @@ function goPrevious() {
 }
 
 function goNext() {
-  if (!canContinue.value) {
-    return
-  }
-
-  if (isLastQuestion.value) {
-    assessmentStore.complete()
-    trackEvent('diagnostic_completed')
-    syncDiagnosticResponses(assessmentStore.answers)
-    void router.push('/resultats')
+  if (!canContinue.value || isLastQuestion.value) {
     return
   }
 
   assessmentStore.setCurrentIndex(assessmentStore.currentIndex + 1)
   void focusQuestion()
+}
+
+function confirmDiagnostic() {
+  if (!canContinue.value) {
+    return
+  }
+
+  // Meme logique que le garde sur diagnostic_started : ne compter que la
+  // toute premiere completion d'un visiteur, pas chaque repassage sur la
+  // derniere question (sinon terminés peut depasser commencés cote stats).
+  const isFirstCompletion = !assessmentStore.completedAt
+  assessmentStore.complete()
+  if (isFirstCompletion) {
+    trackEvent('diagnostic_completed')
+  }
+  syncDiagnosticResponses(assessmentStore.answers)
+}
+
+function goToResults() {
+  void router.push('/resultats')
 }
 
 function domainLabel(domain: AssessmentDomain): string {
@@ -110,31 +123,47 @@ function domainLabel(domain: AssessmentDomain): string {
       </aside>
 
       <div ref="questionRegion" class="stack" tabindex="-1" aria-live="polite">
-        <p class="eyebrow">
-          {{
-            t('diagnostic.questionCount', {
-              current: assessmentStore.currentIndex + 1,
-              total: questions.length,
-            })
-          }}
-        </p>
+        <template v-if="!isConfirmed">
+          <p class="eyebrow">
+            {{
+              t('diagnostic.questionCount', {
+                current: assessmentStore.currentIndex + 1,
+                total: questions.length,
+              })
+            }}
+          </p>
 
-        <QuestionCard v-model="selectedAnswer" :question="currentQuestion" />
+          <QuestionCard v-model="selectedAnswer" :question="currentQuestion" />
 
-        <p v-if="currentQuestion.required && !selectedAnswer" class="muted">
-          {{ t('diagnostic.missingAnswer') }}
+          <p v-if="currentQuestion.required && !selectedAnswer" class="muted">
+            {{ t('diagnostic.missingAnswer') }}
+          </p>
+        </template>
+        <p v-else class="muted">
+          {{ t('diagnostic.confirmedMessage') }}
         </p>
 
         <div class="cluster">
           <AppButton
+            v-if="!isLastQuestion"
             variant="secondary"
             :disabled="assessmentStore.currentIndex === 0"
             @click="goPrevious"
           >
             {{ t('diagnostic.previous') }}
           </AppButton>
-          <AppButton :disabled="!canContinue" @click="goNext">
-            {{ isLastQuestion ? t('diagnostic.results') : t('diagnostic.next') }}
+          <AppButton v-if="!isLastQuestion" :disabled="!canContinue" @click="goNext">
+            {{ t('diagnostic.next') }}
+          </AppButton>
+          <AppButton
+            v-else-if="!assessmentStore.completedAt"
+            :disabled="!canContinue"
+            @click="confirmDiagnostic"
+          >
+            {{ t('diagnostic.confirm') }}
+          </AppButton>
+          <AppButton v-else @click="goToResults">
+            {{ t('diagnostic.results') }}
           </AppButton>
         </div>
       </div>

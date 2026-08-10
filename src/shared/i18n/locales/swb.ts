@@ -179,6 +179,8 @@ export const swbMessages = {
     missingAnswer: 'Dua djawabu wendrelea.',
     previous: 'Prev',
     next: 'Endza',
+    confirm: 'Hakikisha udzisa',
+    confirmedMessage: 'Majibu yaho yamehakikishwa.',
     results: 'nione mavocha yangu',
     noQuestionError: 'Tsisahani wala masuala uketsi',
   },
@@ -482,6 +484,7 @@ export const swbMessages = {
     loading: 'Inashughulikiwa',
     noData: 'Kavhu udzisa bado.',
     summary: {
+      totalStarted: 'Udzisa ziandzianzishiwe',
       total: 'Udzisa ziandzishiwe',
       averageScore: 'Score ya kati',
     },
