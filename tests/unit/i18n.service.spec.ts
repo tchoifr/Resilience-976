@@ -43,6 +43,8 @@ describe('i18n.service', () => {
     const keys = [
       'publicWarning.label',
       'publicWarning.text',
+      'theme.switchToDark',
+      'theme.switchToLight',
       'kit.downloadPdf',
       'videos.downloadAttestation',
       'quiz.start',
