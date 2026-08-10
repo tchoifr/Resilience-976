@@ -173,6 +173,28 @@ export const scenarioSchema = z.object({
 
 export const scenariosSchema = z.array(scenarioSchema).min(1)
 
+export const assistantEntrySchema = z.object({
+  id: z.string().min(1),
+  topic: z.enum([
+    'household_preparation',
+    'kit_composition',
+    'document_protection',
+    'power_outage',
+    'water_outage',
+    'cyclone_eye_behavior',
+    'vulnerable_people_help',
+    'return_to_normal',
+  ]),
+  question: z.string().min(1),
+  keywords: z.array(z.string().min(1)).min(1),
+  answer: z.string().min(1),
+  sourceIds: z.array(z.string().min(1)).min(1),
+  validationStatus: validationStatusSchema,
+  revisionDate: z.string().min(1),
+})
+
+export const assistantEntriesSchema = z.array(assistantEntrySchema).min(1)
+
 export const questionsSchema = z.array(questionSchema).min(1)
 export const actionsSchema = z.array(actionSchema).min(1)
 export const kitSchema = z.array(kitItemSchema).min(1)

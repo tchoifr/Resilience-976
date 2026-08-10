@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import {
   actions,
   actionsById,
+  assistantEntries,
   kitItems,
   questions,
   quizQuestions,
@@ -12,6 +13,7 @@ import {
   sourcesById,
   videosById,
 } from '@/features/assessment/services/content.service'
+import { findBestMatch } from '@/features/assistant/services/assistant.service'
 import { registerLocale, setLocale } from '@/shared/i18n/i18n.service'
 import { swbMessages } from '@/shared/i18n/locales/swb'
 
@@ -172,6 +174,30 @@ describe('contenus metier', () => {
           `${scenario.id}/${step.id} n'a pas d'option a 100`,
         ).toBe(100)
       }
+    }
+  })
+
+  it('relie chaque entree de l’assistant a des sources existantes', () => {
+    expect(assistantEntries.value.length).toBeGreaterThanOrEqual(1)
+
+    for (const entry of assistantEntries.value) {
+      for (const sourceId of entry.sourceIds) {
+        expect(
+          sourcesById.value.has(sourceId),
+          `${entry.id} reference source inconnue ${sourceId}`,
+        ).toBe(true)
+      }
+    }
+  })
+
+  it('route la question canonique de chaque entree de l’assistant vers elle-meme', () => {
+    for (const entry of assistantEntries.value) {
+      const match = findBestMatch(entry.question, assistantEntries.value)
+
+      expect(
+        match?.entry.id,
+        `la question canonique de ${entry.id} ne matche pas cette meme entree`,
+      ).toBe(entry.id)
     }
   })
 
