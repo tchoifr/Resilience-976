@@ -1512,7 +1512,122 @@ function uniqueVisitorIds(events, matchesEvent) {
 // relations pair-a-pair qui n'existent pas dans la donnee : deux visiteurs
 // d'une meme campagne ne sont pas "lies" l'un a l'autre, ils partagent
 // seulement une campagne.
-function buildVisitorGraph(events) {
+async function readLatestDiagnosticAnswersByVisitor() {
+  const currentDatabase = await getDatabase()
+  const rows = currentDatabase
+    .prepare(
+      `
+        SELECT visitor_id, answers_json
+        FROM diagnostic_responses
+        ORDER BY created_at DESC
+      `,
+    )
+    .all()
+
+  const byVisitor = new Map()
+
+  for (const row of rows) {
+    // Rows are newest-first: the first one seen per visitor is their latest.
+    if (!byVisitor.has(row.visitor_id)) {
+      byVisitor.set(row.visitor_id, parseRatingsJson(row.answers_json))
+    }
+  }
+
+  return byVisitor
+}
+
+async function readScenarioResultsByVisitor() {
+  const currentDatabase = await getDatabase()
+  const rows = currentDatabase
+    .prepare(`SELECT visitor_id, scenario_id, score FROM scenario_results`)
+    .all()
+
+  const byVisitor = new Map()
+
+  for (const row of rows) {
+    const list = byVisitor.get(row.visitor_id) ?? []
+    list.push({ scenarioId: row.scenario_id, score: Number(row.score) })
+    byVisitor.set(row.visitor_id, list)
+  }
+
+  return byVisitor
+}
+
+// Weakest and strongest domain in a visitor's most recent diagnostic — same
+// calculation the diagnostic stats screen already uses, just taking the
+// extremes instead of averaging.
+function computeDomainExtremes(answers, questionsById) {
+  const { domainScores } = calculateDiagnosticScore(answers, questionsById)
+  const entries = Object.entries(domainScores)
+
+  if (entries.length === 0) {
+    return { weakest: null, strongest: null }
+  }
+
+  entries.sort((a, b) => a[1] - b[1])
+  return { weakest: entries[0][0], strongest: entries[entries.length - 1][0] }
+}
+
+// Weakest and strongest scenario (by score) among everything a visitor has
+// completed. If they've only done one, it's trivially both — that's an
+// honest reflection of a single data point, not a bug.
+function computeScenarioExtremes(results) {
+  if (results.length === 0) {
+    return { weakest: null, strongest: null }
+  }
+
+  let weakest = results[0]
+  let strongest = results[0]
+
+  for (const result of results) {
+    if (result.score < weakest.score) {
+      weakest = result
+    }
+
+    if (result.score > strongest.score) {
+      strongest = result
+    }
+  }
+
+  return { weakest: weakest.scenarioId, strongest: strongest.scenarioId }
+}
+
+// Shared shape for every visitor -> topic-hub star (campaign is built
+// separately since it doesn't need the "skip if no key" branch). Each
+// visitor contributes at most one edge per cluster, keeping every cluster
+// O(n) rather than reintroducing a visitor-to-visitor clique.
+function buildStarCluster(visitorIds, resolveKey, type, extraFields) {
+  const counts = new Map()
+  const edges = []
+
+  for (const visitorId of visitorIds) {
+    const key = resolveKey(visitorId)
+
+    if (!key) {
+      continue
+    }
+
+    counts.set(key, (counts.get(key) ?? 0) + 1)
+    edges.push({ source: `visitor:${visitorId}`, target: `${type}:${key}`, type })
+  }
+
+  const nodes = Array.from(counts.entries()).map(([key, visitorCount]) => ({
+    id: `${type}:${key}`,
+    type,
+    visitorCount,
+    ...(extraFields ? extraFields(key) : {}),
+  }))
+
+  return { nodes, edges, count: counts.size }
+}
+
+function buildVisitorGraph(
+  events,
+  diagnosticAnswersByVisitor,
+  questionsIndex,
+  scenarioResultsByVisitor,
+  scenariosIndex,
+) {
   const engagedVisitorIds = uniqueVisitorIds(
     events,
     (event) => event.name === 'diagnostic_started',
@@ -1571,17 +1686,90 @@ function buildVisitorGraph(events) {
     status: statusFor(visitorId),
   }))
 
-  const edges = visitorIds.map((visitorId) => ({
+  const campaignEdges = visitorIds.map((visitorId) => ({
     source: `visitor:${visitorId}`,
     target: `campaign:${campaignByVisitor.get(visitorId)}`,
+    type: 'campaign',
   }))
+
+  // Four more independent stars, each one-hop-to-a-hub like the campaign
+  // links: weakest/strongest diagnostic domain, weakest/strongest completed
+  // scenario. A visitor only gets an edge in a cluster if they have the
+  // underlying data for it (a synced diagnostic, or at least one scenario
+  // result) — the rest simply have none for that cluster.
+  const domainExtremesByVisitor = new Map()
+
+  for (const visitorId of visitorIds) {
+    const answers = diagnosticAnswersByVisitor.get(visitorId)
+
+    if (answers) {
+      domainExtremesByVisitor.set(visitorId, computeDomainExtremes(answers, questionsIndex.byId))
+    }
+  }
+
+  const scenarioExtremesByVisitor = new Map()
+
+  for (const visitorId of visitorIds) {
+    const results = scenarioResultsByVisitor.get(visitorId)
+
+    if (results && results.length > 0) {
+      scenarioExtremesByVisitor.set(visitorId, computeScenarioExtremes(results))
+    }
+  }
+
+  const scenarioLabel = (scenarioId) => ({
+    scenarioId,
+    label: scenariosIndex.byId.get(scenarioId)?.title ?? scenarioId,
+  })
+
+  const riskCluster = buildStarCluster(
+    visitorIds,
+    (visitorId) => domainExtremesByVisitor.get(visitorId)?.weakest ?? null,
+    'risk',
+    (domain) => ({ domain }),
+  )
+  const strengthCluster = buildStarCluster(
+    visitorIds,
+    (visitorId) => domainExtremesByVisitor.get(visitorId)?.strongest ?? null,
+    'strength',
+    (domain) => ({ domain }),
+  )
+  const scenarioWeakCluster = buildStarCluster(
+    visitorIds,
+    (visitorId) => scenarioExtremesByVisitor.get(visitorId)?.weakest ?? null,
+    'scenario_weak',
+    scenarioLabel,
+  )
+  const scenarioStrongCluster = buildStarCluster(
+    visitorIds,
+    (visitorId) => scenarioExtremesByVisitor.get(visitorId)?.strongest ?? null,
+    'scenario_strong',
+    scenarioLabel,
+  )
 
   return {
     generatedAt: new Date().toISOString(),
     totalVisitors: visitorIds.length,
     totalCampaigns: campaignCounts.size,
-    nodes: [...campaignNodes, ...visitorNodes],
-    edges,
+    totalRiskDomains: riskCluster.count,
+    totalStrengthDomains: strengthCluster.count,
+    totalScenarioWeakSpots: scenarioWeakCluster.count,
+    totalScenarioStrongSpots: scenarioStrongCluster.count,
+    nodes: [
+      ...campaignNodes,
+      ...visitorNodes,
+      ...riskCluster.nodes,
+      ...strengthCluster.nodes,
+      ...scenarioWeakCluster.nodes,
+      ...scenarioStrongCluster.nodes,
+    ],
+    edges: [
+      ...campaignEdges,
+      ...riskCluster.edges,
+      ...strengthCluster.edges,
+      ...scenarioWeakCluster.edges,
+      ...scenarioStrongCluster.edges,
+    ],
   }
 }
 
@@ -2000,9 +2188,32 @@ const server = createServer(async (request, response) => {
     }
 
     if (request.method === 'GET' && requestUrl.pathname === '/api/visitors/graph') {
-      const events = await readEvents()
+      const [
+        events,
+        diagnosticAnswersByVisitor,
+        questionsIndex,
+        scenarioResultsByVisitor,
+        scenariosIndex,
+      ] = await Promise.all([
+        readEvents(),
+        readLatestDiagnosticAnswersByVisitor(),
+        getQuestionsIndex(),
+        readScenarioResultsByVisitor(),
+        getScenariosIndex(),
+      ])
 
-      sendJson(response, 200, buildVisitorGraph(events), origin)
+      sendJson(
+        response,
+        200,
+        buildVisitorGraph(
+          events,
+          diagnosticAnswersByVisitor,
+          questionsIndex,
+          scenarioResultsByVisitor,
+          scenariosIndex,
+        ),
+        origin,
+      )
       return
     }
 

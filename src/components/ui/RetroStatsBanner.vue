@@ -50,7 +50,13 @@ const digits = computed(() => String(visits.value).padStart(6, '0').split(''))
 const engagedDigits = computed(() => String(engagedVisitors.value).padStart(6, '0'))
 
 const visitorId = getVisitorId()
-const shortVisitorId = visitorId.replace(/-/g, '').slice(0, 8).toUpperCase()
+const parts = visitorId.split('-')
+
+const shortVisitorId = (
+  (parts[0] ?? '').slice(0, 4) +
+  (parts[1] ?? '').slice(0, 4) +
+  (parts[2] ?? '').slice(0, 4)
+).toUpperCase()
 
 const tickerItems = computed(() => [
   `${journeysCompleted.value.toLocaleString('fr-FR')} diagnostics complétés`,

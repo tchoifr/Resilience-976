@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /* global fetch, cancelAnimationFrame, requestAnimationFrame, ResizeObserver, HTMLCanvasElement */
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 
 import {
@@ -9,10 +9,12 @@ import {
 } from '@/features/visitor-graph/services/force-layout.service'
 import type {
   SimulationNode,
+  VisitorGraphEdgeType,
+  VisitorGraphNodeData,
   VisitorGraphResponse,
   VisitorStatus,
 } from '@/features/visitor-graph/types/visitor-graph'
-import { useI18n } from '@/shared/i18n/i18n.service'
+import { getDomainLabel, useI18n } from '@/shared/i18n/i18n.service'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -30,6 +32,11 @@ const stats = ref<VisitorGraphResponse | null>(null)
 const canvasEl = ref<HTMLCanvasElement | null>(null)
 const hoveredNode = ref<SimulationNode | null>(null)
 const tooltipPosition = ref({ x: 0, y: 0 })
+const showCampaignLinks = ref(true)
+const showRiskLinks = ref(true)
+const showStrengthLinks = ref(true)
+const showScenarioWeakLinks = ref(true)
+const showScenarioStrongLinks = ref(true)
 
 let simulationNodes: SimulationNode[] = []
 let edges: VisitorGraphResponse['edges'] = []
@@ -42,12 +49,68 @@ const statusColor: Record<VisitorStatus, string> = {
   actioned: '#00a1ad',
   completed: '#7bb661',
 }
-const campaignColor = '#00394b'
+const hubColor: Record<VisitorGraphEdgeType, string> = {
+  campaign: '#00394b',
+  risk: '#ff8a2a',
+  strength: '#7bb661',
+  scenario_weak: '#e63946',
+  scenario_strong: '#00a1ad',
+}
 const edgeColor = 'rgba(38, 56, 77, 0.15)'
+
+function isLinkTypeVisible(type: VisitorGraphEdgeType): boolean {
+  if (type === 'campaign') return showCampaignLinks.value
+  if (type === 'risk') return showRiskLinks.value
+  if (type === 'strength') return showStrengthLinks.value
+  if (type === 'scenario_weak') return showScenarioWeakLinks.value
+  return showScenarioStrongLinks.value
+}
 
 const rawId = computed(() => {
   const id = hoveredNode.value?.id ?? ''
   return id.slice(id.indexOf(':') + 1)
+})
+
+// The hub a hovered visitor is linked to for a given cluster, looked up
+// from the full (never filtered) edge/node lists — informational in the
+// tooltip regardless of whether that link type is currently toggled on.
+function findLinkedHub(edgeType: VisitorGraphEdgeType): VisitorGraphNodeData | null {
+  if (hoveredNode.value?.type !== 'visitor' || !stats.value) {
+    return null
+  }
+
+  const edge = stats.value.edges.find(
+    (candidate) => candidate.type === edgeType && candidate.source === hoveredNode.value?.id,
+  )
+
+  if (!edge) {
+    return null
+  }
+
+  return stats.value.nodes.find((node) => node.id === edge.target) ?? null
+}
+
+const hoveredVisitorRisk = computed(() => findLinkedHub('risk'))
+const hoveredVisitorStrength = computed(() => findLinkedHub('strength'))
+const hoveredVisitorScenarioWeak = computed(() => findLinkedHub('scenario_weak'))
+const hoveredVisitorScenarioStrong = computed(() => findLinkedHub('scenario_strong'))
+
+const visibleNodes = computed(() => {
+  if (!stats.value) {
+    return []
+  }
+
+  return stats.value.nodes.filter(
+    (node) => node.type === 'visitor' || isLinkTypeVisible(node.type),
+  )
+})
+
+const visibleEdges = computed(() => {
+  if (!stats.value) {
+    return []
+  }
+
+  return stats.value.edges.filter((edge) => isLinkTypeVisible(edge.type))
 })
 
 function draw() {
@@ -87,7 +150,7 @@ function draw() {
     context.beginPath()
     context.arc(node.x, node.y, node.radius, 0, Math.PI * 2)
     context.fillStyle =
-      node.type === 'campaign' ? campaignColor : statusColor[node.status ?? 'visited']
+      node.type === 'visitor' ? statusColor[node.status ?? 'visited'] : hubColor[node.type]
     context.fill()
 
     if (node.id === hoveredNode.value?.id) {
@@ -116,8 +179,8 @@ function startSimulation() {
     return
   }
 
-  simulationNodes = createSimulationNodes(stats.value.nodes, canvas.width, canvas.height)
-  edges = stats.value.edges
+  simulationNodes = createSimulationNodes(visibleNodes.value, canvas.width, canvas.height)
+  edges = visibleEdges.value
 
   if (animationFrame === null) {
     animationFrame = requestAnimationFrame(tick)
@@ -138,13 +201,24 @@ function resizeCanvas() {
   startSimulation()
 }
 
-// Visitors are checked before campaigns: their radius is much smaller, so a
+// Toggling a link type swaps which nodes/edges are simulated, not just
+// which are drawn — a hidden hub still pulling on visitors via physics
+// would be a confusing, invisible force. Re-seeding is a deliberate,
+// visible re-layout rather than trying to preserve position continuity.
+watch(
+  [showCampaignLinks, showRiskLinks, showStrengthLinks, showScenarioWeakLinks, showScenarioStrongLinks],
+  () => {
+    startSimulation()
+  },
+)
+
+// Visitors are checked before hubs: their radius is much smaller, so a
 // visitor sitting near a hub's edge would otherwise always lose to the hub.
 function findNodeAt(x: number, y: number): SimulationNode | null {
   const visitors = simulationNodes.filter((node) => node.type === 'visitor')
-  const campaigns = simulationNodes.filter((node) => node.type === 'campaign')
+  const hubs = simulationNodes.filter((node) => node.type !== 'visitor')
 
-  for (const node of [...visitors, ...campaigns]) {
+  for (const node of [...visitors, ...hubs]) {
     if (Math.hypot(node.x - x, node.y - y) <= node.radius + 2) {
       return node
     }
@@ -241,7 +315,46 @@ onBeforeUnmount(() => {
             <span>{{ t('visitorGraph.summary.totalCampaigns') }}</span>
             <strong>{{ stats.totalCampaigns }}</strong>
           </article>
+          <article class="metric-card metric-card--neutral">
+            <span>{{ t('visitorGraph.summary.totalRiskDomains') }}</span>
+            <strong>{{ stats.totalRiskDomains }}</strong>
+          </article>
+          <article class="metric-card metric-card--neutral">
+            <span>{{ t('visitorGraph.summary.totalStrengthDomains') }}</span>
+            <strong>{{ stats.totalStrengthDomains }}</strong>
+          </article>
+          <article class="metric-card metric-card--neutral">
+            <span>{{ t('visitorGraph.summary.totalScenarioWeakSpots') }}</span>
+            <strong>{{ stats.totalScenarioWeakSpots }}</strong>
+          </article>
+          <article class="metric-card metric-card--neutral">
+            <span>{{ t('visitorGraph.summary.totalScenarioStrongSpots') }}</span>
+            <strong>{{ stats.totalScenarioStrongSpots }}</strong>
+          </article>
         </section>
+
+        <div class="cluster">
+          <label class="visitor-graph-toggle">
+            <input v-model="showCampaignLinks" type="checkbox" />
+            {{ t('visitorGraph.toggles.campaign') }}
+          </label>
+          <label class="visitor-graph-toggle">
+            <input v-model="showRiskLinks" type="checkbox" />
+            {{ t('visitorGraph.toggles.risk') }}
+          </label>
+          <label class="visitor-graph-toggle">
+            <input v-model="showStrengthLinks" type="checkbox" />
+            {{ t('visitorGraph.toggles.strength') }}
+          </label>
+          <label class="visitor-graph-toggle">
+            <input v-model="showScenarioWeakLinks" type="checkbox" />
+            {{ t('visitorGraph.toggles.scenarioWeak') }}
+          </label>
+          <label class="visitor-graph-toggle">
+            <input v-model="showScenarioStrongLinks" type="checkbox" />
+            {{ t('visitorGraph.toggles.scenarioStrong') }}
+          </label>
+        </div>
 
         <section class="panel dashboard-panel">
           <canvas
@@ -262,12 +375,40 @@ onBeforeUnmount(() => {
               <strong>{{ hoveredNode.campaignId }}</strong>
               <span>{{ hoveredNode.visitorCount }} {{ t('visitorGraph.tooltip.visitors') }}</span>
             </template>
+            <template v-else-if="hoveredNode.type === 'risk' || hoveredNode.type === 'strength'">
+              <strong>{{ getDomainLabel(hoveredNode.domain ?? '') }}</strong>
+              <span>{{ hoveredNode.visitorCount }} {{ t('visitorGraph.tooltip.visitors') }}</span>
+            </template>
+            <template
+              v-else-if="
+                hoveredNode.type === 'scenario_weak' || hoveredNode.type === 'scenario_strong'
+              "
+            >
+              <strong>{{ hoveredNode.label }}</strong>
+              <span>{{ hoveredNode.visitorCount }} {{ t('visitorGraph.tooltip.visitors') }}</span>
+            </template>
             <template v-else>
               <strong>{{ rawId }}</strong>
               <span
                 >{{ t('visitorGraph.tooltip.campaign') }} {{ hoveredNode.campaignId }} —
                 {{ t(`visitorGraph.statusShort.${hoveredNode.status}`) }}</span
               >
+              <span v-if="hoveredVisitorRisk">
+                {{ t('visitorGraph.tooltip.weakestDomain') }}
+                {{ getDomainLabel(hoveredVisitorRisk.domain ?? '') }}
+              </span>
+              <span v-if="hoveredVisitorStrength">
+                {{ t('visitorGraph.tooltip.strongestDomain') }}
+                {{ getDomainLabel(hoveredVisitorStrength.domain ?? '') }}
+              </span>
+              <span v-if="hoveredVisitorScenarioWeak">
+                {{ t('visitorGraph.tooltip.weakestScenario') }}
+                {{ hoveredVisitorScenarioWeak.label }}
+              </span>
+              <span v-if="hoveredVisitorScenarioStrong">
+                {{ t('visitorGraph.tooltip.strongestScenario') }}
+                {{ hoveredVisitorScenarioStrong.label }}
+              </span>
               <span class="muted">{{ t('visitorGraph.tooltip.clickHint') }}</span>
             </template>
           </div>
@@ -275,28 +416,75 @@ onBeforeUnmount(() => {
 
         <section class="panel stack">
           <h2 class="section-title">{{ t('visitorGraph.legend.title') }}</h2>
-          <ul class="visitor-graph-legend">
-            <li>
-              <span class="visitor-graph-swatch" style="background: #00394b"></span>
-              {{ t('visitorGraph.legend.campaign') }}
-            </li>
-            <li>
-              <span class="visitor-graph-swatch" style="background: #dce8ee"></span>
-              {{ t('visitorGraph.legend.visited') }}
-            </li>
-            <li>
-              <span class="visitor-graph-swatch" style="background: #007f86"></span>
-              {{ t('visitorGraph.legend.engaged') }}
-            </li>
-            <li>
-              <span class="visitor-graph-swatch" style="background: #00a1ad"></span>
-              {{ t('visitorGraph.legend.actioned') }}
-            </li>
-            <li>
-              <span class="visitor-graph-swatch" style="background: #7bb661"></span>
-              {{ t('visitorGraph.legend.completed') }}
-            </li>
-          </ul>
+
+          <div class="visitor-graph-legend-group">
+            <h3 class="visitor-graph-legend-group__title">
+              {{ t('visitorGraph.legend.hubsTitle') }}
+            </h3>
+            <p class="muted">{{ t('visitorGraph.legend.hubsHint') }}</p>
+            <ul class="visitor-graph-legend">
+              <li>
+                <span
+                  class="visitor-graph-swatch visitor-graph-swatch--hub"
+                  style="background: #00394b"
+                ></span>
+                {{ t('visitorGraph.legend.campaign') }}
+              </li>
+              <li>
+                <span
+                  class="visitor-graph-swatch visitor-graph-swatch--hub"
+                  style="background: #ff8a2a"
+                ></span>
+                {{ t('visitorGraph.legend.risk') }}
+              </li>
+              <li>
+                <span
+                  class="visitor-graph-swatch visitor-graph-swatch--hub"
+                  style="background: #7bb661"
+                ></span>
+                {{ t('visitorGraph.legend.strength') }}
+              </li>
+              <li>
+                <span
+                  class="visitor-graph-swatch visitor-graph-swatch--hub"
+                  style="background: #e63946"
+                ></span>
+                {{ t('visitorGraph.legend.scenarioWeak') }}
+              </li>
+              <li>
+                <span
+                  class="visitor-graph-swatch visitor-graph-swatch--hub"
+                  style="background: #00a1ad"
+                ></span>
+                {{ t('visitorGraph.legend.scenarioStrong') }}
+              </li>
+            </ul>
+          </div>
+
+          <div class="visitor-graph-legend-group">
+            <h3 class="visitor-graph-legend-group__title">
+              {{ t('visitorGraph.legend.visitorsTitle') }}
+            </h3>
+            <p class="muted">{{ t('visitorGraph.legend.visitorsHint') }}</p>
+            <ul class="visitor-graph-legend">
+              <li>
+                <span class="visitor-graph-swatch" style="background: #dce8ee"></span>
+                {{ t('visitorGraph.legend.visited') }}
+              </li>
+              <li>
+                <span class="visitor-graph-swatch" style="background: #007f86"></span>
+                {{ t('visitorGraph.legend.engaged') }}
+              </li>
+              <li>
+                <span class="visitor-graph-swatch" style="background: #00a1ad"></span>
+                {{ t('visitorGraph.legend.actioned') }}
+              </li>
+              <li>
+                <span class="visitor-graph-swatch" style="background: #7bb661"></span>
+                {{ t('visitorGraph.legend.completed') }}
+              </li>
+            </ul>
+          </div>
         </section>
       </template>
     </div>
@@ -316,6 +504,12 @@ onBeforeUnmount(() => {
   cursor: pointer;
 }
 
+.visitor-graph-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
 .visitor-graph-tooltip {
   position: fixed;
   z-index: 20;
@@ -330,6 +524,16 @@ onBeforeUnmount(() => {
   max-width: 260px;
 }
 
+.visitor-graph-legend-group {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.visitor-graph-legend-group__title {
+  font-size: 1em;
+  margin: 0;
+}
+
 .visitor-graph-legend {
   display: grid;
   gap: var(--space-2);
@@ -341,14 +545,19 @@ onBeforeUnmount(() => {
 .visitor-graph-legend li {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
 .visitor-graph-swatch {
   display: inline-block;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
+}
+
+.visitor-graph-swatch--hub {
+  width: 26px;
+  height: 26px;
 }
 </style>

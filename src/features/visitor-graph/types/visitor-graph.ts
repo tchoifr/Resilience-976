@@ -1,24 +1,47 @@
 export type VisitorStatus = 'visited' | 'engaged' | 'actioned' | 'completed'
+export type VisitorGraphEdgeType =
+  | 'campaign'
+  | 'risk'
+  | 'strength'
+  | 'scenario_weak'
+  | 'scenario_strong'
+export type VisitorGraphNodeType = 'campaign' | 'visitor' | VisitorGraphEdgeType
 
 export interface VisitorGraphNodeData {
   id: string
-  type: 'campaign' | 'visitor'
-  campaignId: string
-  // Present only on type: 'campaign'.
+  type: VisitorGraphNodeType
+  // Present on type: 'campaign' and type: 'visitor'.
+  campaignId?: string
+  // Present on every hub type (campaign, risk, strength, scenario_weak,
+  // scenario_strong) — never on type: 'visitor'.
   visitorCount?: number
   // Present only on type: 'visitor'.
   status?: VisitorStatus
+  // Present only on type: 'risk' and type: 'strength' — the diagnostic
+  // domain slug, translate via getDomainLabel().
+  domain?: string
+  // Present only on type: 'scenario_weak' and type: 'scenario_strong'.
+  scenarioId?: string
+  // Present only on type: 'scenario_weak' and type: 'scenario_strong' — the
+  // scenario's title, already resolved server-side (content data, not an
+  // i18n key, so no client-side lookup needed).
+  label?: string
 }
 
 export interface VisitorGraphEdgeData {
   source: string
   target: string
+  type: VisitorGraphEdgeType
 }
 
 export interface VisitorGraphResponse {
   generatedAt: string
   totalVisitors: number
   totalCampaigns: number
+  totalRiskDomains: number
+  totalStrengthDomains: number
+  totalScenarioWeakSpots: number
+  totalScenarioStrongSpots: number
   nodes: VisitorGraphNodeData[]
   edges: VisitorGraphEdgeData[]
 }
