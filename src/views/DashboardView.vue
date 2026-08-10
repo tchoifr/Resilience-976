@@ -191,6 +191,12 @@ onMounted(async () => {
         >
           Statistiques du formulaire
         </RouterLink>
+        <RouterLink
+          class="link-button link-button--secondary"
+          to="/tableau-de-bord/graphe-visiteurs"
+        >
+          Graphe des visiteurs
+        </RouterLink>
       </div>
 
       <p v-if="populationSource" class="muted">

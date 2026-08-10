@@ -91,6 +91,7 @@ const allowedPaths = new Set([
   '/declaration-accessibilite',
   '/support',
   '/tableau-de-bord/kit',
+  '/tableau-de-bord/graphe-visiteurs',
 ])
 
 const actionEvents = new Set([
@@ -1496,6 +1497,86 @@ function uniqueVisitorIds(events, matchesEvent) {
   )
 }
 
+// Graphe en etoile plutot qu'en clique : chaque visiteur (anonyme, deja
+// collecte) n'est relie qu'au noeud de sa campagne, jamais aux autres
+// visiteurs directement. Une clique par campagne donnerait O(n^2) aretes
+// (une campagne de 200 personnes en donnerait ~20 000) et suggererait des
+// relations pair-a-pair qui n'existent pas dans la donnee : deux visiteurs
+// d'une meme campagne ne sont pas "lies" l'un a l'autre, ils partagent
+// seulement une campagne.
+function buildVisitorGraph(events) {
+  const engagedVisitorIds = uniqueVisitorIds(
+    events,
+    (event) => event.name === 'diagnostic_started',
+  )
+  const completedVisitorIds = uniqueVisitorIds(
+    events,
+    (event) => event.name === 'diagnostic_completed',
+  )
+  const actionVisitorIds = uniqueVisitorIds(events, (event) =>
+    actionEvents.has(event.name),
+  )
+
+  const campaignByVisitor = new Map()
+
+  for (const event of events) {
+    campaignByVisitor.set(event.visitorId, event.campaignId)
+  }
+
+  function statusFor(visitorId) {
+    if (completedVisitorIds.has(visitorId)) {
+      return 'completed'
+    }
+
+    if (actionVisitorIds.has(visitorId)) {
+      return 'actioned'
+    }
+
+    if (engagedVisitorIds.has(visitorId)) {
+      return 'engaged'
+    }
+
+    return 'visited'
+  }
+
+  const visitorIds = Array.from(campaignByVisitor.keys())
+  const campaignCounts = new Map()
+
+  for (const visitorId of visitorIds) {
+    const campaignId = campaignByVisitor.get(visitorId)
+    campaignCounts.set(campaignId, (campaignCounts.get(campaignId) ?? 0) + 1)
+  }
+
+  const campaignNodes = Array.from(campaignCounts.entries()).map(
+    ([campaignId, visitorCount]) => ({
+      id: `campaign:${campaignId}`,
+      type: 'campaign',
+      campaignId,
+      visitorCount,
+    }),
+  )
+
+  const visitorNodes = visitorIds.map((visitorId) => ({
+    id: `visitor:${visitorId}`,
+    type: 'visitor',
+    campaignId: campaignByVisitor.get(visitorId),
+    status: statusFor(visitorId),
+  }))
+
+  const edges = visitorIds.map((visitorId) => ({
+    source: `visitor:${visitorId}`,
+    target: `campaign:${campaignByVisitor.get(visitorId)}`,
+  }))
+
+  return {
+    generatedAt: new Date().toISOString(),
+    totalVisitors: visitorIds.length,
+    totalCampaigns: campaignCounts.size,
+    nodes: [...campaignNodes, ...visitorNodes],
+    edges,
+  }
+}
+
 function buildDashboard(events, updatedAt, feedbackDatabaseCount = 0) {
   // Funnel steps count unique visitors, not raw events: a visitor who
   // resumes, refreshes /resultats, or fires several actionEvents (e.g. a
@@ -1774,6 +1855,13 @@ const server = createServer(async (request, response) => {
         buildDiagnosticStats(rows, index, totalStarted),
         origin,
       )
+      return
+    }
+
+    if (request.method === 'GET' && requestUrl.pathname === '/api/visitors/graph') {
+      const events = await readEvents()
+
+      sendJson(response, 200, buildVisitorGraph(events), origin)
       return
     }
 

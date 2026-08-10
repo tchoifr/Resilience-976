@@ -157,6 +157,11 @@ export const frMessages = {
       description:
         'Résultats agrégés des profils de foyer utilisés pour personnaliser le kit d’urgence.',
     },
+    visitorGraph: {
+      title: 'Graphe des visiteurs - Resilience 976',
+      description:
+        'Vue relationnelle des visiteurs anonymes regroupés par campagne de mobilisation.',
+    },
     dashboard: {
       title: 'Tableau de bord - Resilience 976',
       description:
@@ -707,6 +712,27 @@ export const frMessages = {
       withElderly: 'Avec personnes âgées',
       withPets: 'Avec animaux',
       withSpecialNeeds: 'Avec besoins particuliers',
+    },
+  },
+  visitorGraph: {
+    eyebrow: 'Vue relationnelle',
+    title: 'Graphe des visiteurs par campagne',
+    intro:
+      'Chaque point est un visiteur anonyme (identifiant local, sans donnée personnelle), relié au nœud de la campagne dont il fait partie. Deux visiteurs ne sont jamais reliés directement entre eux : ils partagent seulement une campagne.',
+    backToDashboard: 'Retour au tableau de bord',
+    loading: 'Chargement',
+    noData: 'Aucun visiteur enregistré pour le moment.',
+    summary: {
+      totalVisitors: 'Visiteurs',
+      totalCampaigns: 'Campagnes',
+    },
+    legend: {
+      title: 'Légende',
+      campaign: 'Campagne (taille = nombre de participants)',
+      visited: 'Visiteur — page vue seulement',
+      engaged: 'Visiteur — diagnostic commencé',
+      actioned: 'Visiteur — plan, checklist, kit ou PDF ouvert',
+      completed: 'Visiteur — diagnostic terminé',
     },
   },
   quiz: {

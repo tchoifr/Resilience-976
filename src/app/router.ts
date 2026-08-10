@@ -141,6 +141,13 @@ const router = createRouter({
       },
     },
     {
+      path: '/tableau-de-bord/graphe-visiteurs',
+      component: () => import('@/views/VisitorGraphView.vue'),
+      meta: {
+        seoKey: 'visitorGraph',
+      },
+    },
+    {
       path: '/mentions-legales',
       component: () => import('@/views/LegalView.vue'),
       meta: {
