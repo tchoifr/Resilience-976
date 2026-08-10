@@ -34,6 +34,7 @@ export const frMessages = {
     privacy: 'Politique de confidentialité',
     accessibility: 'Déclaration d’accessibilité',
     support: 'Support',
+    linkedin: 'Suivre Resilience 976 sur LinkedIn',
     publicService: 'Plateforme publique et gratuite',
     noPersonalData: 'Sans compte, sans donnée personnelle',
     slogan: 'Ensemble, soyons prêts face aux risques.',

@@ -24,10 +24,10 @@ watch(locale, () => {
 
 <template>
   <a class="skip-link" href="#main-content">Aller au contenu</a>
-  <PublicWarningBanner />
   <AppHeader />
   <main id="main-content" class="app-main" tabindex="-1">
     <RouterView />
   </main>
   <AppFooter />
+  <PublicWarningBanner />
 </template>

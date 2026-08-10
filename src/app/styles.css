@@ -104,21 +104,20 @@ textarea:focus-visible {
 }
 
 .public-warning-banner {
-  background: #fff4e8;
-  border-bottom: 1px solid var(--color-warning);
+  background: var(--color-primary-dark);
 }
 
 .public-warning-banner p {
   width: min(100% - 32px, var(--container));
   margin: 0 auto;
-  padding: 8px 0;
-  color: var(--color-text-strong);
+  padding: 10px 0;
+  color: #ffffff;
   font-size: 0.85rem;
   text-align: center;
 }
 
 .public-warning-banner strong {
-  color: var(--color-warning);
+  color: var(--color-teal);
 }
 
 .page {
@@ -671,6 +670,25 @@ textarea:focus-visible {
 .app-footer p {
   margin: 0;
   font-size: 1.05rem;
+}
+
+.footer-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: #eff9fb;
+  border: 1px solid #cce8ed;
+  color: var(--color-text-strong);
+  flex-shrink: 0;
+}
+
+.footer-social-link svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
 }
 
 .footer-legal-nav {
