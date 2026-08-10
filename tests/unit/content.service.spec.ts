@@ -33,6 +33,37 @@ describe('contenus metier', () => {
       'Eba haho dagoni haho ujua wantru wahifagna hayi harimwa trongo yahidjiri?',
     )
     expect(questions.value).toHaveLength(24)
+
+    // La traduction shimaore du quiz et des mises en situation est un
+    // brouillon non relu par un locuteur natif (cf. commit) : on ne peut
+    // pas verifier la langue ici, seulement que la structure reste valide
+    // (memes ids/scores/sources que la version francaise).
+    expect(quizQuestions.value).toHaveLength(16)
+    for (const question of quizQuestions.value) {
+      expect(question.correctOptionIndex).toBeLessThan(question.options.length)
+
+      for (const sourceId of question.sourceIds) {
+        expect(
+          sourcesById.value.has(sourceId),
+          `${question.id} (swb) reference source inconnue ${sourceId}`,
+        ).toBe(true)
+      }
+    }
+
+    expect(scenarios.value).toHaveLength(5)
+    for (const scenario of scenarios.value) {
+      for (const sourceId of scenario.sourceIds) {
+        expect(
+          sourcesById.value.has(sourceId),
+          `${scenario.id} (swb) reference source inconnue ${sourceId}`,
+        ).toBe(true)
+      }
+
+      for (const step of scenario.steps) {
+        const maxScore = Math.max(...step.options.map((option) => option.score))
+        expect(maxScore, `${scenario.id}/${step.id} (swb) n'a pas d'option a 100`).toBe(100)
+      }
+    }
   })
 
   it('charge une base MVP complete', () => {

@@ -11,7 +11,9 @@ import videosJson from '@/data/videos.json'
 import swbActionsJson from '@/data/swb/actions.json'
 import swbKitJson from '@/data/swb/kit.json'
 import swbQuestionsJson from '@/data/swb/questions.json'
+import swbQuizQuestionsJson from '@/data/swb/quiz-questions.json'
 import swbResourcesJson from '@/data/swb/resources.json'
+import swbScenariosJson from '@/data/swb/scenarios.json'
 import swbSourcesJson from '@/data/swb/sources.json'
 import swbVideosJson from '@/data/swb/videos.json'
 import { useI18n } from '@/shared/i18n/i18n.service'
@@ -69,12 +71,14 @@ const videosByLocale: Record<ContentLocale, VideoCapsule[]> = {
   swb: sortVideos(videosSchema.parse(swbVideosJson)),
 }
 
-// Not yet translated per locale: the quiz question bank only ships in
-// French for this first iteration.
-const quizQuestionsList: QuizQuestion[] = quizQuestionsSchema.parse(quizQuestionsJson)
-
-// Same: French only for this first iteration.
-const scenariosList: Scenario[] = scenariosSchema.parse(scenariosJson)
+const quizQuestionsByLocale: Record<ContentLocale, QuizQuestion[]> = {
+  fr: quizQuestionsSchema.parse(quizQuestionsJson),
+  swb: quizQuestionsSchema.parse(swbQuizQuestionsJson),
+}
+const scenariosByLocale: Record<ContentLocale, Scenario[]> = {
+  fr: scenariosSchema.parse(scenariosJson),
+  swb: scenariosSchema.parse(swbScenariosJson),
+}
 
 function forLocale<T>(byLocale: Record<ContentLocale, T>, fallback: T): T {
   return byLocale[locale.value as ContentLocale] ?? fallback
@@ -86,8 +90,10 @@ export const kitItems = computed(() => forLocale(kitItemsByLocale, kitItemsByLoc
 export const resources = computed(() => forLocale(resourcesByLocale, resourcesByLocale.fr))
 export const sources = computed(() => forLocale(sourcesByLocale, sourcesByLocale.fr))
 export const videos = computed(() => forLocale(videosByLocale, videosByLocale.fr))
-export const quizQuestions = computed(() => quizQuestionsList)
-export const scenarios = computed(() => scenariosList)
+export const quizQuestions = computed(() =>
+  forLocale(quizQuestionsByLocale, quizQuestionsByLocale.fr),
+)
+export const scenarios = computed(() => forLocale(scenariosByLocale, scenariosByLocale.fr))
 
 export const sourcesById = computed(
   () => new Map(sources.value.map((source) => [source.id, source])),
