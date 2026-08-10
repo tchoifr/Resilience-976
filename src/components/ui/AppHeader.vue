@@ -21,6 +21,7 @@ const navLinks = [
   { to: '/videos', labelKey: 'navigation.videos' },
   { to: '/quiz', labelKey: 'navigation.quiz' },
   { to: '/mises-en-situation', labelKey: 'navigation.scenarios' },
+  { to: '/assistant-documentaire', labelKey: 'navigation.assistant' },
   { to: '/experimentation-utilisateurs', labelKey: 'navigation.experiment' },
 ]
 

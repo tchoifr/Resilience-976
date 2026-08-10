@@ -55,6 +55,9 @@ const eventMap = {
   scenario_completed: 'scenario_completed',
   video_attestation_generated: 'video_attestation_generated',
   kit_pdf_generated: 'kit_pdf_generated',
+  assistant_question_asked: 'assistant_question_asked',
+  assistant_answered: 'assistant_answered',
+  assistant_unanswered: 'assistant_unanswered',
 }
 
 const allowedEvents = new Set(Object.keys(eventMap))
@@ -95,6 +98,7 @@ const allowedPaths = new Set([
   '/tableau-de-bord/graphe-visiteurs',
   '/tableau-de-bord/visiteur',
   '/tableau-de-bord/priorites',
+  '/assistant-documentaire',
 ])
 
 const actionEvents = new Set([
