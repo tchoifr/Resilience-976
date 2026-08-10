@@ -53,9 +53,9 @@ const visitorId = getVisitorId()
 const parts = visitorId.split('-')
 
 const shortVisitorId = (
-  parts[0].slice(0, 4) +
-  parts[1].slice(0, 4) +
-  parts[2].slice(0, 4)
+  (parts[0] ?? '').slice(0, 4) +
+  (parts[1] ?? '').slice(0, 4) +
+  (parts[2] ?? '').slice(0, 4)
 ).toUpperCase()
 
 const tickerItems = computed(() => [
