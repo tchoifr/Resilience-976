@@ -544,6 +544,27 @@ async function getDatabase() {
     }
   }
 
+  // quiz_results shipped first with a `pseudonym` column and no
+  // `answers_json`; the pseudonym was dropped before this ever reached
+  // production, replaced by per-question answers for future stats.
+  try {
+    database.exec(
+      `ALTER TABLE quiz_results ADD COLUMN answers_json TEXT NOT NULL DEFAULT '{}';`,
+    )
+  } catch (error) {
+    if (!String(error.message).includes('duplicate column name')) {
+      throw error
+    }
+  }
+
+  try {
+    database.exec(`ALTER TABLE quiz_results DROP COLUMN pseudonym;`)
+  } catch (error) {
+    if (!String(error.message).includes('no such column')) {
+      throw error
+    }
+  }
+
   return database
 }
 
