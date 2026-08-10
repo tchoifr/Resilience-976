@@ -30,11 +30,6 @@ const { t } = useI18n()
           <RouterLink to="/support">{{ t('footer.support') }}</RouterLink>
         </p>
       </section>
-
-      <section class="panel stack">
-        <h2 class="section-title">{{ t('accessibility.remedyTitle') }}</h2>
-        <p>{{ t('accessibility.remedy') }}</p>
-      </section>
     </div>
   </section>
 </template>

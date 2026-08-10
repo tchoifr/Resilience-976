@@ -356,9 +356,6 @@ export const frMessages = {
     contactTitle: 'Signaler un problème d’accessibilité',
     contact:
       'Si vous rencontrez un obstacle pour accéder à un contenu ou une fonctionnalité, vous pouvez le signaler via le canal de contact indiqué sur la page support.',
-    remedyTitle: 'Voie de recours',
-    remedy:
-      'Si vous n’obtenez pas de réponse satisfaisante, vous pouvez adresser une réclamation au Défenseur des droits.',
   },
   support: {
     eyebrow: 'Support',
