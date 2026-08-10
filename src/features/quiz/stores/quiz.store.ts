@@ -12,7 +12,6 @@ interface QuizStoreState {
   isAnswered: boolean
   results: boolean[]
   status: QuizStatus
-  pseudonym: string
 }
 
 function createInitialState(): QuizStoreState {
@@ -23,7 +22,6 @@ function createInitialState(): QuizStoreState {
     isAnswered: false,
     results: [],
     status: 'idle',
-    pseudonym: '',
   }
 }
 
@@ -74,9 +72,6 @@ export const useQuizStore = defineStore('quiz', {
       this.currentIndex += 1
       this.selectedIndex = null
       this.isAnswered = false
-    },
-    setPseudonym(value: string) {
-      this.pseudonym = value.slice(0, 40)
     },
     reset() {
       this.$reset()

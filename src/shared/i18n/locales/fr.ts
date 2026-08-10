@@ -372,7 +372,6 @@ export const frMessages = {
     quizTitle: 'Attestation de participation',
     quizSubtitle: 'Quiz de sensibilisation aux risques',
     quizLine1: 'Ce document atteste la participation au quiz interactif Resilience 976.',
-    quizPseudonym: 'Participant : {pseudonym}',
     quizScoreLine: 'Score obtenu : {score}/{total}',
     quizDisclaimer:
       'Attestation de sensibilisation : sans valeur de certification professionnelle.',
@@ -540,12 +539,6 @@ export const frMessages = {
     results: {
       title: 'Résultat du quiz',
       summary: '{score} bonne(s) réponse(s) sur {total}.',
-      pseudonymLabel:
-        'Pseudonyme pour un classement facultatif (aucun nom complet requis)',
-      pseudonymPlaceholder: 'Ex : Manta-976',
-      saveScore: 'Enregistrer mon score',
-      savingScore: 'Enregistrement…',
-      scoreSaved: 'Score enregistré pour le classement de la campagne',
       downloadAttestation: 'Télécharger l’attestation',
       preparingPdf: 'Préparation du PDF…',
       disclaimer:

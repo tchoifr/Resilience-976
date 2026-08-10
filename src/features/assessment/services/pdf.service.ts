@@ -38,7 +38,6 @@ interface ChecklistPdfInput {
 interface QuizAttestationInput {
   score: number
   total: number
-  pseudonym: string
 }
 
 interface PdfOutputOptions {
@@ -384,12 +383,6 @@ function addQuizAttestationPage(pdf: jsPDF, input: QuizAttestationInput) {
   addCenteredText(pdf, t('pdf.quizLine1'), 104, {
     size: 11,
   })
-  if (input.pseudonym) {
-    addCenteredText(pdf, t('pdf.quizPseudonym', { pseudonym: input.pseudonym }), 112, {
-      size: 11,
-      bold: true,
-    })
-  }
 
   addSeal(pdf, percent)
 

@@ -12,12 +12,11 @@ const quizSyncEndpoint = import.meta.env.VITE_QUIZ_SYNC_ENDPOINT ?? defaultQuizS
 export interface QuizResultInput {
   score: number
   total: number
-  pseudonym: string
 }
 
-// No full name is ever collected: only an optional pseudonym, so a school,
-// company or local authority can mobilize a group under the shared
-// campaign_id without gathering personal identity data.
+// No name is ever collected: a school, company or local authority can
+// mobilize a group under the shared campaign_id without gathering any
+// personal identity data.
 export function syncQuizResult(input: QuizResultInput): void {
   if (!quizSyncEnabled) {
     return
@@ -27,7 +26,6 @@ export function syncQuizResult(input: QuizResultInput): void {
     id: window.crypto.randomUUID(),
     visitorId: getVisitorId(),
     campaignId: getCampaignId(),
-    pseudonym: input.pseudonym.trim().slice(0, 40),
     score: input.score,
     total: input.total,
   }

@@ -16,8 +16,6 @@ const quizStore = useQuizStore()
 const { t } = useI18n()
 
 const isGeneratingPdf = ref(false)
-const isSavingScore = ref(false)
-const hasSavedScore = ref(false)
 
 const campaignId = computed(() => {
   const id = getCampaignId()
@@ -40,7 +38,6 @@ const currentSources = computed<Source[]>(() => {
 
 function startQuiz() {
   quizStore.start(quizQuestions.value)
-  hasSavedScore.value = false
   trackEvent('quiz_started')
 }
 
@@ -50,29 +47,7 @@ function nextQuestion() {
 
   if (wasLastQuestion) {
     trackEvent('quiz_completed')
-  }
-}
-
-function updatePseudonym(event: Event) {
-  quizStore.setPseudonym((event.target as HTMLInputElement).value)
-}
-
-async function saveScore() {
-  if (isSavingScore.value || hasSavedScore.value) {
-    return
-  }
-
-  isSavingScore.value = true
-
-  try {
-    syncQuizResult({
-      score: quizStore.score,
-      total: quizStore.total,
-      pseudonym: quizStore.pseudonym,
-    })
-    hasSavedScore.value = true
-  } finally {
-    isSavingScore.value = false
+    syncQuizResult({ score: quizStore.score, total: quizStore.total })
   }
 }
 
@@ -88,11 +63,7 @@ async function downloadAttestation() {
       '@/features/assessment/services/pdf.service'
     )
 
-    generateQuizAttestationPdf({
-      score: quizStore.score,
-      total: quizStore.total,
-      pseudonym: quizStore.pseudonym,
-    })
+    generateQuizAttestationPdf({ score: quizStore.score, total: quizStore.total })
     trackEvent('quiz_attestation_generated')
     trackEvent('pdf_downloaded')
   } finally {
@@ -186,30 +157,8 @@ async function downloadAttestation() {
           <h2 class="section-title">{{ t('quiz.results.title') }}</h2>
           <p>{{ t('quiz.results.summary', { score: quizStore.score, total: quizStore.total }) }}</p>
 
-          <label class="form-row" for="quiz-pseudonym">
-            <span>{{ t('quiz.results.pseudonymLabel') }}</span>
-            <input
-              id="quiz-pseudonym"
-              class="text-input"
-              type="text"
-              maxlength="40"
-              :placeholder="t('quiz.results.pseudonymPlaceholder')"
-              :value="quizStore.pseudonym"
-              @input="updatePseudonym"
-            />
-          </label>
-
           <div class="cluster">
-            <AppButton :disabled="isSavingScore || hasSavedScore" @click="saveScore">
-              {{
-                hasSavedScore
-                  ? t('quiz.results.scoreSaved')
-                  : isSavingScore
-                    ? t('quiz.results.savingScore')
-                    : t('quiz.results.saveScore')
-              }}
-            </AppButton>
-            <AppButton variant="secondary" :disabled="isGeneratingPdf" @click="downloadAttestation">
+            <AppButton :disabled="isGeneratingPdf" @click="downloadAttestation">
               {{ isGeneratingPdf ? t('quiz.results.preparingPdf') : t('quiz.results.downloadAttestation') }}
             </AppButton>
             <AppButton variant="secondary" @click="startQuiz">{{ t('quiz.restart') }}</AppButton>
