@@ -8,6 +8,13 @@ export const swbMessages = {
     french: 'umufarantsa',
     shimaore: 'shimaore',
   },
+  // Brouillon non relu par un locuteur natif (comme le reste de ce fichier),
+  // mais celui-ci porte le disclaimer de sécurité affiché en permanence sur
+  // le site : priorité à faire relire avant toute mise en avant publique.
+  publicWarning: {
+    label: 'Trongo ya sensibilisation :',
+    text: 'Resilience 976 kaïbadilishe zi alerte rasmi, wala zi plan za sirkali, wala avis ya dokotera au mutaalamu, wala uja wa disecours.',
+  },
   navigation: {
     ariaLabel: 'utsorongoa ha uzuri',
     menu: 'manyu',

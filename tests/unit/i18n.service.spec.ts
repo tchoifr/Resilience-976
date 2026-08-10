@@ -41,6 +41,8 @@ describe('i18n.service', () => {
 
   it('couvre en shimaore les boutons kit/video et les modules quiz et mises en situation', () => {
     const keys = [
+      'publicWarning.label',
+      'publicWarning.text',
       'kit.downloadPdf',
       'videos.downloadAttestation',
       'quiz.start',
