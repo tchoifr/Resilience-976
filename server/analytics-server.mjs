@@ -73,6 +73,7 @@ const allowedPaths = new Set([
   '/tableau-de-bord',
   '/tableau-de-bord/experimentation',
   '/tableau-de-bord/diagnostics',
+  '/tableau-de-bord/quiz',
   '/experimentation-utilisateurs',
   '/mentions-legales',
 ])

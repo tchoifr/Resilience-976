@@ -117,6 +117,11 @@ export const frMessages = {
       description:
         'Testez vos réflexes face au cyclone, à l’inondation, au séisme et au mouvement de terrain, avec correction expliquée et attestation de participation.',
     },
+    quizStats: {
+      title: 'Statistiques du quiz - Resilience 976',
+      description:
+        'Résultats agrégés du quiz interactif : score moyen, résultats par campagne et détail par question.',
+    },
     dashboard: {
       title: 'Tableau de bord - Resilience 976',
       description:
@@ -513,6 +518,27 @@ export const frMessages = {
       answerNone: 'Non fait',
       answerPartial: 'Partiel',
       answerReady: 'Fait',
+    },
+  },
+  quizStats: {
+    eyebrow: 'Statistiques du quiz',
+    title: 'Résultats agrégés du quiz interactif',
+    intro:
+      'Indicateurs calculés à partir des sessions de quiz terminées. Aucune donnée nominative n’est affichée.',
+    backToDashboard: 'Retour au tableau de bord',
+    loading: 'Chargement',
+    noData: 'Aucune session de quiz enregistrée pour le moment.',
+    summary: {
+      total: 'Sessions enregistrées',
+      averageScore: 'Score moyen',
+    },
+    campaigns: {
+      title: 'Résultats par campagne',
+      participants: 'participant(s)',
+      noCampaign: 'Aucune campagne distincte enregistrée pour le moment.',
+    },
+    questionBreakdown: {
+      title: 'Détail par question',
     },
   },
   quiz: {

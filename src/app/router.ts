@@ -99,6 +99,13 @@ const router = createRouter({
       },
     },
     {
+      path: '/tableau-de-bord/quiz',
+      component: () => import('@/views/QuizStatsView.vue'),
+      meta: {
+        seoKey: 'quizStats',
+      },
+    },
+    {
       path: '/mentions-legales',
       component: () => import('@/views/LegalView.vue'),
       meta: {
