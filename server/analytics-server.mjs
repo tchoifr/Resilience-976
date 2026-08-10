@@ -86,6 +86,9 @@ const allowedPaths = new Set([
   '/tableau-de-bord/mises-en-situation',
   '/experimentation-utilisateurs',
   '/mentions-legales',
+  '/politique-de-confidentialite',
+  '/declaration-accessibilite',
+  '/support',
 ])
 
 const actionEvents = new Set([
