@@ -19,6 +19,7 @@ export const frMessages = {
     resources: 'Ressources',
     videos: 'Vidéos',
     quiz: 'Quiz',
+    scenarios: 'Mises en situation',
     dashboard: 'Stats',
     experiment: 'Expérimentation',
   },
@@ -126,6 +127,21 @@ export const frMessages = {
       title: 'Statistiques des formations - Resilience 976',
       description:
         'Résultats agrégés des capsules vidéo : parcours enregistrés et détail par capsule.',
+    },
+    scenarios: {
+      title: 'Mises en situation - Resilience 976',
+      description:
+        'Scénarios courts où chaque décision compte, suivis d’un débrief sur les comportements les plus sûrs.',
+    },
+    scenarioPlay: {
+      title: 'Mise en situation - Resilience 976',
+      description:
+        'Prenez des décisions face à une situation courte et consultez le débrief associé.',
+    },
+    scenarioStats: {
+      title: 'Statistiques des mises en situation - Resilience 976',
+      description:
+        'Résultats agrégés des mises en situation : sessions enregistrées et détail par scénario.',
     },
     dashboard: {
       title: 'Tableau de bord - Resilience 976',
@@ -558,6 +574,22 @@ export const frMessages = {
       quizCorrect: 'quiz réussi(s)',
     },
   },
+  scenarioStats: {
+    eyebrow: 'Statistiques des mises en situation',
+    title: 'Résultats agrégés des mises en situation',
+    intro:
+      'Indicateurs calculés à partir des scénarios terminés. Aucune donnée nominative n’est affichée.',
+    backToDashboard: 'Retour au tableau de bord',
+    loading: 'Chargement',
+    noData: 'Aucun scénario terminé pour le moment.',
+    summary: {
+      total: 'Sessions enregistrées',
+    },
+    breakdown: {
+      title: 'Détail par scénario',
+      sessions: 'session(s)',
+    },
+  },
   quiz: {
     eyebrow: 'Entrée rapide et ludique',
     title: 'Quiz interactif',
@@ -586,6 +618,29 @@ export const frMessages = {
       preparingPdf: 'Préparation du PDF…',
       disclaimer:
         'L’attestation mentionne le score obtenu ; elle n’a pas de valeur de certification professionnelle.',
+    },
+  },
+  scenarios: {
+    eyebrow: 'Mises en situation',
+    title: 'Mises en situation',
+    intro:
+      'Des scénarios courts où chaque décision influence le résultat, suivis d’un débrief sur les comportements les plus sûrs, en lien avec les capsules de micro-formation.',
+    start: 'Commencer ce scénario',
+    relatedCapsule: 'Capsule liée',
+  },
+  scenarioPlay: {
+    backToList: 'Retour aux mises en situation',
+    stepCount: 'Étape {current} sur {total}',
+    confirm: 'Confirmer ce choix',
+    next: 'Étape suivante',
+    seeDebrief: 'Voir le débrief',
+    debrief: {
+      title: 'Débrief',
+      scoreLabel: 'Score de sécurité',
+      yourChoice: 'Votre choix',
+      safestBehavior: 'Comportement le plus sûr',
+      watchCapsule: 'Revoir la capsule liée',
+      restart: 'Recommencer ce scénario',
     },
   },
 } as const

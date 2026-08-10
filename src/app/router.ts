@@ -71,6 +71,20 @@ const router = createRouter({
       },
     },
     {
+      path: '/mises-en-situation',
+      component: () => import('@/views/ScenariosView.vue'),
+      meta: {
+        seoKey: 'scenarios',
+      },
+    },
+    {
+      path: '/mises-en-situation/:id',
+      component: () => import('@/views/ScenarioPlayView.vue'),
+      meta: {
+        seoKey: 'scenarioPlay',
+      },
+    },
+    {
       path: '/tableau-de-bord',
       component: () => import('@/views/DashboardView.vue'),
       meta: {
@@ -110,6 +124,13 @@ const router = createRouter({
       component: () => import('@/views/VideoStatsView.vue'),
       meta: {
         seoKey: 'videoStats',
+      },
+    },
+    {
+      path: '/tableau-de-bord/mises-en-situation',
+      component: () => import('@/views/ScenarioStatsView.vue'),
+      meta: {
+        seoKey: 'scenarioStats',
       },
     },
     {

@@ -5,6 +5,7 @@ import kitJson from '@/data/kit.json'
 import questionsJson from '@/data/questions.json'
 import quizQuestionsJson from '@/data/quiz-questions.json'
 import resourcesJson from '@/data/resources.json'
+import scenariosJson from '@/data/scenarios.json'
 import sourcesJson from '@/data/sources.json'
 import videosJson from '@/data/videos.json'
 import swbActionsJson from '@/data/swb/actions.json'
@@ -16,6 +17,7 @@ import swbVideosJson from '@/data/swb/videos.json'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
 import type { QuizQuestion } from '@/features/quiz/types/quiz'
+import type { Scenario } from '@/features/scenarios/types/scenario'
 
 import type { KitItem } from '../types/kit'
 import type { Question } from '../types/question'
@@ -28,6 +30,7 @@ import {
   questionsSchema,
   quizQuestionsSchema,
   resourcesSchema,
+  scenariosSchema,
   sourcesSchema,
   videosSchema,
 } from '../validation/contentSchemas'
@@ -70,6 +73,9 @@ const videosByLocale: Record<ContentLocale, VideoCapsule[]> = {
 // French for this first iteration.
 const quizQuestionsList: QuizQuestion[] = quizQuestionsSchema.parse(quizQuestionsJson)
 
+// Same: French only for this first iteration.
+const scenariosList: Scenario[] = scenariosSchema.parse(scenariosJson)
+
 function forLocale<T>(byLocale: Record<ContentLocale, T>, fallback: T): T {
   return byLocale[locale.value as ContentLocale] ?? fallback
 }
@@ -81,6 +87,7 @@ export const resources = computed(() => forLocale(resourcesByLocale, resourcesBy
 export const sources = computed(() => forLocale(sourcesByLocale, sourcesByLocale.fr))
 export const videos = computed(() => forLocale(videosByLocale, videosByLocale.fr))
 export const quizQuestions = computed(() => quizQuestionsList)
+export const scenarios = computed(() => scenariosList)
 
 export const sourcesById = computed(
   () => new Map(sources.value.map((source) => [source.id, source])),
@@ -93,4 +100,7 @@ export const resourcesById = computed(
 )
 export const videosBySlug = computed(
   () => new Map(videos.value.map((video) => [video.slug, video])),
+)
+export const videosById = computed(
+  () => new Map(videos.value.map((video) => [video.id, video])),
 )

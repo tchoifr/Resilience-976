@@ -22,6 +22,9 @@ const QUIZ_QUESTIONS_FILE = resolve(
   process.env.QUIZ_QUESTIONS_DATA_FILE ?? 'src/data/quiz-questions.json',
 )
 const VIDEOS_FILE = resolve(process.env.VIDEOS_DATA_FILE ?? 'src/data/videos.json')
+const SCENARIOS_FILE = resolve(
+  process.env.SCENARIOS_DATA_FILE ?? 'src/data/scenarios.json',
+)
 const ALLOWED_ORIGINS = (
   process.env.ANALYTICS_ALLOWED_ORIGINS ??
   'http://127.0.0.1:5173,http://localhost:5173'
@@ -47,6 +50,8 @@ const eventMap = {
   quiz_started: 'quiz_started',
   quiz_completed: 'quiz_completed',
   quiz_attestation_generated: 'quiz_attestation_generated',
+  scenario_started: 'scenario_started',
+  scenario_completed: 'scenario_completed',
 }
 
 const allowedEvents = new Set(Object.keys(eventMap))
@@ -71,11 +76,13 @@ const allowedPaths = new Set([
   '/ressources',
   '/videos',
   '/quiz',
+  '/mises-en-situation',
   '/tableau-de-bord',
   '/tableau-de-bord/experimentation',
   '/tableau-de-bord/diagnostics',
   '/tableau-de-bord/quiz',
   '/tableau-de-bord/formations',
+  '/tableau-de-bord/mises-en-situation',
   '/experimentation-utilisateurs',
   '/mentions-legales',
 ])
@@ -305,6 +312,52 @@ async function sanitizeVideoProgress(input) {
     status: sanitizeEnum(input.status, allowedVideoProgressStatuses, 'started'),
     quizAnsweredCorrectly: input.quizAnsweredCorrectly === true,
     updatedAt: new Date().toISOString(),
+  }
+}
+
+let scenariosIndex = null
+
+async function getScenariosIndex() {
+  if (scenariosIndex) {
+    return scenariosIndex
+  }
+
+  const scenarios = JSON.parse(await readFile(SCENARIOS_FILE, 'utf8'))
+  const byId = new Map(scenarios.map((scenario) => [scenario.id, scenario]))
+
+  scenariosIndex = { scenarios, byId }
+  return scenariosIndex
+}
+
+function sanitizeScenarioChoices(input, scenario) {
+  const choices = input && typeof input === 'object' ? input : {}
+  const stepsById = new Map(scenario.steps.map((step) => [step.id, step]))
+  const sanitized = {}
+
+  for (const [stepId, optionId] of Object.entries(choices)) {
+    const step = stepsById.get(stepId)
+    const option = step?.options.find((candidate) => candidate.id === optionId)
+
+    if (option) {
+      sanitized[stepId] = optionId
+    }
+  }
+
+  return sanitized
+}
+
+async function sanitizeScenarioResult(input) {
+  const { byId } = await getScenariosIndex()
+  const scenario = byId.get(input.scenarioId)
+
+  return {
+    id: sanitizeVisitorId(input.id),
+    createdAt: new Date().toISOString(),
+    visitorId: sanitizeVisitorId(input.visitorId),
+    campaignId: sanitizeCampaign(input.campaignId),
+    scenarioId: scenario ? scenario.id : null,
+    score: sanitizeInteger(input.score, 0, 100, 0),
+    choices: scenario ? sanitizeScenarioChoices(input.choices, scenario) : {},
   }
 }
 
@@ -578,6 +631,22 @@ async function getDatabase() {
 
     CREATE INDEX IF NOT EXISTS video_progress_video_id_idx
       ON video_progress (video_id);
+
+    CREATE TABLE IF NOT EXISTS scenario_results (
+      id TEXT PRIMARY KEY,
+      created_at TEXT NOT NULL,
+      visitor_id TEXT NOT NULL,
+      campaign_id TEXT NOT NULL,
+      scenario_id TEXT NOT NULL,
+      score INTEGER NOT NULL,
+      choices_json TEXT NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS scenario_results_created_at_idx
+      ON scenario_results (created_at DESC);
+
+    CREATE INDEX IF NOT EXISTS scenario_results_scenario_id_idx
+      ON scenario_results (scenario_id);
   `)
 
   try {
@@ -699,6 +768,35 @@ async function saveVideoProgress(videoProgress) {
       videoProgress.status,
       videoProgress.quizAnsweredCorrectly ? 1 : 0,
       videoProgress.updatedAt,
+    )
+}
+
+async function saveScenarioResult(scenarioResult) {
+  const currentDatabase = await getDatabase()
+
+  currentDatabase
+    .prepare(
+      `
+        INSERT OR IGNORE INTO scenario_results (
+          id,
+          created_at,
+          visitor_id,
+          campaign_id,
+          scenario_id,
+          score,
+          choices_json
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `,
+    )
+    .run(
+      scenarioResult.id,
+      scenarioResult.createdAt,
+      scenarioResult.visitorId,
+      scenarioResult.campaignId,
+      scenarioResult.scenarioId,
+      scenarioResult.score,
+      JSON.stringify(scenarioResult.choices),
     )
 }
 
@@ -970,6 +1068,74 @@ function buildVideoProgressStats(rows, videosIndex) {
         quizCorrectCount: counts.quizCorrectCount,
       }
     }),
+  }
+}
+
+async function readScenarioResultRows() {
+  const currentDatabase = await getDatabase()
+
+  return currentDatabase
+    .prepare(
+      `
+        SELECT scenario_id, choices_json
+        FROM scenario_results
+      `,
+    )
+    .all()
+    .map((row) => ({
+      scenarioId: row.scenario_id,
+      choices: parseRatingsJson(row.choices_json),
+    }))
+}
+
+function buildScenarioStepBreakdown(rows, scenario) {
+  const optionCountsByStep = new Map()
+
+  for (const row of rows) {
+    if (row.scenarioId !== scenario.id) {
+      continue
+    }
+
+    for (const [stepId, optionId] of Object.entries(row.choices)) {
+      if (!optionCountsByStep.has(stepId)) {
+        optionCountsByStep.set(stepId, new Map())
+      }
+
+      const optionCounts = optionCountsByStep.get(stepId)
+      optionCounts.set(optionId, (optionCounts.get(optionId) ?? 0) + 1)
+    }
+  }
+
+  return scenario.steps.map((step) => {
+    const optionCounts = optionCountsByStep.get(step.id) ?? new Map()
+
+    return {
+      id: step.id,
+      options: step.options.map((option) => ({
+        id: option.id,
+        label: option.label,
+        score: option.score,
+        count: optionCounts.get(option.id) ?? 0,
+      })),
+    }
+  })
+}
+
+function buildScenarioStats(rows, scenariosIndex) {
+  const sessionsByScenario = new Map()
+
+  for (const row of rows) {
+    sessionsByScenario.set(row.scenarioId, (sessionsByScenario.get(row.scenarioId) ?? 0) + 1)
+  }
+
+  return {
+    generatedAt: new Date().toISOString(),
+    total: rows.length,
+    scenarios: scenariosIndex.scenarios.map((scenario) => ({
+      id: scenario.id,
+      sessions: sessionsByScenario.get(scenario.id) ?? 0,
+      stepBreakdown: buildScenarioStepBreakdown(rows, scenario),
+    })),
   }
 }
 
@@ -1408,6 +1574,30 @@ const server = createServer(async (request, response) => {
       ])
 
       sendJson(response, 200, buildVideoProgressStats(rows, videosIndexResult), origin)
+      return
+    }
+
+    if (request.method === 'POST' && requestUrl.pathname === '/api/scenario-results') {
+      const body = await readBody(request)
+      const scenarioResult = await sanitizeScenarioResult(body)
+
+      if (!scenarioResult.scenarioId) {
+        sendJson(response, 400, { error: 'invalid_scenario_result' }, origin)
+        return
+      }
+
+      await saveScenarioResult(scenarioResult)
+      sendJson(response, 201, { ok: true, id: scenarioResult.id }, origin)
+      return
+    }
+
+    if (request.method === 'GET' && requestUrl.pathname === '/api/scenario-results/stats') {
+      const [rows, scenariosIndexResult] = await Promise.all([
+        readScenarioResultRows(),
+        getScenariosIndex(),
+      ])
+
+      sendJson(response, 200, buildScenarioStats(rows, scenariosIndexResult), origin)
       return
     }
 

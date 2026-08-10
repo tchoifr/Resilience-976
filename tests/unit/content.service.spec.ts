@@ -7,8 +7,10 @@ import {
   questions,
   quizQuestions,
   resources,
+  scenarios,
   sources,
   sourcesById,
+  videosById,
 } from '@/features/assessment/services/content.service'
 import { registerLocale, setLocale } from '@/shared/i18n/i18n.service'
 import { swbMessages } from '@/shared/i18n/locales/swb'
@@ -112,6 +114,32 @@ describe('contenus metier', () => {
           sourcesById.value.has(sourceId),
           `${question.id} reference source inconnue ${sourceId}`,
         ).toBe(true)
+      }
+    }
+  })
+
+  it('relie chaque mise en situation a une capsule et des sources existantes', () => {
+    expect(scenarios.value.length).toBeGreaterThanOrEqual(1)
+
+    for (const scenario of scenarios.value) {
+      expect(
+        videosById.value.has(scenario.videoId),
+        `${scenario.id} reference capsule inconnue ${scenario.videoId}`,
+      ).toBe(true)
+
+      for (const sourceId of scenario.sourceIds) {
+        expect(
+          sourcesById.value.has(sourceId),
+          `${scenario.id} reference source inconnue ${sourceId}`,
+        ).toBe(true)
+      }
+
+      for (const step of scenario.steps) {
+        const maxScore = Math.max(...step.options.map((option) => option.score))
+        expect(
+          maxScore,
+          `${scenario.id}/${step.id} n'a pas d'option a 100`,
+        ).toBe(100)
       }
     }
   })
