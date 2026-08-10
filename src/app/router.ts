@@ -127,6 +127,13 @@ const router = createRouter({
       },
     },
     {
+      path: '/tableau-de-bord/mises-en-situation',
+      component: () => import('@/views/ScenarioStatsView.vue'),
+      meta: {
+        seoKey: 'scenarioStats',
+      },
+    },
+    {
       path: '/mentions-legales',
       component: () => import('@/views/LegalView.vue'),
       meta: {

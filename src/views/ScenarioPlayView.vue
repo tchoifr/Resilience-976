@@ -11,6 +11,7 @@ import {
   videosById,
 } from '@/features/assessment/services/content.service'
 import type { Source } from '@/features/assessment/types/source'
+import { syncScenarioResult } from '@/features/scenarios/services/scenario-sync.service'
 import { useScenarioStore } from '@/features/scenarios/stores/scenario.store'
 import { trackEvent } from '@/shared/analytics/analytics.service'
 import { useI18n } from '@/shared/i18n/i18n.service'
@@ -53,8 +54,15 @@ function confirmStep() {
   const wasLastStep = scenarioStore.isLastStep
   scenarioStore.confirm()
 
-  if (wasLastStep) {
+  if (wasLastStep && scenario.value) {
     trackEvent('scenario_completed')
+    syncScenarioResult({
+      scenarioId: scenario.value.id,
+      score: scenarioStore.score,
+      choices: Object.fromEntries(
+        scenarioStore.choices.map((choice) => [choice.step.id, choice.selectedOption.id]),
+      ),
+    })
   }
 }
 
