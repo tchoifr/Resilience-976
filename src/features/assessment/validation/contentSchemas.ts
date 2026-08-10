@@ -116,6 +116,25 @@ export const videoCapsuleSchema = z
     path: ['quiz', 'correctOptionIndex'],
   })
 
+export const quizQuestionSchema = z
+  .object({
+    id: z.string().min(1),
+    risk: z.enum(['cyclone', 'inondation', 'seisme', 'mouvement_terrain']),
+    text: z.string().min(1),
+    options: z.array(z.string().min(1)).min(2),
+    correctOptionIndex: z.number().int().min(0),
+    explanation: z.string().min(1),
+    sourceIds: z.array(z.string().min(1)),
+    validationStatus: validationStatusSchema,
+    revisionDate: z.string().min(1),
+  })
+  .refine((question) => question.correctOptionIndex < question.options.length, {
+    message: 'correctOptionIndex must point to an existing option',
+    path: ['correctOptionIndex'],
+  })
+
+export const quizQuestionsSchema = z.array(quizQuestionSchema).min(1)
+
 export const questionsSchema = z.array(questionSchema).min(1)
 export const actionsSchema = z.array(actionSchema).min(1)
 export const kitSchema = z.array(kitItemSchema).min(1)

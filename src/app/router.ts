@@ -64,6 +64,13 @@ const router = createRouter({
       },
     },
     {
+      path: '/quiz',
+      component: () => import('@/views/QuizView.vue'),
+      meta: {
+        seoKey: 'quiz',
+      },
+    },
+    {
       path: '/tableau-de-bord',
       component: () => import('@/views/DashboardView.vue'),
       meta: {
@@ -89,6 +96,20 @@ const router = createRouter({
       component: () => import('@/views/DiagnosticStatsView.vue'),
       meta: {
         seoKey: 'diagnosticStats',
+      },
+    },
+    {
+      path: '/tableau-de-bord/quiz',
+      component: () => import('@/views/QuizStatsView.vue'),
+      meta: {
+        seoKey: 'quizStats',
+      },
+    },
+    {
+      path: '/tableau-de-bord/formations',
+      component: () => import('@/views/VideoStatsView.vue'),
+      meta: {
+        seoKey: 'videoStats',
       },
     },
     {

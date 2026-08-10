@@ -5,6 +5,7 @@ import {
   actionsById,
   kitItems,
   questions,
+  quizQuestions,
   resources,
   sources,
   sourcesById,
@@ -89,6 +90,27 @@ describe('contenus metier', () => {
         expect(
           sourcesById.value.has(sourceId),
           `${item.id} reference source inconnue ${sourceId}`,
+        ).toBe(true)
+      }
+    }
+  })
+
+  it('couvre les quatre risques du quiz avec des questions et sources valides', () => {
+    const risks = ['cyclone', 'inondation', 'seisme', 'mouvement_terrain']
+
+    for (const risk of risks) {
+      expect(
+        quizQuestions.value.filter((question) => question.risk === risk).length,
+      ).toBeGreaterThanOrEqual(2)
+    }
+
+    for (const question of quizQuestions.value) {
+      expect(question.correctOptionIndex).toBeLessThan(question.options.length)
+
+      for (const sourceId of question.sourceIds) {
+        expect(
+          sourcesById.value.has(sourceId),
+          `${question.id} reference source inconnue ${sourceId}`,
         ).toBe(true)
       }
     }

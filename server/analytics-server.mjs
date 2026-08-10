@@ -18,6 +18,10 @@ const DATABASE_FILE = resolve(
 const QUESTIONS_FILE = resolve(
   process.env.QUESTIONS_DATA_FILE ?? 'src/data/questions.json',
 )
+const QUIZ_QUESTIONS_FILE = resolve(
+  process.env.QUIZ_QUESTIONS_DATA_FILE ?? 'src/data/quiz-questions.json',
+)
+const VIDEOS_FILE = resolve(process.env.VIDEOS_DATA_FILE ?? 'src/data/videos.json')
 const ALLOWED_ORIGINS = (
   process.env.ANALYTICS_ALLOWED_ORIGINS ??
   'http://127.0.0.1:5173,http://localhost:5173'
@@ -40,6 +44,9 @@ const eventMap = {
   pdf_downloaded: 'pdf_downloaded',
   source_opened: 'source_opened',
   technical_error: 'technical_error',
+  quiz_started: 'quiz_started',
+  quiz_completed: 'quiz_completed',
+  quiz_attestation_generated: 'quiz_attestation_generated',
 }
 
 const allowedEvents = new Set(Object.keys(eventMap))
@@ -63,9 +70,12 @@ const allowedPaths = new Set([
   '/kit',
   '/ressources',
   '/videos',
+  '/quiz',
   '/tableau-de-bord',
   '/tableau-de-bord/experimentation',
   '/tableau-de-bord/diagnostics',
+  '/tableau-de-bord/quiz',
+  '/tableau-de-bord/formations',
   '/experimentation-utilisateurs',
   '/mentions-legales',
 ])
@@ -76,6 +86,7 @@ const actionEvents = new Set([
   'checklist_opened',
   'kit_opened',
   'pdf_downloaded',
+  'quiz_attestation_generated',
 ])
 const allowedDevices = new Set(['smartphone', 'ordinateur', 'tablette'])
 const allowedProfiles = new Set([
@@ -231,6 +242,72 @@ async function getQuestionsIndex() {
   return questionsIndex
 }
 
+let quizQuestionsIndex = null
+
+async function getQuizQuestionsIndex() {
+  if (quizQuestionsIndex) {
+    return quizQuestionsIndex
+  }
+
+  const questions = JSON.parse(await readFile(QUIZ_QUESTIONS_FILE, 'utf8'))
+  const byId = new Map(questions.map((question) => [question.id, question]))
+
+  quizQuestionsIndex = { questions, byId }
+  return quizQuestionsIndex
+}
+
+async function sanitizeQuizAnswers(input) {
+  const { byId } = await getQuizQuestionsIndex()
+  const answers = input && typeof input === 'object' ? input : {}
+  const sanitized = {}
+
+  for (const [questionId, optionIndex] of Object.entries(answers)) {
+    const question = byId.get(questionId)
+    const index = Number(optionIndex)
+
+    if (
+      question &&
+      Number.isInteger(index) &&
+      index >= 0 &&
+      index < question.options.length
+    ) {
+      sanitized[questionId] = index
+    }
+  }
+
+  return sanitized
+}
+
+let videosIndex = null
+
+async function getVideosIndex() {
+  if (videosIndex) {
+    return videosIndex
+  }
+
+  const videos = JSON.parse(await readFile(VIDEOS_FILE, 'utf8'))
+  const byId = new Map(videos.map((video) => [video.id, video]))
+
+  videosIndex = { videos, byId }
+  return videosIndex
+}
+
+const allowedVideoProgressStatuses = new Set(['started', 'completed'])
+
+async function sanitizeVideoProgress(input) {
+  const { byId } = await getVideosIndex()
+  const video = byId.get(input.videoId)
+
+  return {
+    visitorId: sanitizeVisitorId(input.visitorId),
+    campaignId: sanitizeCampaign(input.campaignId),
+    videoId: video ? video.id : null,
+    status: sanitizeEnum(input.status, allowedVideoProgressStatuses, 'started'),
+    quizAnsweredCorrectly: input.quizAnsweredCorrectly === true,
+    updatedAt: new Date().toISOString(),
+  }
+}
+
 async function sanitizeDiagnosticAnswers(input) {
   const { validAnswersByQuestion } = await getQuestionsIndex()
   const answers = input && typeof input === 'object' ? input : {}
@@ -373,6 +450,18 @@ async function sanitizeDiagnosticResponse(input) {
   }
 }
 
+async function sanitizeQuizResult(input) {
+  return {
+    id: sanitizeVisitorId(input.id),
+    createdAt: new Date().toISOString(),
+    visitorId: sanitizeVisitorId(input.visitorId),
+    campaignId: sanitizeCampaign(input.campaignId),
+    score: sanitizeInteger(input.score, 0, 1000, 0),
+    total: sanitizeInteger(input.total, 0, 1000, 0),
+    answers: await sanitizeQuizAnswers(input.answers),
+  }
+}
+
 function sanitizeFeedback(input) {
   return {
     id:
@@ -460,6 +549,35 @@ async function getDatabase() {
 
     CREATE INDEX IF NOT EXISTS diagnostic_responses_created_at_idx
       ON diagnostic_responses (created_at DESC);
+
+    CREATE TABLE IF NOT EXISTS quiz_results (
+      id TEXT PRIMARY KEY,
+      created_at TEXT NOT NULL,
+      visitor_id TEXT NOT NULL,
+      campaign_id TEXT NOT NULL,
+      score INTEGER NOT NULL,
+      total INTEGER NOT NULL,
+      answers_json TEXT NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS quiz_results_created_at_idx
+      ON quiz_results (created_at DESC);
+
+    CREATE INDEX IF NOT EXISTS quiz_results_campaign_id_idx
+      ON quiz_results (campaign_id);
+
+    CREATE TABLE IF NOT EXISTS video_progress (
+      visitor_id TEXT NOT NULL,
+      video_id TEXT NOT NULL,
+      campaign_id TEXT NOT NULL,
+      status TEXT NOT NULL,
+      quiz_answered_correctly INTEGER NOT NULL,
+      updated_at TEXT NOT NULL,
+      PRIMARY KEY (visitor_id, video_id)
+    );
+
+    CREATE INDEX IF NOT EXISTS video_progress_video_id_idx
+      ON video_progress (video_id);
   `)
 
   try {
@@ -468,6 +586,27 @@ async function getDatabase() {
     )
   } catch (error) {
     if (!String(error.message).includes('duplicate column name')) {
+      throw error
+    }
+  }
+
+  // quiz_results shipped first with a `pseudonym` column and no
+  // `answers_json`; the pseudonym was dropped before this ever reached
+  // production, replaced by per-question answers for future stats.
+  try {
+    database.exec(
+      `ALTER TABLE quiz_results ADD COLUMN answers_json TEXT NOT NULL DEFAULT '{}';`,
+    )
+  } catch (error) {
+    if (!String(error.message).includes('duplicate column name')) {
+      throw error
+    }
+  }
+
+  try {
+    database.exec(`ALTER TABLE quiz_results DROP COLUMN pseudonym;`)
+  } catch (error) {
+    if (!String(error.message).includes('no such column')) {
       throw error
     }
   }
@@ -499,6 +638,67 @@ async function saveDiagnosticResponse(diagnosticResponse) {
       diagnosticResponse.campaignId,
       diagnosticResponse.version,
       JSON.stringify(diagnosticResponse.answers),
+    )
+}
+
+async function saveQuizResult(quizResult) {
+  const currentDatabase = await getDatabase()
+
+  currentDatabase
+    .prepare(
+      `
+        INSERT OR IGNORE INTO quiz_results (
+          id,
+          created_at,
+          visitor_id,
+          campaign_id,
+          score,
+          total,
+          answers_json
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `,
+    )
+    .run(
+      quizResult.id,
+      quizResult.createdAt,
+      quizResult.visitorId,
+      quizResult.campaignId,
+      quizResult.score,
+      quizResult.total,
+      JSON.stringify(quizResult.answers),
+    )
+}
+
+async function saveVideoProgress(videoProgress) {
+  const currentDatabase = await getDatabase()
+
+  currentDatabase
+    .prepare(
+      `
+        INSERT INTO video_progress (
+          visitor_id,
+          video_id,
+          campaign_id,
+          status,
+          quiz_answered_correctly,
+          updated_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+        ON CONFLICT (visitor_id, video_id) DO UPDATE SET
+          campaign_id = excluded.campaign_id,
+          status = excluded.status,
+          quiz_answered_correctly = excluded.quiz_answered_correctly,
+          updated_at = excluded.updated_at
+      `,
+    )
+    .run(
+      videoProgress.visitorId,
+      videoProgress.videoId,
+      videoProgress.campaignId,
+      videoProgress.status,
+      videoProgress.quizAnsweredCorrectly ? 1 : 0,
+      videoProgress.updatedAt,
     )
 }
 
@@ -612,6 +812,165 @@ async function readDiagnosticResponseRows() {
     )
     .all()
     .map((row) => ({ answers: parseRatingsJson(row.answers_json) }))
+}
+
+async function readQuizResultRows() {
+  const currentDatabase = await getDatabase()
+
+  return currentDatabase
+    .prepare(
+      `
+        SELECT campaign_id, score, total, answers_json, created_at
+        FROM quiz_results
+        ORDER BY created_at DESC
+      `,
+    )
+    .all()
+    .map((row) => ({
+      campaignId: row.campaign_id,
+      score: Number(row.score),
+      total: Number(row.total),
+      answers: parseRatingsJson(row.answers_json),
+      createdAt: row.created_at,
+    }))
+}
+
+function buildQuizQuestionBreakdown(rows, quizIndex) {
+  const optionCountsByQuestion = new Map()
+
+  for (const row of rows) {
+    for (const [questionId, optionIndex] of Object.entries(row.answers)) {
+      if (!optionCountsByQuestion.has(questionId)) {
+        optionCountsByQuestion.set(questionId, new Map())
+      }
+
+      const optionCounts = optionCountsByQuestion.get(questionId)
+      optionCounts.set(optionIndex, (optionCounts.get(optionIndex) ?? 0) + 1)
+    }
+  }
+
+  return quizIndex.questions.map((question) => {
+    const optionCounts = optionCountsByQuestion.get(question.id) ?? new Map()
+    const totalAnswered = Array.from(optionCounts.values()).reduce(
+      (sum, count) => sum + count,
+      0,
+    )
+
+    return {
+      id: question.id,
+      risk: question.risk,
+      totalAnswered,
+      correctCount: optionCounts.get(question.correctOptionIndex) ?? 0,
+      options: question.options.map((label, index) => ({
+        index,
+        label,
+        count: optionCounts.get(index) ?? 0,
+      })),
+    }
+  })
+}
+
+function buildQuizStats(rows, quizIndex) {
+  const campaigns = new Map()
+  let scorePercentSum = 0
+
+  for (const row of rows) {
+    const scorePercent = row.total === 0 ? 0 : Math.round((row.score / row.total) * 100)
+    scorePercentSum += scorePercent
+
+    const current = campaigns.get(row.campaignId) ?? {
+      campaignId: row.campaignId,
+      participants: 0,
+      scorePercentSum: 0,
+    }
+
+    current.participants += 1
+    current.scorePercentSum += scorePercent
+    campaigns.set(row.campaignId, current)
+  }
+
+  return {
+    generatedAt: new Date().toISOString(),
+    total: rows.length,
+    averageScorePercent:
+      rows.length === 0 ? 0 : Math.round(scorePercentSum / rows.length),
+    campaigns: Array.from(campaigns.values())
+      .map((campaign) => ({
+        campaignId: campaign.campaignId,
+        participants: campaign.participants,
+        averageScorePercent:
+          campaign.participants === 0
+            ? 0
+            : Math.round(campaign.scorePercentSum / campaign.participants),
+      }))
+      .sort((a, b) => b.participants - a.participants),
+    questionBreakdown: buildQuizQuestionBreakdown(rows, quizIndex),
+  }
+}
+
+async function readVideoProgressRows() {
+  const currentDatabase = await getDatabase()
+
+  return currentDatabase
+    .prepare(
+      `
+        SELECT visitor_id, video_id, status, quiz_answered_correctly
+        FROM video_progress
+      `,
+    )
+    .all()
+    .map((row) => ({
+      visitorId: row.visitor_id,
+      videoId: row.video_id,
+      status: row.status,
+      quizAnsweredCorrectly: Boolean(row.quiz_answered_correctly),
+    }))
+}
+
+function buildVideoProgressStats(rows, videosIndex) {
+  const countsByVideo = new Map()
+  const participantIds = new Set()
+
+  for (const row of rows) {
+    participantIds.add(row.visitorId)
+
+    const current = countsByVideo.get(row.videoId) ?? {
+      startedCount: 0,
+      completedCount: 0,
+      quizCorrectCount: 0,
+    }
+
+    if (row.status === 'completed') {
+      current.completedCount += 1
+    } else {
+      current.startedCount += 1
+    }
+
+    if (row.quizAnsweredCorrectly) {
+      current.quizCorrectCount += 1
+    }
+
+    countsByVideo.set(row.videoId, current)
+  }
+
+  return {
+    generatedAt: new Date().toISOString(),
+    totalParticipants: participantIds.size,
+    videos: videosIndex.videos.map((video) => {
+      const counts = countsByVideo.get(video.id) ?? {
+        startedCount: 0,
+        completedCount: 0,
+        quizCorrectCount: 0,
+      }
+
+      return {
+        id: video.id,
+        startedCount: counts.startedCount,
+        completedCount: counts.completedCount,
+        quizCorrectCount: counts.quizCorrectCount,
+      }
+    }),
+  }
 }
 
 async function readFeedbackRows() {
@@ -1001,6 +1360,54 @@ const server = createServer(async (request, response) => {
 
       await saveDiagnosticResponse(diagnosticResponse)
       sendJson(response, 201, { ok: true, id: diagnosticResponse.id }, origin)
+      return
+    }
+
+    if (request.method === 'POST' && requestUrl.pathname === '/api/quiz-results') {
+      const body = await readBody(request)
+      const quizResult = await sanitizeQuizResult(body)
+
+      if (quizResult.total === 0) {
+        sendJson(response, 400, { error: 'invalid_quiz_result' }, origin)
+        return
+      }
+
+      await saveQuizResult(quizResult)
+      sendJson(response, 201, { ok: true, id: quizResult.id }, origin)
+      return
+    }
+
+    if (request.method === 'GET' && requestUrl.pathname === '/api/quiz-results/stats') {
+      const [rows, quizIndex] = await Promise.all([
+        readQuizResultRows(),
+        getQuizQuestionsIndex(),
+      ])
+
+      sendJson(response, 200, buildQuizStats(rows, quizIndex), origin)
+      return
+    }
+
+    if (request.method === 'POST' && requestUrl.pathname === '/api/video-progress') {
+      const body = await readBody(request)
+      const videoProgress = await sanitizeVideoProgress(body)
+
+      if (!videoProgress.videoId) {
+        sendJson(response, 400, { error: 'invalid_video_progress' }, origin)
+        return
+      }
+
+      await saveVideoProgress(videoProgress)
+      sendJson(response, 201, { ok: true }, origin)
+      return
+    }
+
+    if (request.method === 'GET' && requestUrl.pathname === '/api/video-progress/stats') {
+      const [rows, videosIndexResult] = await Promise.all([
+        readVideoProgressRows(),
+        getVideosIndex(),
+      ])
+
+      sendJson(response, 200, buildVideoProgressStats(rows, videosIndexResult), origin)
       return
     }
 

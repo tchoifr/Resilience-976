@@ -163,6 +163,18 @@ onMounted(async () => {
         </RouterLink>
         <RouterLink
           class="link-button link-button--secondary"
+          to="/tableau-de-bord/quiz"
+        >
+          Statistiques du quiz
+        </RouterLink>
+        <RouterLink
+          class="link-button link-button--secondary"
+          to="/tableau-de-bord/formations"
+        >
+          Statistiques des formations
+        </RouterLink>
+        <RouterLink
+          class="link-button link-button--secondary"
           to="/tableau-de-bord/experimentation"
         >
           Statistiques du formulaire

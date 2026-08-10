@@ -12,12 +12,13 @@ import {
   videos,
   videosBySlug,
 } from '@/features/assessment/services/content.service'
+import { syncVideoProgress } from '@/features/assessment/services/video-progress-sync.service'
 import {
   getVideoProgress,
   updateVideoProgress,
 } from '@/features/assessment/services/video-progress.service'
 import type { Source } from '@/features/assessment/types/source'
-import type { VideoProgressEntry } from '@/features/assessment/types/video'
+import type { VideoProgressEntry, VideoProgressStatus } from '@/features/assessment/types/video'
 import { getDomainLabel, useI18n } from '@/shared/i18n/i18n.service'
 
 const route = useRoute()
@@ -54,12 +55,21 @@ const isCorrect = computed(
 )
 const isCompleted = computed(() => progress.value?.status === 'completed')
 
+function applyProgress(status: VideoProgressStatus, quizAnsweredCorrectly = false) {
+  if (!video.value) {
+    return
+  }
+
+  progress.value = updateVideoProgress(video.value.id, status, quizAnsweredCorrectly)
+  syncVideoProgress(video.value.id, progress.value.status, progress.value.quizAnsweredCorrectly)
+}
+
 function markStarted() {
   if (!video.value || progress.value?.status === 'completed') {
     return
   }
 
-  progress.value = updateVideoProgress(video.value.id, 'started')
+  applyProgress('started')
 }
 
 function submitAnswer() {
@@ -68,20 +78,11 @@ function submitAnswer() {
   }
 
   hasAnswered.value = true
-
-  if (isCorrect.value) {
-    progress.value = updateVideoProgress(video.value.id, 'completed', true)
-  } else {
-    progress.value = updateVideoProgress(video.value.id, 'started')
-  }
+  applyProgress(isCorrect.value ? 'completed' : 'started', isCorrect.value)
 }
 
 function markCompleted() {
-  if (!video.value) {
-    return
-  }
-
-  progress.value = updateVideoProgress(video.value.id, 'completed', progress.value?.quizAnsweredCorrectly)
+  applyProgress('completed', progress.value?.quizAnsweredCorrectly)
 }
 </script>
 
