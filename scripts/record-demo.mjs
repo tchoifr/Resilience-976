@@ -1,7 +1,9 @@
-// Génère une vidéo de démonstration du parcours utilisateur (accueil, diagnostic,
-// résultats + certificat PDF, checklist + PDF, kit, ressources, vidéos) via
-// Playwright, pour la communication/présentation du site. N'est pas une suite de
-// tests : les pauses et scrolls sont volontairement lents pour rester regardables.
+// Génère une vidéo de démonstration du parcours utilisateur (accueil,
+// diagnostic, résultats + certificat PDF, checklist + PDF, kit + PDF,
+// ressources, vidéos, quiz interactif + attestation PDF, mises en situation,
+// pages réglementaires) via Playwright, pour la communication/présentation du
+// site. N'est pas une suite de tests : les pauses et scrolls sont
+// volontairement lents pour rester regardables.
 //
 // Prérequis : le site doit tourner (ex. `npm run preview -- --port 4174`).
 //
@@ -69,6 +71,13 @@ async function downloadAndViewPdf(page, buttonSelector, returnUrl) {
   await page.waitForTimeout(800)
 }
 
+async function visitStaticPage(page, href) {
+  await page.locator(`footer nav a[href="${href}"]`).click()
+  await page.waitForTimeout(1000)
+  await smoothScrollToBottom(page, 450)
+  await scrollToTop(page)
+}
+
 async function main() {
   await mkdir(DOWNLOADS_DIR, { recursive: true })
 
@@ -83,6 +92,12 @@ async function main() {
     acceptDownloads: true,
   })
   const page = await context.newPage()
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') {
+      console.error('[browser console]', msg.text())
+    }
+  })
+  page.on('pageerror', (error) => console.error('[browser pageerror]', error.message))
 
   // --- Accueil + choix de la langue ---
   await page.goto(BASE_URL + '/')
@@ -98,16 +113,23 @@ async function main() {
   await scrollToTop(page)
 
   await page.locator('.hero-actions .link-button--primary').click()
+  await page.waitForSelector('.question-card input[type="radio"]')
   await page.waitForTimeout(800)
 
   // --- Diagnostic : réponses variées pour un score non nul ---
+  // Le flux a deux etapes sur la derniere question : "Confirmer" (aucune
+  // navigation), puis un second clic separe sur "Voir mes resultats" (aucun
+  // radio a cocher a cette derniere etape).
   let index = 0
   for (;;) {
     const options = page.locator('.question-card input[type="radio"]')
     const count = await options.count()
-    const choice = index % count
-    await options.nth(choice).check()
-    await page.waitForTimeout(500)
+
+    if (count > 0) {
+      const choice = index % count
+      await options.nth(choice).check()
+      await page.waitForTimeout(500)
+    }
 
     await page.locator('.cluster .button--primary').click()
     await page.waitForTimeout(500)
@@ -134,14 +156,25 @@ async function main() {
 
   await downloadAndViewPdf(page, '.cluster .button--primary', BASE_URL + '/checklist')
 
-  // --- Kit / Ressources ---
-  for (const href of ['/kit', '/ressources']) {
-    await page.locator(`nav a[href="${href}"]`).click()
-    await page.waitForTimeout(1000)
-    await smoothScrollToBottom(page, 450)
-    await scrollToTop(page)
-    await page.waitForTimeout(400)
-  }
+  // --- Kit : ajuster le foyer, puis télécharger et lire le PDF ---
+  await page.locator('nav a[href="/kit"]').click()
+  await page.waitForTimeout(1000)
+
+  const childrenStepper = page.locator('.household-grid .stepper').nth(1)
+  await childrenStepper.locator('.button--secondary').nth(1).click()
+  await page.waitForTimeout(500)
+
+  await smoothScrollToBottom(page, 450)
+  await scrollToTop(page)
+
+  await downloadAndViewPdf(page, '.cluster .button--primary', BASE_URL + '/kit')
+
+  // --- Ressources ---
+  await page.locator('nav a[href="/ressources"]').click()
+  await page.waitForTimeout(1000)
+  await smoothScrollToBottom(page, 450)
+  await scrollToTop(page)
+  await page.waitForTimeout(400)
 
   // --- Vidéos : liste, ouverture de la première, quiz, retour à la liste ---
   await page.locator('nav a[href="/videos"]').click()
@@ -161,6 +194,53 @@ async function main() {
 
   await page.locator('.back-link').click()
   await page.waitForTimeout(1000)
+
+  // --- Quiz interactif : tirage aléatoire, score en direct, attestation PDF ---
+  await page.locator('nav a[href="/quiz"]').click()
+  await page.waitForTimeout(1000)
+
+  await page.locator('.cluster .button--primary').click()
+  await page.waitForTimeout(700)
+
+  for (let step = 0; step < 8; step += 1) {
+    await page.locator('.video-quiz input[type="radio"]').first().check()
+    await page.waitForTimeout(400)
+    await page.locator('.cluster .button--primary').click()
+    await page.waitForTimeout(700)
+    await page.locator('.cluster .button--primary').click()
+    await page.waitForTimeout(700)
+  }
+
+  await smoothScrollToBottom(page, 450)
+  await scrollToTop(page)
+
+  await downloadAndViewPdf(page, '.cluster .button--primary', BASE_URL + '/quiz')
+
+  // --- Mises en situation : un scénario complet jusqu'au débrief ---
+  await page.locator('nav a[href="/mises-en-situation"]').click()
+  await page.waitForTimeout(1000)
+  await smoothScrollToBottom(page, 450)
+  await scrollToTop(page)
+
+  await page.locator('.link-button--primary').first().click()
+  await page.waitForTimeout(1000)
+
+  for (let step = 0; step < 3; step += 1) {
+    await page.locator('.video-quiz input[type="radio"]').first().check()
+    await page.waitForTimeout(400)
+    await page.locator('.cluster .button--primary').click()
+    await page.waitForTimeout(900)
+  }
+
+  await smoothScrollToBottom(page, 450)
+  await scrollToTop(page)
+  await page.waitForTimeout(600)
+
+  // --- Pages réglementaires (mentions légales, confidentialité, accessibilité, support) ---
+  await visitStaticPage(page, '/mentions-legales')
+  await visitStaticPage(page, '/politique-de-confidentialite')
+  await visitStaticPage(page, '/declaration-accessibilite')
+  await visitStaticPage(page, '/support')
 
   await page.waitForTimeout(800)
   await context.close()
