@@ -640,6 +640,11 @@ export const frMessages = {
       total: 'Diagnostics enregistrés',
       averageScore: 'Score global moyen',
     },
+    priority: {
+      title: 'Priorité d’action',
+      intro: 'Domaines classés du score moyen le plus faible au plus élevé.',
+      respondents: '{count} répondant(s)',
+    },
     domains: {
       title: 'Score moyen par domaine',
     },
@@ -651,6 +656,10 @@ export const frMessages = {
       answerNone: 'Non fait',
       answerPartial: 'Partiel',
       answerReady: 'Fait',
+    },
+    trend: {
+      title: 'Évolution du score global',
+      intro: 'Score moyen quotidien sur les 30 derniers jours d’activité.',
     },
   },
   quizStats: {
@@ -721,6 +730,19 @@ export const frMessages = {
       withElderly: 'Avec personnes âgées',
       withPets: 'Avec animaux',
       withSpecialNeeds: 'Avec besoins particuliers',
+    },
+    domainGap: {
+      counts: '{with} avec / {without} sans',
+      domain: 'Domaine',
+      with: 'Score (segment)',
+      without: 'Score (reste)',
+      gap: 'Écart',
+      segments: {
+        children: 'Score par domaine — foyers avec enfants',
+        elderly: 'Score par domaine — foyers avec personnes âgées',
+        pets: 'Score par domaine — foyers avec animaux',
+        specialNeeds: 'Score par domaine — foyers avec besoins particuliers',
+      },
     },
   },
   visitorGraph: {

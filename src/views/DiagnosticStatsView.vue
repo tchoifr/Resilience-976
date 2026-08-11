@@ -5,6 +5,7 @@ import { RouterLink } from 'vue-router'
 
 import BarChart from '@/components/ui/BarChart.vue'
 import StackedBar from '@/components/ui/StackedBar.vue'
+import TrendSparkline from '@/components/ui/TrendSparkline.vue'
 import { questions } from '@/features/assessment/services/content.service'
 import type { AssessmentDomain } from '@/features/assessment/types/question'
 import { getDomainLabel, useI18n } from '@/shared/i18n/i18n.service'
@@ -17,12 +18,14 @@ interface DiagnosticStats {
   total: number
   averageGlobalScore: number
   domainAverages: Record<string, number>
+  domainPriority: Array<{ domain: string; averageScore: number; respondentCount: number }>
   levelCounts: Record<'insufficient' | 'fragile' | 'good' | 'very_good', number>
   questionBreakdown: Array<{
     id: string
     domain: string
     answers: Array<{ id: string; score: number; count: number }>
   }>
+  trend: Array<{ date: string; responses: number; averageGlobalScore: number }>
 }
 
 const defaultStatsEndpoint = import.meta.env.PROD
@@ -52,6 +55,24 @@ const domainItems = computed(() =>
     label: getDomainLabel(domain),
     value: stats.value?.domainAverages[domain] ?? 0,
   })),
+)
+
+const priorityItems = computed(
+  () =>
+    stats.value?.domainPriority.map((item) => ({
+      domain: item.domain,
+      label: getDomainLabel(item.domain as AssessmentDomain),
+      averageScore: item.averageScore,
+      respondentCount: item.respondentCount,
+    })) ?? [],
+)
+
+const trendPoints = computed(
+  () =>
+    stats.value?.trend.map((point) => ({
+      date: point.date,
+      value: point.averageGlobalScore,
+    })) ?? [],
 )
 
 const levelOrder = ['insufficient', 'fragile', 'good', 'very_good'] as const
@@ -135,6 +156,23 @@ onMounted(async () => {
 
       <template v-else>
         <section class="panel dashboard-panel">
+          <h2>{{ t('diagnosticStats.priority.title') }}</h2>
+          <p class="muted">{{ t('diagnosticStats.priority.intro') }}</p>
+          <ol class="priority-list">
+            <li v-for="(item, index) in priorityItems" :key="item.domain" class="priority-row">
+              <span class="priority-row__rank">{{ index + 1 }}</span>
+              <span class="priority-row__label">{{ item.label }}</span>
+              <span class="priority-row__meta">
+                {{ item.averageScore }}/100 ·
+                {{
+                  t('diagnosticStats.priority.respondents', { count: item.respondentCount })
+                }}
+              </span>
+            </li>
+          </ol>
+        </section>
+
+        <section class="panel dashboard-panel">
           <h2>{{ t('diagnosticStats.domains.title') }}</h2>
           <BarChart :items="domainItems" suffix="/100" :max="100" />
         </section>
@@ -142,6 +180,16 @@ onMounted(async () => {
         <section class="panel dashboard-panel">
           <h2>{{ t('diagnosticStats.levels.title') }}</h2>
           <BarChart :items="levelItems" />
+        </section>
+
+        <section v-if="trendPoints.length > 0" class="panel dashboard-panel">
+          <h2>{{ t('diagnosticStats.trend.title') }}</h2>
+          <p class="muted">{{ t('diagnosticStats.trend.intro') }}</p>
+          <TrendSparkline
+            :points="trendPoints"
+            :label="t('diagnosticStats.trend.title')"
+            suffix="/100"
+          />
         </section>
 
         <section class="panel dashboard-panel">

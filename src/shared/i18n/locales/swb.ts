@@ -576,6 +576,11 @@ export const swbMessages = {
       total: 'Udzisa ziandzishiwe',
       averageScore: 'Score ya kati',
     },
+    priority: {
+      title: 'Domaine ya kuandza',
+      intro: 'Domaines zioandzishiwe kutoka score ya pungufu haline ya juu.',
+      respondents: '{count} mutru ajibuye',
+    },
     domains: {
       title: 'Score ya kati kwa domaine',
     },
@@ -587,6 +592,10 @@ export const swbMessages = {
       answerNone: 'Kayafanyiwa',
       answerPartial: 'Piya',
       answerReady: 'Idjitru',
+    },
+    trend: {
+      title: 'Mwendo wa score ya kati',
+      intro: 'Score ya kati ya kila siku, siku 30 za mwisho.',
     },
   },
 } as const

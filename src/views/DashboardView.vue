@@ -4,6 +4,7 @@ import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
 import SourceLink from '@/components/ui/SourceLink.vue'
+import TrendSparkline from '@/components/ui/TrendSparkline.vue'
 import { sourcesById } from '@/features/assessment/services/content.service'
 
 interface DashboardStats {
@@ -25,6 +26,7 @@ interface DashboardStats {
     technicalErrors: number
     completionRate: number
   }
+  trend: Array<{ date: string; started: number; completed: number; actions: number }>
 }
 
 const defaultDashboardEndpoint = import.meta.env.PROD
@@ -43,6 +45,16 @@ const populationSource = computed(() =>
 
 const displayValue = (value: number | null | undefined) =>
   typeof value === 'number' ? value.toLocaleString('fr-FR') : '—'
+
+const startedTrend = computed(
+  () => stats.value?.trend.map((point) => ({ date: point.date, value: point.started })) ?? [],
+)
+const completedTrend = computed(
+  () => stats.value?.trend.map((point) => ({ date: point.date, value: point.completed })) ?? [],
+)
+const actionsTrend = computed(
+  () => stats.value?.trend.map((point) => ({ date: point.date, value: point.actions })) ?? [],
+)
 
 const summaryCards = computed(() => [
   {
@@ -181,6 +193,18 @@ onMounted(async () => {
             <span>{{ step.label }}</span>
             <small>{{ step.help }}</small>
           </article>
+        </div>
+      </section>
+
+      <section v-if="startedTrend.length > 0" class="panel dashboard-panel">
+        <div class="dashboard-section-heading">
+          <h2>Évolution quotidienne</h2>
+          <span class="pill">30 derniers jours</span>
+        </div>
+        <div class="stack">
+          <TrendSparkline :points="startedTrend" label="Parcours commencés" color="var(--color-teal)" />
+          <TrendSparkline :points="completedTrend" label="Parcours terminés" color="#4caf50" />
+          <TrendSparkline :points="actionsTrend" label="Passages à l’action" color="#f4a261" />
         </div>
       </section>
 

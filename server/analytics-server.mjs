@@ -468,6 +468,7 @@ function buildDiagnosticStats(rows, index, totalStarted = 0) {
   const domainCounts = {}
   const levelCounts = { insufficient: 0, fragile: 0, good: 0, very_good: 0 }
   const questionAnswerCounts = new Map()
+  const dailyScores = new Map()
   let globalScoreSum = 0
 
   for (const row of rows) {
@@ -478,6 +479,12 @@ function buildDiagnosticStats(rows, index, totalStarted = 0) {
 
     globalScoreSum += globalScore
     levelCounts[getScoreLevelId(globalScore)] += 1
+
+    const day = row.createdAt.slice(0, 10)
+    const dayStats = dailyScores.get(day) ?? { count: 0, scoreSum: 0 }
+    dayStats.count += 1
+    dayStats.scoreSum += globalScore
+    dailyScores.set(day, dayStats)
 
     for (const [domain, score] of Object.entries(domainScores)) {
       domainSums[domain] = (domainSums[domain] ?? 0) + score
@@ -500,6 +507,17 @@ function buildDiagnosticStats(rows, index, totalStarted = 0) {
     domainAverages[domain] = Math.round(domainSums[domain] / domainCounts[domain])
   }
 
+  // Weakest average first: this is the ranking a decision-maker actually
+  // wants ("where do we act first"), with respondentCount alongside so a
+  // low score from one respondent doesn't read the same as one from fifty.
+  const domainPriority = Object.entries(domainAverages)
+    .map(([domain, averageScore]) => ({
+      domain,
+      averageScore,
+      respondentCount: domainCounts[domain],
+    }))
+    .sort((a, b) => a.averageScore - b.averageScore)
+
   const questionBreakdown = index.questions.map((question) => ({
     id: question.id,
     domain: question.domain,
@@ -510,14 +528,25 @@ function buildDiagnosticStats(rows, index, totalStarted = 0) {
     })),
   }))
 
+  const trend = Array.from(dailyScores.entries())
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .slice(-30)
+    .map(([date, value]) => ({
+      date,
+      responses: value.count,
+      averageGlobalScore: Math.round(value.scoreSum / value.count),
+    }))
+
   return {
     generatedAt: new Date().toISOString(),
     totalStarted,
     total,
     averageGlobalScore: total === 0 ? 0 : Math.round(globalScoreSum / total),
     domainAverages,
+    domainPriority,
     levelCounts,
     questionBreakdown,
+    trend,
   }
 }
 
@@ -983,13 +1012,16 @@ async function readDiagnosticResponseRows() {
   return currentDatabase
     .prepare(
       `
-        SELECT answers_json
+        SELECT created_at, answers_json
         FROM diagnostic_responses
         ORDER BY created_at DESC
       `,
     )
     .all()
-    .map((row) => ({ answers: parseRatingsJson(row.answers_json) }))
+    .map((row) => ({
+      createdAt: row.created_at,
+      answers: parseRatingsJson(row.answers_json),
+    }))
 }
 
 async function readQuizResultRows() {
@@ -1225,18 +1257,93 @@ async function readKitProfileRows() {
   return currentDatabase
     .prepare(
       `
-        SELECT adults, children, elderly, pets, special_needs
+        SELECT visitor_id, adults, children, elderly, pets, special_needs
         FROM kit_profiles
       `,
     )
     .all()
     .map((row) => ({
+      visitorId: row.visitor_id,
       adults: Number(row.adults),
       children: Number(row.children),
       elderly: Number(row.elderly),
       pets: Number(row.pets),
       specialNeeds: Boolean(row.special_needs),
     }))
+}
+
+const householdSegments = [
+  { key: 'children', label: 'foyers avec enfants', test: (row) => row.children > 0 },
+  {
+    key: 'elderly',
+    label: 'foyers avec personnes agees',
+    test: (row) => row.elderly > 0,
+  },
+  { key: 'pets', label: 'foyers avec animaux', test: (row) => row.pets > 0 },
+  {
+    key: 'specialNeeds',
+    label: 'foyers avec besoins specifiques',
+    test: (row) => row.specialNeeds,
+  },
+]
+
+function averageDomainScores(entries) {
+  const sums = {}
+  const counts = {}
+
+  for (const { domainScores } of entries) {
+    for (const [domain, score] of Object.entries(domainScores)) {
+      sums[domain] = (sums[domain] ?? 0) + score
+      counts[domain] = (counts[domain] ?? 0) + 1
+    }
+  }
+
+  const averages = {}
+
+  for (const domain of Object.keys(sums)) {
+    averages[domain] = Math.round(sums[domain] / counts[domain])
+  }
+
+  return averages
+}
+
+// Cross-references household composition with diagnostic domain scores, so a
+// segment's weak spot ("families with children score lower on X") can drive
+// content priority instead of only the population-wide average.
+function buildDomainGapBySegment(kitRows, diagnosticAnswersByVisitor, questionsIndex) {
+  const matched = kitRows
+    .map((row) => {
+      const answers = diagnosticAnswersByVisitor.get(row.visitorId)
+
+      if (!answers) {
+        return null
+      }
+
+      return {
+        row,
+        domainScores: calculateDiagnosticScore(answers, questionsIndex.byId).domainScores,
+      }
+    })
+    .filter(Boolean)
+
+  return {
+    totalMatched: matched.length,
+    segments: householdSegments.map((segment) => {
+      const withSegment = matched.filter(({ row }) => segment.test(row))
+      const withoutSegment = matched.filter(({ row }) => !segment.test(row))
+
+      return {
+        key: segment.key,
+        label: segment.label,
+        withCount: withSegment.length,
+        withoutCount: withoutSegment.length,
+        domainAverages: {
+          with: averageDomainScores(withSegment),
+          without: averageDomainScores(withoutSegment),
+        },
+      }
+    }),
+  }
 }
 
 function percent(count, total) {
@@ -1906,6 +2013,42 @@ async function getVisitorProfile(visitorId) {
   }
 }
 
+// Raw daily event counts, not unique-visitor dedup like the funnel totals
+// below — enough to see whether a day trended up or down without the extra
+// cost of re-deriving per-day unique visitor sets.
+function buildDashboardTrend(events) {
+  const byDate = new Map()
+
+  for (const event of events) {
+    const isTracked =
+      event.name === 'diagnostic_started' ||
+      event.name === 'diagnostic_completed' ||
+      actionEvents.has(event.name)
+
+    if (!isTracked) {
+      continue
+    }
+
+    const day = event.createdAt.slice(0, 10)
+    const current = byDate.get(day) ?? { started: 0, completed: 0, actions: 0 }
+
+    if (event.name === 'diagnostic_started') {
+      current.started += 1
+    } else if (event.name === 'diagnostic_completed') {
+      current.completed += 1
+    } else {
+      current.actions += 1
+    }
+
+    byDate.set(day, current)
+  }
+
+  return Array.from(byDate.entries())
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .slice(-30)
+    .map(([date, value]) => ({ date, ...value }))
+}
+
 function buildDashboard(events, updatedAt, feedbackDatabaseCount = 0) {
   // Funnel steps count unique visitors, not raw events: a visitor who
   // resumes, refreshes /resultats, or fires several actionEvents (e.g. a
@@ -1999,6 +2142,7 @@ function buildDashboard(events, updatedAt, feedbackDatabaseCount = 0) {
     campaigns: Array.from(campaigns.values()).sort(
       (a, b) => b.engaged - a.engaged,
     ),
+    trend: buildDashboardTrend(events),
   }
 }
 
@@ -2134,9 +2278,25 @@ const server = createServer(async (request, response) => {
     }
 
     if (request.method === 'GET' && requestUrl.pathname === '/api/kit-profiles/stats') {
-      const rows = await readKitProfileRows()
+      const [rows, diagnosticAnswersByVisitor, questionsIndex] = await Promise.all([
+        readKitProfileRows(),
+        readLatestDiagnosticAnswersByVisitor(),
+        getQuestionsIndex(),
+      ])
 
-      sendJson(response, 200, buildKitStats(rows), origin)
+      sendJson(
+        response,
+        200,
+        {
+          ...buildKitStats(rows),
+          domainGapBySegment: buildDomainGapBySegment(
+            rows,
+            diagnosticAnswersByVisitor,
+            questionsIndex,
+          ),
+        },
+        origin,
+      )
       return
     }
 
