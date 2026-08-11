@@ -263,6 +263,13 @@ export const frMessages = {
     noAccount: 'Sans compte',
     local: 'Conservé sur votre appareil',
     officialSources: 'Sources officielles à valider',
+    assistant: {
+      title: 'Assistant documentaire',
+      badge: 'Version en cours de tests',
+      intro:
+        'Posez une question sur la préparation aux risques et obtenez une réponse issue uniquement d’une base documentaire validée, source affichée à chaque fois.',
+      cta: 'Essayer l’assistant',
+    },
   },
   diagnostic: {
     title: 'Diagnostic',
