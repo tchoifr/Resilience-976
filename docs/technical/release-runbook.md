@@ -13,7 +13,7 @@ npm run test:e2e
 npm audit --audit-level=critical
 ```
 
-4. Generer le sitemap avec le domaine final:
+4. Generer le sitemap, robots.txt et llms.txt avec le domaine final:
 
 ```bash
 VITE_PUBLIC_BASE_URL=https://domaine-final.fr npm run seo:sitemap

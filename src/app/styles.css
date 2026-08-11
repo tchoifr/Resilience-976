@@ -17,6 +17,10 @@
   --color-primary: #007f86;
   --color-primary-dark: #00394b;
   --color-teal: #00a1ad;
+  /* Lighter than --color-teal: the base teal fails WCAG AA (4.5:1) as text
+     on the dark navy banners below (public-warning-banner, retro-id-badge).
+     Same hue, brightened until it clears 4.5:1 against both. */
+  --color-teal-on-dark: #1cb8c4;
   --color-success: #7bb661;
   --color-warning: #ff8a2a;
   --color-danger: #e63946;
@@ -183,7 +187,7 @@ textarea:focus-visible {
 }
 
 .public-warning-banner strong {
-  color: var(--color-teal);
+  color: var(--color-teal-on-dark);
 }
 
 .language-demo-banner {

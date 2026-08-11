@@ -16,14 +16,14 @@ const { theme } = useTheme()
 const heroImages = computed(() =>
   theme.value === 'dark'
     ? {
-        mobile: '/images/Mobile-darktheme.png',
-        tablet: '/images/Tablet-darktheme.png',
-        desktop: '/images/desktop-darktheme.png',
+        mobile: '/images/Mobile-darktheme.webp',
+        tablet: '/images/Tablet-darktheme.webp',
+        desktop: '/images/desktop-darktheme.webp',
       }
     : {
-        mobile: '/images/Mobile.png',
-        tablet: '/images/Tablet.png',
-        desktop: '/images/desktop.png',
+        mobile: '/images/Mobile.webp',
+        tablet: '/images/Tablet.webp',
+        desktop: '/images/desktop.webp',
       },
 )
 
