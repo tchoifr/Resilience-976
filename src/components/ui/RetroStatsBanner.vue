@@ -3,6 +3,9 @@
 import { computed, onMounted, ref } from 'vue'
 
 import { getVisitorId } from '@/shared/analytics/analytics.service'
+import { useI18n } from '@/shared/i18n/i18n.service'
+
+const { t } = useI18n()
 
 interface DashboardStats {
   target: number
@@ -59,11 +62,11 @@ const shortVisitorId = (
 ).toUpperCase()
 
 const tickerItems = computed(() => [
-  `${journeysCompleted.value.toLocaleString('fr-FR')} diagnostics complétés`,
-  `${quizSessions.value.toLocaleString('fr-FR')} quiz joués`,
-  `${videoParticipants.value.toLocaleString('fr-FR')} parcours de formation suivis`,
-  `${scenarioSessions.value.toLocaleString('fr-FR')} mises en situation testées`,
-  `Objectif JNR 2026 : ${target.value.toLocaleString('fr-FR')} visiteurs engagés`,
+  t('retroStats.ticker.diagnostics', { count: journeysCompleted.value.toLocaleString('fr-FR') }),
+  t('retroStats.ticker.quiz', { count: quizSessions.value.toLocaleString('fr-FR') }),
+  t('retroStats.ticker.videos', { count: videoParticipants.value.toLocaleString('fr-FR') }),
+  t('retroStats.ticker.scenarios', { count: scenarioSessions.value.toLocaleString('fr-FR') }),
+  t('retroStats.ticker.goal', { target: target.value.toLocaleString('fr-FR') }),
 ])
 const tickerSummary = computed(() => tickerItems.value.join(' — '))
 
@@ -111,22 +114,37 @@ onMounted(async () => {
 
 <template>
   <div class="retro-banner">
-    <div class="retro-id-badge" role="img" :aria-label="`Identifiant visiteur ${visitorId}`">
-      <span class="retro-id-badge__label">ID VISITEUR</span>
+    <div
+      class="retro-id-badge"
+      role="img"
+      :aria-label="t('retroStats.idBadgeAria', { id: visitorId })"
+    >
+      <span class="retro-id-badge__label">{{ t('retroStats.idBadgeLabel') }}</span>
       <span class="retro-id-badge__value">{{ shortVisitorId }}</span>
     </div>
 
     <div
       class="retro-counter"
       role="img"
-      :aria-label="`Vous êtes le visiteur numéro ${visits}. ${engagedVisitors} visiteurs engagés, objectif JNR 2026 : ${target}`"
+      :aria-label="
+        t('retroStats.counterAria', {
+          visits,
+          engaged: engagedVisitors,
+          target,
+        })
+      "
     >
-      <span class="retro-counter__label">VOUS ÊTES LE VISITEUR N°</span>
+      <span class="retro-counter__label">{{ t('retroStats.counterLabel') }}</span>
       <div class="retro-counter__digits" aria-hidden="true">
         <span v-for="(digit, index) in digits" :key="index">{{ digit }}</span>
       </div>
       <span class="retro-counter__goal">
-        {{ engagedDigits }} VISITEURS ENGAGÉS · OBJECTIF JNR 2026&nbsp;: {{ target.toLocaleString('fr-FR') }}
+        {{
+          t('retroStats.goalLine', {
+            engaged: engagedDigits,
+            target: target.toLocaleString('fr-FR'),
+          })
+        }}
       </span>
     </div>
 

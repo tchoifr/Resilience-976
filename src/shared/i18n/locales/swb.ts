@@ -604,6 +604,22 @@ export const swbMessages = {
       intro: 'Score ya kati ya kila siku, siku 30 za mwisho.',
     },
   },
+  // Brouillon non relu par un locuteur natif (comme le reste de ce fichier).
+  retroStats: {
+    idBadgeLabel: 'ID YA MUTRU',
+    idBadgeAria: 'Identifiant ya mutru {id}',
+    counterLabel: 'WE NDIWE MUTRU N°',
+    counterAria:
+      'We ndiwe mutru namba {visits}. {engaged} watru wandzianzishe, lengo JNR 2026 : {target}',
+    goalLine: '{engaged} WATRU WANDZIANZISHE · LENGO JNR 2026 : {target}',
+    ticker: {
+      diagnostics: '{count} udzisa zioandzishiwe',
+      quiz: '{count} quiz zicheziwe',
+      videos: '{count} mafundrisho ziandziliwe',
+      scenarios: '{count} mises en situation zidjaribiwe',
+      goal: 'Lengo JNR 2026 : {target} watru wandzianzishe',
+    },
+  },
 } as const
 
 export type SwbMessages = typeof swbMessages

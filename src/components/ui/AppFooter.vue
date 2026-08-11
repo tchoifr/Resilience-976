@@ -9,6 +9,7 @@ const legalLinks = [
   { to: '/politique-de-confidentialite', labelKey: 'footer.privacy' },
   { to: '/declaration-accessibilite', labelKey: 'footer.accessibility' },
   { to: '/support', labelKey: 'footer.support' },
+  { to: '/tableau-de-bord', labelKey: 'footer.stats' },
 ]
 
 const linkedinUrl = 'https://www.linkedin.com/in/natam-sa-61474b22b/'
