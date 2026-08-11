@@ -19,7 +19,10 @@ Verifier ensuite:
 ```txt
 https://domaine-final.fr/sitemap.xml
 https://domaine-final.fr/robots.txt
+https://domaine-final.fr/llms.txt
 ```
+
+`npm run seo:sitemap` genere les trois fichiers a partir du meme `VITE_PUBLIC_BASE_URL` (`public/sitemap.xml`, `public/robots.txt`, `public/llms.txt` — ce dernier suit https://llmstxt.org/).
 
 ## Google Search Console
 

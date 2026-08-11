@@ -218,7 +218,7 @@ onMounted(async () => {
   font-weight: 700;
   font-size: 1.05rem;
   letter-spacing: 0.1em;
-  color: var(--color-teal);
+  color: var(--color-teal-on-dark);
   text-shadow: 0 0 8px rgba(0, 161, 173, 0.85);
 }
 
