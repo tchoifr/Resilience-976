@@ -640,6 +640,11 @@ export const frMessages = {
       total: 'Diagnostics enregistrés',
       averageScore: 'Score global moyen',
     },
+    priority: {
+      title: 'Priorité d’action',
+      intro: 'Domaines classés du score moyen le plus faible au plus élevé.',
+      respondents: '{count} répondant(s)',
+    },
     domains: {
       title: 'Score moyen par domaine',
     },
@@ -651,6 +656,10 @@ export const frMessages = {
       answerNone: 'Non fait',
       answerPartial: 'Partiel',
       answerReady: 'Fait',
+    },
+    trend: {
+      title: 'Évolution du score global',
+      intro: 'Score moyen quotidien sur les 30 derniers jours d’activité.',
     },
   },
   quizStats: {
@@ -664,8 +673,18 @@ export const frMessages = {
     summary: {
       total: 'Sessions enregistrées',
     },
+    priority: {
+      title: 'Questions les moins réussies',
+      intro: 'Questions classées du taux de bonnes réponses le plus faible au plus élevé.',
+      correctRate: '{rate}% de bonnes réponses',
+      respondents: '{count} répondant(s)',
+    },
     questionBreakdown: {
       title: 'Détail par question',
+    },
+    trend: {
+      title: 'Évolution du score moyen',
+      intro: 'Score moyen quotidien sur les 30 derniers jours d’activité.',
     },
   },
   videoStats: {
@@ -679,11 +698,21 @@ export const frMessages = {
     summary: {
       total: 'Parcours enregistrés',
     },
+    priority: {
+      title: 'Capsules les moins terminées',
+      intro: 'Capsules classées du taux de complétion le plus faible au plus élevé, parmi les personnes qui les ont commencées.',
+      completionRate: '{rate}% de complétion',
+      engaged: '{count} engagé(s)',
+    },
     breakdown: {
       title: 'Détail par capsule',
       started: 'Commencé',
       completed: 'Terminé',
       quizCorrect: 'quiz réussi(s)',
+    },
+    trend: {
+      title: 'Évolution de l’engagement',
+      intro: 'Nombre de mises à jour de progression par jour, sur les 30 derniers jours.',
     },
   },
   scenarioStats: {
@@ -697,9 +726,19 @@ export const frMessages = {
     summary: {
       total: 'Sessions enregistrées',
     },
+    priority: {
+      title: 'Décisions les moins réussies',
+      intro: 'Étapes classées du score moyen des choix le plus faible au plus élevé, toutes mises en situation confondues.',
+      averageScore: '{score}/100 en moyenne',
+      respondents: '{count} répondant(s)',
+    },
     breakdown: {
       title: 'Détail par scénario',
       sessions: 'session(s)',
+    },
+    trend: {
+      title: 'Évolution des sessions',
+      intro: 'Nombre de sessions terminées par jour, sur les 30 derniers jours.',
     },
   },
   kitStats: {
@@ -722,6 +761,19 @@ export const frMessages = {
       withPets: 'Avec animaux',
       withSpecialNeeds: 'Avec besoins particuliers',
     },
+    domainGap: {
+      counts: '{with} avec / {without} sans',
+      domain: 'Domaine',
+      with: 'Score (segment)',
+      without: 'Score (reste)',
+      gap: 'Écart',
+      segments: {
+        children: 'Score par domaine — foyers avec enfants',
+        elderly: 'Score par domaine — foyers avec personnes âgées',
+        pets: 'Score par domaine — foyers avec animaux',
+        specialNeeds: 'Score par domaine — foyers avec besoins particuliers',
+      },
+    },
   },
   visitorGraph: {
     eyebrow: 'Vue relationnelle',
@@ -740,12 +792,26 @@ export const frMessages = {
       totalScenarioWeakSpots: 'Scénarios les plus faibles représentés',
       totalScenarioStrongSpots: 'Scénarios les plus forts représentés',
     },
+    campaignFilter: {
+      label: 'Filtrer par campagne',
+      all: 'Toutes les campagnes',
+    },
     toggles: {
       campaign: 'Liens par campagne',
       risk: 'Liens par domaine le plus faible',
       strength: 'Liens par domaine le plus fort',
       scenarioWeak: 'Liens par scénario le plus faible',
       scenarioStrong: 'Liens par scénario le plus fort',
+    },
+    summaryList: {
+      title: 'Résumé des tendances',
+      intro:
+        'Classement des regroupements par nombre de visiteurs, selon la campagne sélectionnée ci-dessus.',
+      riskTitle: 'Domaines les plus faibles',
+      strengthTitle: 'Domaines les plus forts',
+      scenarioWeakTitle: 'Mises en situation les plus faibles',
+      scenarioStrongTitle: 'Mises en situation les plus fortes',
+      empty: 'Aucune donnée pour cette campagne.',
     },
     legend: {
       title: 'Légende',

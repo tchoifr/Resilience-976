@@ -468,6 +468,7 @@ function buildDiagnosticStats(rows, index, totalStarted = 0) {
   const domainCounts = {}
   const levelCounts = { insufficient: 0, fragile: 0, good: 0, very_good: 0 }
   const questionAnswerCounts = new Map()
+  const dailyScores = new Map()
   let globalScoreSum = 0
 
   for (const row of rows) {
@@ -478,6 +479,12 @@ function buildDiagnosticStats(rows, index, totalStarted = 0) {
 
     globalScoreSum += globalScore
     levelCounts[getScoreLevelId(globalScore)] += 1
+
+    const day = row.createdAt.slice(0, 10)
+    const dayStats = dailyScores.get(day) ?? { count: 0, scoreSum: 0 }
+    dayStats.count += 1
+    dayStats.scoreSum += globalScore
+    dailyScores.set(day, dayStats)
 
     for (const [domain, score] of Object.entries(domainScores)) {
       domainSums[domain] = (domainSums[domain] ?? 0) + score
@@ -500,6 +507,17 @@ function buildDiagnosticStats(rows, index, totalStarted = 0) {
     domainAverages[domain] = Math.round(domainSums[domain] / domainCounts[domain])
   }
 
+  // Weakest average first: this is the ranking a decision-maker actually
+  // wants ("where do we act first"), with respondentCount alongside so a
+  // low score from one respondent doesn't read the same as one from fifty.
+  const domainPriority = Object.entries(domainAverages)
+    .map(([domain, averageScore]) => ({
+      domain,
+      averageScore,
+      respondentCount: domainCounts[domain],
+    }))
+    .sort((a, b) => a.averageScore - b.averageScore)
+
   const questionBreakdown = index.questions.map((question) => ({
     id: question.id,
     domain: question.domain,
@@ -510,14 +528,25 @@ function buildDiagnosticStats(rows, index, totalStarted = 0) {
     })),
   }))
 
+  const trend = Array.from(dailyScores.entries())
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .slice(-30)
+    .map(([date, value]) => ({
+      date,
+      responses: value.count,
+      averageGlobalScore: Math.round(value.scoreSum / value.count),
+    }))
+
   return {
     generatedAt: new Date().toISOString(),
     totalStarted,
     total,
     averageGlobalScore: total === 0 ? 0 : Math.round(globalScoreSum / total),
     domainAverages,
+    domainPriority,
     levelCounts,
     questionBreakdown,
+    trend,
   }
 }
 
@@ -983,13 +1012,16 @@ async function readDiagnosticResponseRows() {
   return currentDatabase
     .prepare(
       `
-        SELECT answers_json
+        SELECT created_at, answers_json
         FROM diagnostic_responses
         ORDER BY created_at DESC
       `,
     )
     .all()
-    .map((row) => ({ answers: parseRatingsJson(row.answers_json) }))
+    .map((row) => ({
+      createdAt: row.created_at,
+      answers: parseRatingsJson(row.answers_json),
+    }))
 }
 
 async function readQuizResultRows() {
@@ -1048,6 +1080,43 @@ function buildQuizQuestionBreakdown(rows, quizIndex) {
   })
 }
 
+function buildQuizTrend(rows) {
+  const byDate = new Map()
+
+  for (const row of rows) {
+    const scorePercent = row.total === 0 ? 0 : Math.round((row.score / row.total) * 100)
+    const day = row.createdAt.slice(0, 10)
+    const current = byDate.get(day) ?? { sessions: 0, scorePercentSum: 0 }
+
+    current.sessions += 1
+    current.scorePercentSum += scorePercent
+    byDate.set(day, current)
+  }
+
+  return Array.from(byDate.entries())
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .slice(-30)
+    .map(([date, value]) => ({
+      date,
+      sessions: value.sessions,
+      averageScorePercent: Math.round(value.scorePercentSum / value.sessions),
+    }))
+}
+
+// Lowest correct rate first: which question the audience actually gets
+// wrong most often, i.e. where the underlying content isn't landing.
+function buildQuestionPriority(questionBreakdown) {
+  return questionBreakdown
+    .filter((question) => question.totalAnswered > 0)
+    .map((question) => ({
+      id: question.id,
+      risk: question.risk,
+      correctRate: Math.round((question.correctCount / question.totalAnswered) * 100),
+      totalAnswered: question.totalAnswered,
+    }))
+    .sort((a, b) => a.correctRate - b.correctRate)
+}
+
 function buildQuizStats(rows, quizIndex) {
   const campaigns = new Map()
   let scorePercentSum = 0
@@ -1067,6 +1136,8 @@ function buildQuizStats(rows, quizIndex) {
     campaigns.set(row.campaignId, current)
   }
 
+  const questionBreakdown = buildQuizQuestionBreakdown(rows, quizIndex)
+
   return {
     generatedAt: new Date().toISOString(),
     total: rows.length,
@@ -1082,7 +1153,9 @@ function buildQuizStats(rows, quizIndex) {
             : Math.round(campaign.scorePercentSum / campaign.participants),
       }))
       .sort((a, b) => b.participants - a.participants),
-    questionBreakdown: buildQuizQuestionBreakdown(rows, quizIndex),
+    questionBreakdown,
+    questionPriority: buildQuestionPriority(questionBreakdown),
+    trend: buildQuizTrend(rows),
   }
 }
 
@@ -1092,7 +1165,7 @@ async function readVideoProgressRows() {
   return currentDatabase
     .prepare(
       `
-        SELECT visitor_id, video_id, status, quiz_answered_correctly
+        SELECT visitor_id, video_id, status, quiz_answered_correctly, updated_at
         FROM video_progress
       `,
     )
@@ -1102,7 +1175,47 @@ async function readVideoProgressRows() {
       videoId: row.video_id,
       status: row.status,
       quizAnsweredCorrectly: Boolean(row.quiz_answered_correctly),
+      updatedAt: row.updated_at,
     }))
+}
+
+// video_progress is an upsert table (one row per visitor+video, overwritten
+// as they progress), not an append log, so there is no per-day start/finish
+// event to trend. updated_at — last time that row changed — is the closest
+// available signal and is used as a proxy for daily engagement.
+function buildVideoTrend(rows) {
+  const byDate = new Map()
+
+  for (const row of rows) {
+    const day = row.updatedAt.slice(0, 10)
+    byDate.set(day, (byDate.get(day) ?? 0) + 1)
+  }
+
+  return Array.from(byDate.entries())
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .slice(-30)
+    .map(([date, count]) => ({ date, count }))
+}
+
+// Lowest completion rate first, among visitors who engaged with that video
+// at all — the capsule that loses the most people once they've started it.
+function buildVideoPriority(videos) {
+  return videos
+    .map((video) => {
+      const totalEngaged = video.startedCount + video.completedCount
+
+      if (totalEngaged === 0) {
+        return null
+      }
+
+      return {
+        id: video.id,
+        completionRate: Math.round((video.completedCount / totalEngaged) * 100),
+        totalEngaged,
+      }
+    })
+    .filter((entry) => entry !== null)
+    .sort((a, b) => a.completionRate - b.completionRate)
 }
 
 function buildVideoProgressStats(rows, videosIndex) {
@@ -1131,23 +1244,27 @@ function buildVideoProgressStats(rows, videosIndex) {
     countsByVideo.set(row.videoId, current)
   }
 
+  const videos = videosIndex.videos.map((video) => {
+    const counts = countsByVideo.get(video.id) ?? {
+      startedCount: 0,
+      completedCount: 0,
+      quizCorrectCount: 0,
+    }
+
+    return {
+      id: video.id,
+      startedCount: counts.startedCount,
+      completedCount: counts.completedCount,
+      quizCorrectCount: counts.quizCorrectCount,
+    }
+  })
+
   return {
     generatedAt: new Date().toISOString(),
     totalParticipants: participantIds.size,
-    videos: videosIndex.videos.map((video) => {
-      const counts = countsByVideo.get(video.id) ?? {
-        startedCount: 0,
-        completedCount: 0,
-        quizCorrectCount: 0,
-      }
-
-      return {
-        id: video.id,
-        startedCount: counts.startedCount,
-        completedCount: counts.completedCount,
-        quizCorrectCount: counts.quizCorrectCount,
-      }
-    }),
+    videos,
+    videoPriority: buildVideoPriority(videos),
+    trend: buildVideoTrend(rows),
   }
 }
 
@@ -1157,12 +1274,13 @@ async function readScenarioResultRows() {
   return currentDatabase
     .prepare(
       `
-        SELECT scenario_id, choices_json
+        SELECT created_at, scenario_id, choices_json
         FROM scenario_results
       `,
     )
     .all()
     .map((row) => ({
+      createdAt: row.created_at,
       scenarioId: row.scenario_id,
       choices: parseRatingsJson(row.choices_json),
     }))
@@ -1201,6 +1319,50 @@ function buildScenarioStepBreakdown(rows, scenario) {
   })
 }
 
+function buildScenarioTrend(rows) {
+  const byDate = new Map()
+
+  for (const row of rows) {
+    const day = row.createdAt.slice(0, 10)
+    byDate.set(day, (byDate.get(day) ?? 0) + 1)
+  }
+
+  return Array.from(byDate.entries())
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .slice(-30)
+    .map(([date, count]) => ({ date, count }))
+}
+
+// Lowest average chosen score first, across every scenario's steps — the
+// decision point respondents get wrong most often, wherever it happens to
+// live. Steps nobody answered are skipped rather than shown as a false 0.
+function buildStepPriority(scenarios) {
+  return scenarios
+    .flatMap((scenario) =>
+      scenario.stepBreakdown.map((step) => {
+        const totalResponses = step.options.reduce((sum, option) => sum + option.count, 0)
+
+        if (totalResponses === 0) {
+          return null
+        }
+
+        const scoreSum = step.options.reduce(
+          (sum, option) => sum + option.score * option.count,
+          0,
+        )
+
+        return {
+          scenarioId: scenario.id,
+          stepId: step.id,
+          averageScore: Math.round(scoreSum / totalResponses),
+          totalResponses,
+        }
+      }),
+    )
+    .filter((entry) => entry !== null)
+    .sort((a, b) => a.averageScore - b.averageScore)
+}
+
 function buildScenarioStats(rows, scenariosIndex) {
   const sessionsByScenario = new Map()
 
@@ -1208,14 +1370,18 @@ function buildScenarioStats(rows, scenariosIndex) {
     sessionsByScenario.set(row.scenarioId, (sessionsByScenario.get(row.scenarioId) ?? 0) + 1)
   }
 
+  const scenarios = scenariosIndex.scenarios.map((scenario) => ({
+    id: scenario.id,
+    sessions: sessionsByScenario.get(scenario.id) ?? 0,
+    stepBreakdown: buildScenarioStepBreakdown(rows, scenario),
+  }))
+
   return {
     generatedAt: new Date().toISOString(),
     total: rows.length,
-    scenarios: scenariosIndex.scenarios.map((scenario) => ({
-      id: scenario.id,
-      sessions: sessionsByScenario.get(scenario.id) ?? 0,
-      stepBreakdown: buildScenarioStepBreakdown(rows, scenario),
-    })),
+    scenarios,
+    stepPriority: buildStepPriority(scenarios),
+    trend: buildScenarioTrend(rows),
   }
 }
 
@@ -1225,18 +1391,93 @@ async function readKitProfileRows() {
   return currentDatabase
     .prepare(
       `
-        SELECT adults, children, elderly, pets, special_needs
+        SELECT visitor_id, adults, children, elderly, pets, special_needs
         FROM kit_profiles
       `,
     )
     .all()
     .map((row) => ({
+      visitorId: row.visitor_id,
       adults: Number(row.adults),
       children: Number(row.children),
       elderly: Number(row.elderly),
       pets: Number(row.pets),
       specialNeeds: Boolean(row.special_needs),
     }))
+}
+
+const householdSegments = [
+  { key: 'children', label: 'foyers avec enfants', test: (row) => row.children > 0 },
+  {
+    key: 'elderly',
+    label: 'foyers avec personnes agees',
+    test: (row) => row.elderly > 0,
+  },
+  { key: 'pets', label: 'foyers avec animaux', test: (row) => row.pets > 0 },
+  {
+    key: 'specialNeeds',
+    label: 'foyers avec besoins specifiques',
+    test: (row) => row.specialNeeds,
+  },
+]
+
+function averageDomainScores(entries) {
+  const sums = {}
+  const counts = {}
+
+  for (const { domainScores } of entries) {
+    for (const [domain, score] of Object.entries(domainScores)) {
+      sums[domain] = (sums[domain] ?? 0) + score
+      counts[domain] = (counts[domain] ?? 0) + 1
+    }
+  }
+
+  const averages = {}
+
+  for (const domain of Object.keys(sums)) {
+    averages[domain] = Math.round(sums[domain] / counts[domain])
+  }
+
+  return averages
+}
+
+// Cross-references household composition with diagnostic domain scores, so a
+// segment's weak spot ("families with children score lower on X") can drive
+// content priority instead of only the population-wide average.
+function buildDomainGapBySegment(kitRows, diagnosticAnswersByVisitor, questionsIndex) {
+  const matched = kitRows
+    .map((row) => {
+      const answers = diagnosticAnswersByVisitor.get(row.visitorId)
+
+      if (!answers) {
+        return null
+      }
+
+      return {
+        row,
+        domainScores: calculateDiagnosticScore(answers, questionsIndex.byId).domainScores,
+      }
+    })
+    .filter(Boolean)
+
+  return {
+    totalMatched: matched.length,
+    segments: householdSegments.map((segment) => {
+      const withSegment = matched.filter(({ row }) => segment.test(row))
+      const withoutSegment = matched.filter(({ row }) => !segment.test(row))
+
+      return {
+        key: segment.key,
+        label: segment.label,
+        withCount: withSegment.length,
+        withoutCount: withoutSegment.length,
+        domainAverages: {
+          with: averageDomainScores(withSegment),
+          without: averageDomainScores(withoutSegment),
+        },
+      }
+    }),
+  }
 }
 
 function percent(count, total) {
@@ -1906,6 +2147,42 @@ async function getVisitorProfile(visitorId) {
   }
 }
 
+// Raw daily event counts, not unique-visitor dedup like the funnel totals
+// below — enough to see whether a day trended up or down without the extra
+// cost of re-deriving per-day unique visitor sets.
+function buildDashboardTrend(events) {
+  const byDate = new Map()
+
+  for (const event of events) {
+    const isTracked =
+      event.name === 'diagnostic_started' ||
+      event.name === 'diagnostic_completed' ||
+      actionEvents.has(event.name)
+
+    if (!isTracked) {
+      continue
+    }
+
+    const day = event.createdAt.slice(0, 10)
+    const current = byDate.get(day) ?? { started: 0, completed: 0, actions: 0 }
+
+    if (event.name === 'diagnostic_started') {
+      current.started += 1
+    } else if (event.name === 'diagnostic_completed') {
+      current.completed += 1
+    } else {
+      current.actions += 1
+    }
+
+    byDate.set(day, current)
+  }
+
+  return Array.from(byDate.entries())
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .slice(-30)
+    .map(([date, value]) => ({ date, ...value }))
+}
+
 function buildDashboard(events, updatedAt, feedbackDatabaseCount = 0) {
   // Funnel steps count unique visitors, not raw events: a visitor who
   // resumes, refreshes /resultats, or fires several actionEvents (e.g. a
@@ -1999,6 +2276,7 @@ function buildDashboard(events, updatedAt, feedbackDatabaseCount = 0) {
     campaigns: Array.from(campaigns.values()).sort(
       (a, b) => b.engaged - a.engaged,
     ),
+    trend: buildDashboardTrend(events),
   }
 }
 
@@ -2134,9 +2412,25 @@ const server = createServer(async (request, response) => {
     }
 
     if (request.method === 'GET' && requestUrl.pathname === '/api/kit-profiles/stats') {
-      const rows = await readKitProfileRows()
+      const [rows, diagnosticAnswersByVisitor, questionsIndex] = await Promise.all([
+        readKitProfileRows(),
+        readLatestDiagnosticAnswersByVisitor(),
+        getQuestionsIndex(),
+      ])
 
-      sendJson(response, 200, buildKitStats(rows), origin)
+      sendJson(
+        response,
+        200,
+        {
+          ...buildKitStats(rows),
+          domainGapBySegment: buildDomainGapBySegment(
+            rows,
+            diagnosticAnswersByVisitor,
+            questionsIndex,
+          ),
+        },
+        origin,
+      )
       return
     }
 

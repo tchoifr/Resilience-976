@@ -4,6 +4,7 @@ import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
 import StackedBar from '@/components/ui/StackedBar.vue'
+import TrendSparkline from '@/components/ui/TrendSparkline.vue'
 import { videos } from '@/features/assessment/services/content.service'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
@@ -18,6 +19,8 @@ interface VideoStats {
     completedCount: number
     quizCorrectCount: number
   }>
+  videoPriority: Array<{ id: string; completionRate: number; totalEngaged: number }>
+  trend: Array<{ date: string; count: number }>
 }
 
 const defaultStatsEndpoint = import.meta.env.PROD
@@ -55,6 +58,23 @@ const videoRows = computed(() =>
       ],
     }
   }),
+)
+
+const priorityItems = computed(() =>
+  (stats.value?.videoPriority ?? []).map((item) => {
+    const video = videos.value.find((entry) => entry.id === item.id)
+
+    return {
+      id: item.id,
+      label: video?.title ?? item.id,
+      completionRate: item.completionRate,
+      totalEngaged: item.totalEngaged,
+    }
+  }),
+)
+
+const trendPoints = computed(
+  () => stats.value?.trend.map((point) => ({ date: point.date, value: point.count })) ?? [],
 )
 
 onMounted(async () => {
@@ -106,6 +126,30 @@ onMounted(async () => {
         </section>
 
         <section class="panel dashboard-panel">
+          <h2>{{ t('videoStats.priority.title') }}</h2>
+          <p class="muted">{{ t('videoStats.priority.intro') }}</p>
+          <ol class="priority-list">
+            <li
+              v-for="(item, index) in priorityItems"
+              :key="item.id"
+              class="priority-row"
+            >
+              <span class="priority-row__rank">{{ index + 1 }}</span>
+              <span class="priority-row__label">{{ item.label }}</span>
+              <span class="priority-row__meta">
+                {{
+                  t('videoStats.priority.completionRate', { rate: item.completionRate })
+                }}
+                ·
+                {{
+                  t('videoStats.priority.engaged', { count: item.totalEngaged })
+                }}
+              </span>
+            </li>
+          </ol>
+        </section>
+
+        <section class="panel dashboard-panel">
           <h2>{{ t('videoStats.breakdown.title') }}</h2>
           <div class="stack">
             <div v-for="row in videoRows" :key="row.id">
@@ -115,6 +159,12 @@ onMounted(async () => {
               </p>
             </div>
           </div>
+        </section>
+
+        <section v-if="trendPoints.length > 0" class="panel dashboard-panel">
+          <h2>{{ t('videoStats.trend.title') }}</h2>
+          <p class="muted">{{ t('videoStats.trend.intro') }}</p>
+          <TrendSparkline :points="trendPoints" :label="t('videoStats.trend.title')" />
         </section>
       </template>
     </div>

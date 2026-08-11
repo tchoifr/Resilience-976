@@ -4,7 +4,8 @@ import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
 import BarChart from '@/components/ui/BarChart.vue'
-import { useI18n } from '@/shared/i18n/i18n.service'
+import type { AssessmentDomain } from '@/features/assessment/types/question'
+import { getDomainLabel, useI18n } from '@/shared/i18n/i18n.service'
 
 const { t } = useI18n()
 
@@ -16,6 +17,35 @@ interface KitStats {
   withElderlyPercent: number
   withPetsPercent: number
   withSpecialNeedsPercent: number
+  domainGapBySegment: {
+    totalMatched: number
+    segments: Array<{
+      key: string
+      label: string
+      withCount: number
+      withoutCount: number
+      domainAverages: {
+        with: Record<string, number>
+        without: Record<string, number>
+      }
+    }>
+  }
+}
+
+const domainOrder: AssessmentDomain[] = [
+  'household',
+  'housing',
+  'water_food',
+  'energy_communication',
+  'health_documents',
+  'behaviors',
+]
+
+const segmentLabelKeys: Record<string, string> = {
+  children: 'kitStats.domainGap.segments.children',
+  elderly: 'kitStats.domainGap.segments.elderly',
+  pets: 'kitStats.domainGap.segments.pets',
+  specialNeeds: 'kitStats.domainGap.segments.specialNeeds',
 }
 
 const defaultStatsEndpoint = import.meta.env.PROD
@@ -39,6 +69,38 @@ const breakdownItems = computed(() => [
     value: stats.value?.withSpecialNeedsPercent ?? 0,
   },
 ])
+
+const segmentRows = computed(() => {
+  const segments = stats.value?.domainGapBySegment.segments ?? []
+
+  return segments
+    .filter((segment) => segment.withCount > 0 && segment.withoutCount > 0)
+    .map((segment) => ({
+      key: segment.key,
+      label: t(segmentLabelKeys[segment.key] ?? segment.key),
+      withCount: segment.withCount,
+      withoutCount: segment.withoutCount,
+      domainRows: domainOrder
+        .map((domain) => {
+          const withScore = segment.domainAverages.with[domain]
+          const withoutScore = segment.domainAverages.without[domain]
+
+          if (withScore === undefined || withoutScore === undefined) {
+            return null
+          }
+
+          return {
+            domain,
+            label: getDomainLabel(domain),
+            withScore,
+            withoutScore,
+            gap: withScore - withoutScore,
+          }
+        })
+        .filter((row): row is NonNullable<typeof row> => row !== null)
+        .sort((a, b) => Math.abs(b.gap) - Math.abs(a.gap)),
+    }))
+})
 
 onMounted(async () => {
   if (!statsEnabled) {
@@ -96,6 +158,39 @@ onMounted(async () => {
         <section class="panel dashboard-panel">
           <h2>{{ t('kitStats.breakdown.title') }}</h2>
           <BarChart :items="breakdownItems" suffix="%" :max="100" />
+        </section>
+
+        <section
+          v-for="segment in segmentRows"
+          :key="segment.key"
+          class="panel dashboard-panel"
+        >
+          <div class="dashboard-section-heading">
+            <h2>{{ segment.label }}</h2>
+            <span class="pill pill--warning">
+              {{ t('kitStats.domainGap.counts', { with: segment.withCount, without: segment.withoutCount }) }}
+            </span>
+          </div>
+          <table class="gap-table">
+            <thead>
+              <tr>
+                <th scope="col">{{ t('kitStats.domainGap.domain') }}</th>
+                <th scope="col">{{ t('kitStats.domainGap.with') }}</th>
+                <th scope="col">{{ t('kitStats.domainGap.without') }}</th>
+                <th scope="col">{{ t('kitStats.domainGap.gap') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in segment.domainRows" :key="row.domain">
+                <td>{{ row.label }}</td>
+                <td>{{ row.withScore }}/100</td>
+                <td>{{ row.withoutScore }}/100</td>
+                <td :class="row.gap < 0 ? 'gap-value--negative' : 'gap-value--positive'">
+                  {{ row.gap > 0 ? '+' : '' }}{{ row.gap }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </section>
       </template>
     </div>
