@@ -279,6 +279,8 @@ export const swbMessages = {
     privacy:
       'Shitru iyo kailazimu uangihe, marke, baruama, awu trongo za tiba.',
     resetLocal: 'dzianisa ou trongo za dagoni',
+    resetLocalConfirm:
+      'Dzianisa trongo zaho zotsi za dagoni (majibu, checklist, kit, tsena ya vidéo, préférences) ? Iyi kaïna kurudi nyuma.',
     sourcesTitle: 'ziashi',
     sources:
       'masuala, trongo za zini, zi taãbu na zizo, zilazimu zihisewe na trongo za tsihole, kabula ya zoua piya u mwangishiyo rasmi.',

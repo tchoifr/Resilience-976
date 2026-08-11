@@ -7,7 +7,13 @@ const { t } = useI18n()
 // Full wipe, not just the assessment store: also clears video progress,
 // the anonymous visitor/campaign id, and theme/language preference. The
 // reload re-initializes every store/service from the now-empty storage.
+// Confirmed first: unlike the previous assessment-only reset, this can no
+// longer be undone by simply redoing the diagnostic.
 function clearAllLocalData() {
+  if (!window.confirm(t('legal.resetLocalConfirm'))) {
+    return
+  }
+
   window.localStorage.clear()
   window.location.reload()
 }

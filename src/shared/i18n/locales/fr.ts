@@ -363,6 +363,8 @@ export const frMessages = {
     privacy:
       'L’application ne demande pas de compte, d’adresse complète, d’email ou de détails médicaux.',
     resetLocal: 'Effacer mes données locales',
+    resetLocalConfirm:
+      'Effacer toutes vos données locales (réponses, checklist, kit, progression vidéo, préférences) ? Cette action est définitive.',
     sourcesTitle: 'Sources',
     sources:
       'Les questions, actions, quantités et sources doivent être validées par un référent métier avant publication officielle.',
