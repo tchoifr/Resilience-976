@@ -249,6 +249,9 @@ onMounted(async () => {
       <section class="stack">
         <h2 class="section-title">Statistiques agrégées</h2>
         <div class="cluster">
+          <RouterLink class="link-button link-button--primary" to="/tableau-de-bord/priorites">
+            Priorités d’action (tous modules)
+          </RouterLink>
           <RouterLink
             class="link-button link-button--secondary"
             to="/tableau-de-bord/diagnostics"

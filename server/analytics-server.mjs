@@ -94,6 +94,7 @@ const allowedPaths = new Set([
   '/tableau-de-bord/kit',
   '/tableau-de-bord/graphe-visiteurs',
   '/tableau-de-bord/visiteur',
+  '/tableau-de-bord/priorites',
 ])
 
 const actionEvents = new Set([

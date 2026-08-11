@@ -191,6 +191,11 @@ export const frMessages = {
       description:
         'Résultats agrégés des diagnostics complétés : scores par domaine, niveaux de préparation et détail par question.',
     },
+    priorities: {
+      title: 'Priorités d’action - Resilience 976',
+      description:
+        'Classement combiné des points les plus faibles du diagnostic, du quiz, des formations et des mises en situation.',
+    },
     legal: {
       title: 'Mentions légales - Resilience 976',
       description:
@@ -625,6 +630,30 @@ export const frMessages = {
       priorityImprovement: 'Amélioration prioritaire',
       concern: 'Préoccupation',
       empty: 'Aucun commentaire pour le moment.',
+    },
+  },
+  priorities: {
+    eyebrow: 'Synthèse cross-module',
+    title: 'Priorités d’action',
+    intro:
+      'Classement combiné des points les plus faibles, tous modules confondus (diagnostic, quiz, formations, mises en situation), pondéré par le nombre de personnes concernées.',
+    backToDashboard: 'Retour au tableau de bord',
+    loading: 'Chargement',
+    noData: 'Pas encore assez de données pour établir un classement combiné.',
+    list: {
+      title: 'Top 10 des priorités',
+      intro:
+        'Classées par écart au score maximal multiplié par le nombre de personnes concernées — un point faible touchant beaucoup de monde passe avant un point faible isolé.',
+    },
+    modules: {
+      diagnostic: 'Diagnostic',
+      quiz: 'Quiz',
+      video: 'Formation',
+      scenario: 'Mise en situation',
+    },
+    affected: {
+      respondents: '{count} répondant(s)',
+      engaged: '{count} engagé(s)',
     },
   },
   diagnosticStats: {
