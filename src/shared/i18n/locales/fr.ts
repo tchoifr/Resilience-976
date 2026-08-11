@@ -32,6 +32,7 @@ export const frMessages = {
     videos: 'Vidéos',
     quiz: 'Quiz',
     scenarios: 'Mises en situation',
+    assistant: 'Assistant documentaire',
     experiment: 'Expérimentation',
   },
   footer: {
@@ -174,6 +175,11 @@ export const frMessages = {
       description:
         'Recherche des données enregistrées pour un identifiant de visiteur anonyme donné.',
     },
+    assistant: {
+      title: 'Assistant documentaire - Resilience 976',
+      description:
+        'Posez une question parmi les sujets couverts : réponse courte, source affichée, redirection vers les canaux officiels si besoin.',
+    },
     dashboard: {
       title: 'Tableau de bord - Resilience 976',
       description:
@@ -257,6 +263,13 @@ export const frMessages = {
     noAccount: 'Sans compte',
     local: 'Conservé sur votre appareil',
     officialSources: 'Sources officielles à valider',
+    assistant: {
+      title: 'Assistant documentaire',
+      badge: 'Version en cours de tests',
+      intro:
+        'Posez une question sur la préparation aux risques et obtenez une réponse issue uniquement d’une base documentaire validée, source affichée à chaque fois.',
+      cta: 'Essayer l’assistant',
+    },
   },
   diagnostic: {
     title: 'Diagnostic',
@@ -905,6 +918,24 @@ export const frMessages = {
       kit: 'Kit d’urgence',
       timeline: 'Historique des événements',
     },
+  },
+  assistant: {
+    eyebrow: 'Assistant documentaire',
+    title: 'Assistant documentaire',
+    intro:
+      'Posez une question parmi les sujets courants de préparation. Les réponses viennent uniquement d’une base documentaire validée, avec la source affichée à chaque fois.',
+    guardrail:
+      'Cet assistant ne fournit ni prévision ni diagnostic de sécurité individuel et ne remplace pas les alertes et consignes officielles. En situation d’urgence, suivez les canaux officiels.',
+    suggestedTitle: 'Questions courantes',
+    inputLabel: 'Votre question',
+    inputPlaceholder: 'Ex : Que faire en cas de coupure d’eau ?',
+    submit: 'Envoyer',
+    thinking: 'L’assistant réfléchit…',
+    emptyState: 'Choisissez une question ci-dessus ou posez la vôtre.',
+    refusedText:
+      'Cette question sort du périmètre couvert par cet assistant. Consultez les canaux officiels ci-dessous.',
+    llmDisclosure: 'Réponse reformulée par IA à partir du contenu validé ci-dessus.',
+    openResources: 'Voir les ressources',
   },
   quiz: {
     eyebrow: 'Entrée rapide et ludique',
