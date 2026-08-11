@@ -113,6 +113,13 @@ const router = createRouter({
       },
     },
     {
+      path: '/tableau-de-bord/priorites',
+      component: () => import('@/views/PrioritiesView.vue'),
+      meta: {
+        seoKey: 'priorities',
+      },
+    },
+    {
       path: '/tableau-de-bord/quiz',
       component: () => import('@/views/QuizStatsView.vue'),
       meta: {
