@@ -37,6 +37,7 @@ const showRiskLinks = ref(true)
 const showStrengthLinks = ref(true)
 const showScenarioWeakLinks = ref(true)
 const showScenarioStrongLinks = ref(true)
+const selectedCampaign = ref('all')
 
 let simulationNodes: SimulationNode[] = []
 let edges: VisitorGraphResponse['edges'] = []
@@ -95,14 +96,80 @@ const hoveredVisitorStrength = computed(() => findLinkedHub('strength'))
 const hoveredVisitorScenarioWeak = computed(() => findLinkedHub('scenario_weak'))
 const hoveredVisitorScenarioStrong = computed(() => findLinkedHub('scenario_strong'))
 
+const campaignOptions = computed(() => {
+  if (!stats.value) {
+    return []
+  }
+
+  return stats.value.nodes
+    .filter((node) => node.type === 'campaign')
+    .map((node) => ({ id: node.campaignId ?? '', visitorCount: node.visitorCount ?? 0 }))
+    .sort((a, b) => b.visitorCount - a.visitorCount)
+})
+
+const filteredVisitorIds = computed(() => {
+  if (!stats.value) {
+    return new Set<string>()
+  }
+
+  return new Set(
+    stats.value.nodes
+      .filter(
+        (node) =>
+          node.type === 'visitor' &&
+          (selectedCampaign.value === 'all' || node.campaignId === selectedCampaign.value),
+      )
+      .map((node) => node.id),
+  )
+})
+
+// Edges filtered to the selected campaign only — the base every other
+// campaign-scoped view (hub sizing, hub summary list) is derived from, kept
+// separate from the link-type toggles so switching a toggle doesn't need to
+// re-derive the campaign scope.
+const campaignFilteredEdges = computed(() => {
+  if (!stats.value) {
+    return []
+  }
+
+  return stats.value.edges.filter((edge) => filteredVisitorIds.value.has(edge.source))
+})
+
+// Recomputed from the campaign-filtered edges rather than read off the
+// server's node.visitorCount, which is scoped to every visitor ever
+// recorded — stale as soon as a campaign filter narrows the view.
+const hubVisitorCounts = computed(() => {
+  const counts = new Map<string, number>()
+
+  for (const edge of campaignFilteredEdges.value) {
+    counts.set(edge.target, (counts.get(edge.target) ?? 0) + 1)
+  }
+
+  return counts
+})
+
 const visibleNodes = computed(() => {
   if (!stats.value) {
     return []
   }
 
-  return stats.value.nodes.filter(
-    (node) => node.type === 'visitor' || isLinkTypeVisible(node.type),
-  )
+  return stats.value.nodes
+    .filter((node) => {
+      if (node.type === 'visitor') {
+        return filteredVisitorIds.value.has(node.id)
+      }
+
+      if (node.type === 'campaign') {
+        return selectedCampaign.value === 'all' || node.campaignId === selectedCampaign.value
+      }
+
+      return isLinkTypeVisible(node.type) && (hubVisitorCounts.value.get(node.id) ?? 0) > 0
+    })
+    .map((node) =>
+      node.type === 'visitor' || node.type === 'campaign'
+        ? node
+        : { ...node, visitorCount: hubVisitorCounts.value.get(node.id) ?? 0 },
+    )
 })
 
 const visibleEdges = computed(() => {
@@ -110,8 +177,35 @@ const visibleEdges = computed(() => {
     return []
   }
 
-  return stats.value.edges.filter((edge) => isLinkTypeVisible(edge.type))
+  return campaignFilteredEdges.value.filter((edge) => isLinkTypeVisible(edge.type))
 })
+
+// Text equivalent of the canvas clusters — same campaign scope, but
+// independent of the show*Links toggles so it always reflects the real
+// ranking even when a link type is hidden from the drawing.
+function buildHubSummary(type: VisitorGraphEdgeType) {
+  if (!stats.value) {
+    return []
+  }
+
+  return stats.value.nodes
+    .filter((node) => node.type === type)
+    .map((node) => ({
+      id: node.id,
+      label:
+        type === 'risk' || type === 'strength'
+          ? getDomainLabel(node.domain ?? '')
+          : (node.label ?? node.id),
+      visitorCount: hubVisitorCounts.value.get(node.id) ?? 0,
+    }))
+    .filter((entry) => entry.visitorCount > 0)
+    .sort((a, b) => b.visitorCount - a.visitorCount)
+}
+
+const riskSummary = computed(() => buildHubSummary('risk'))
+const strengthSummary = computed(() => buildHubSummary('strength'))
+const scenarioWeakSummary = computed(() => buildHubSummary('scenario_weak'))
+const scenarioStrongSummary = computed(() => buildHubSummary('scenario_strong'))
 
 function draw() {
   const canvas = canvasEl.value
@@ -206,7 +300,14 @@ function resizeCanvas() {
 // would be a confusing, invisible force. Re-seeding is a deliberate,
 // visible re-layout rather than trying to preserve position continuity.
 watch(
-  [showCampaignLinks, showRiskLinks, showStrengthLinks, showScenarioWeakLinks, showScenarioStrongLinks],
+  [
+    showCampaignLinks,
+    showRiskLinks,
+    showStrengthLinks,
+    showScenarioWeakLinks,
+    showScenarioStrongLinks,
+    selectedCampaign,
+  ],
   () => {
     startSimulation()
   },
@@ -335,6 +436,18 @@ onBeforeUnmount(() => {
 
         <div class="cluster">
           <label class="visitor-graph-toggle">
+            {{ t('visitorGraph.campaignFilter.label') }}
+            <select v-model="selectedCampaign">
+              <option value="all">{{ t('visitorGraph.campaignFilter.all') }}</option>
+              <option v-for="campaign in campaignOptions" :key="campaign.id" :value="campaign.id">
+                {{ campaign.id }} ({{ campaign.visitorCount }})
+              </option>
+            </select>
+          </label>
+        </div>
+
+        <div class="cluster">
+          <label class="visitor-graph-toggle">
             <input v-model="showCampaignLinks" type="checkbox" />
             {{ t('visitorGraph.toggles.campaign') }}
           </label>
@@ -412,6 +525,101 @@ onBeforeUnmount(() => {
               <span class="muted">{{ t('visitorGraph.tooltip.clickHint') }}</span>
             </template>
           </div>
+        </section>
+
+        <section class="panel dashboard-panel">
+          <h2>{{ t('visitorGraph.summaryList.title') }}</h2>
+          <p class="muted">{{ t('visitorGraph.summaryList.intro') }}</p>
+
+          <div class="visitor-graph-summary-grid">
+            <div v-if="riskSummary.length > 0">
+              <h3 class="visitor-graph-legend-group__title">
+                {{ t('visitorGraph.summaryList.riskTitle') }}
+              </h3>
+              <ol class="priority-list">
+                <li
+                  v-for="(item, index) in riskSummary"
+                  :key="item.id"
+                  class="priority-row"
+                >
+                  <span class="priority-row__rank">{{ index + 1 }}</span>
+                  <span class="priority-row__label">{{ item.label }}</span>
+                  <span class="priority-row__meta"
+                    >{{ item.visitorCount }} {{ t('visitorGraph.tooltip.visitors') }}</span
+                  >
+                </li>
+              </ol>
+            </div>
+
+            <div v-if="strengthSummary.length > 0">
+              <h3 class="visitor-graph-legend-group__title">
+                {{ t('visitorGraph.summaryList.strengthTitle') }}
+              </h3>
+              <ol class="priority-list">
+                <li
+                  v-for="(item, index) in strengthSummary"
+                  :key="item.id"
+                  class="priority-row"
+                >
+                  <span class="priority-row__rank">{{ index + 1 }}</span>
+                  <span class="priority-row__label">{{ item.label }}</span>
+                  <span class="priority-row__meta"
+                    >{{ item.visitorCount }} {{ t('visitorGraph.tooltip.visitors') }}</span
+                  >
+                </li>
+              </ol>
+            </div>
+
+            <div v-if="scenarioWeakSummary.length > 0">
+              <h3 class="visitor-graph-legend-group__title">
+                {{ t('visitorGraph.summaryList.scenarioWeakTitle') }}
+              </h3>
+              <ol class="priority-list">
+                <li
+                  v-for="(item, index) in scenarioWeakSummary"
+                  :key="item.id"
+                  class="priority-row"
+                >
+                  <span class="priority-row__rank">{{ index + 1 }}</span>
+                  <span class="priority-row__label">{{ item.label }}</span>
+                  <span class="priority-row__meta"
+                    >{{ item.visitorCount }} {{ t('visitorGraph.tooltip.visitors') }}</span
+                  >
+                </li>
+              </ol>
+            </div>
+
+            <div v-if="scenarioStrongSummary.length > 0">
+              <h3 class="visitor-graph-legend-group__title">
+                {{ t('visitorGraph.summaryList.scenarioStrongTitle') }}
+              </h3>
+              <ol class="priority-list">
+                <li
+                  v-for="(item, index) in scenarioStrongSummary"
+                  :key="item.id"
+                  class="priority-row"
+                >
+                  <span class="priority-row__rank">{{ index + 1 }}</span>
+                  <span class="priority-row__label">{{ item.label }}</span>
+                  <span class="priority-row__meta"
+                    >{{ item.visitorCount }} {{ t('visitorGraph.tooltip.visitors') }}</span
+                  >
+                </li>
+              </ol>
+            </div>
+          </div>
+
+          <p
+            v-if="
+              riskSummary.length === 0 &&
+              strengthSummary.length === 0 &&
+              scenarioWeakSummary.length === 0 &&
+              scenarioStrongSummary.length === 0
+            "
+            class="muted"
+          >
+            {{ t('visitorGraph.summaryList.empty') }}
+          </p>
         </section>
 
         <section class="panel stack">
@@ -522,6 +730,12 @@ onBeforeUnmount(() => {
   font-size: 0.85em;
   pointer-events: none;
   max-width: 260px;
+}
+
+.visitor-graph-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-4);
 }
 
 .visitor-graph-legend-group {

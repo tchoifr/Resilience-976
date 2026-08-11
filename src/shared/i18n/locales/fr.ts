@@ -792,12 +792,26 @@ export const frMessages = {
       totalScenarioWeakSpots: 'Scénarios les plus faibles représentés',
       totalScenarioStrongSpots: 'Scénarios les plus forts représentés',
     },
+    campaignFilter: {
+      label: 'Filtrer par campagne',
+      all: 'Toutes les campagnes',
+    },
     toggles: {
       campaign: 'Liens par campagne',
       risk: 'Liens par domaine le plus faible',
       strength: 'Liens par domaine le plus fort',
       scenarioWeak: 'Liens par scénario le plus faible',
       scenarioStrong: 'Liens par scénario le plus fort',
+    },
+    summaryList: {
+      title: 'Résumé des tendances',
+      intro:
+        'Classement des regroupements par nombre de visiteurs, selon la campagne sélectionnée ci-dessus.',
+      riskTitle: 'Domaines les plus faibles',
+      strengthTitle: 'Domaines les plus forts',
+      scenarioWeakTitle: 'Mises en situation les plus faibles',
+      scenarioStrongTitle: 'Mises en situation les plus fortes',
+      empty: 'Aucune donnée pour cette campagne.',
     },
     legend: {
       title: 'Légende',
