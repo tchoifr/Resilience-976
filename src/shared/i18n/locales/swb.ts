@@ -19,6 +19,12 @@ export const swbMessages = {
     label: 'Trongo ya sensibilisation :',
     text: 'Resilience 976 kaïbadilishe zi alerte rasmi, wala zi plan za sirkali, wala avis ya dokotera au mutaalamu, wala uja wa disecours.',
   },
+  // Meta-avertissement sur la traduction elle-meme : brouillon non relu,
+  // comme le reste du fichier, mais celui-ci a la particularite d'annoncer
+  // sa propre absence de validation.
+  languageDemo: {
+    text: 'Trongo iyi iko harimwa tafsiri na uthibitisho — version ya démonstration ya lugha, tafsiri kaïna uthibitishwa.',
+  },
   navigation: {
     ariaLabel: 'utsorongoa ha uzuri',
     menu: 'manyu',

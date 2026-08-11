@@ -193,10 +193,16 @@ textarea:focus-visible {
 .language-demo-banner p {
   width: min(100% - 32px, var(--container));
   margin: 0 auto;
-  padding: 8px 0;
+  padding: 8px 0 0;
   color: var(--color-warning-fg);
   font-size: 0.8rem;
   text-align: center;
+}
+
+.language-demo-banner__source {
+  padding: 0 0 8px;
+  opacity: 0.8;
+  font-size: 0.75rem;
 }
 
 .page {
