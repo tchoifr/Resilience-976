@@ -43,6 +43,7 @@ const googleAnalyticsEnabled =
   typeof googleAnalyticsId === 'string' &&
   googleAnalyticsId.length > 0
 const visitorStorageKey = 'resilience976.analytics.visitorId'
+const campaignStorageKey = 'resilience976.analytics.campaignId'
 let googleAnalyticsLoaded = false
 
 declare global {
@@ -66,7 +67,15 @@ export function getVisitorId(): string {
 
 export function getCampaignId(): string {
   const params = new URLSearchParams(window.location.search)
-  return params.get('campaign_id') ?? params.get('utm_campaign') ?? 'DIRECT'
+  const campaignFromUrl =
+    params.get('campaign_id') ?? params.get('utm_campaign')
+
+  if (campaignFromUrl) {
+    window.localStorage.setItem(campaignStorageKey, campaignFromUrl)
+    return campaignFromUrl
+  }
+
+  return window.localStorage.getItem(campaignStorageKey) ?? 'DIRECT'
 }
 
 function loadGoogleAnalytics(): void {
