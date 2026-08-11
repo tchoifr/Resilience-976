@@ -1,13 +1,31 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 
+import { computed } from 'vue'
+
 import AppAlert from '@/components/ui/AppAlert.vue'
 import RetroStatsBanner from '@/components/ui/RetroStatsBanner.vue'
 import { useAssessmentStore } from '@/features/assessment/stores/assessment.store'
 import { useI18n } from '@/shared/i18n/i18n.service'
+import { useTheme } from '@/shared/theme/theme.service'
 
 const assessmentStore = useAssessmentStore()
 const { t } = useI18n()
+const { theme } = useTheme()
+
+const heroImages = computed(() =>
+  theme.value === 'dark'
+    ? {
+        mobile: '/images/Mobile-darktheme.png',
+        tablet: '/images/Tablet-darktheme.png',
+        desktop: '/images/desktop-darktheme.png',
+      }
+    : {
+        mobile: '/images/Mobile.png',
+        tablet: '/images/Tablet.png',
+        desktop: '/images/desktop.png',
+      },
+)
 
 const journeySteps = [
   {
@@ -74,10 +92,10 @@ const journeySteps = [
 
         <div class="hero-media" aria-hidden="true">
           <picture>
-            <source media="(max-width: 600px)" srcset="/images/Mobile.png" />
-            <source media="(max-width: 1024px)" srcset="/images/Tablet.png" />
+            <source media="(max-width: 600px)" :srcset="heroImages.mobile" />
+            <source media="(max-width: 1024px)" :srcset="heroImages.tablet" />
             <img
-              src="/images/desktop.png"
+              :src="heroImages.desktop"
               alt=""
               decoding="async"
               fetchpriority="high"
