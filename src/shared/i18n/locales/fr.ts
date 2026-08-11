@@ -40,6 +40,7 @@ export const frMessages = {
     privacy: 'Politique de confidentialité',
     accessibility: 'Déclaration d’accessibilité',
     support: 'Support',
+    stats: 'Statistiques',
     linkedin: 'Suivre Resilience 976 sur LinkedIn',
     publicService: 'Plateforme publique et gratuite',
     noPersonalData: 'Sans compte, sans donnée personnelle',
@@ -222,6 +223,21 @@ export const frMessages = {
     notFound: {
       title: 'Page introuvable - Resilience 976',
       description: 'La page demandée n’existe pas.',
+    },
+  },
+  retroStats: {
+    idBadgeLabel: 'ID VISITEUR',
+    idBadgeAria: 'Identifiant visiteur {id}',
+    counterLabel: 'VOUS ÊTES LE VISITEUR N°',
+    counterAria:
+      'Vous êtes le visiteur numéro {visits}. {engaged} visiteurs engagés, objectif JNR 2026 : {target}',
+    goalLine: '{engaged} VISITEURS ENGAGÉS · OBJECTIF JNR 2026 : {target}',
+    ticker: {
+      diagnostics: '{count} diagnostics complétés',
+      quiz: '{count} quiz joués',
+      videos: '{count} parcours de formation suivis',
+      scenarios: '{count} mises en situation testées',
+      goal: 'Objectif JNR 2026 : {target} visiteurs engagés',
     },
   },
   home: {
