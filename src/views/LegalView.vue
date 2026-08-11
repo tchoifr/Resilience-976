@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import AppButton from '@/components/ui/AppButton.vue'
-import { useAssessmentStore } from '@/features/assessment/stores/assessment.store'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
-const assessmentStore = useAssessmentStore()
 const { t } = useI18n()
+
+// Full wipe, not just the assessment store: also clears video progress,
+// the anonymous visitor/campaign id, and theme/language preference. The
+// reload re-initializes every store/service from the now-empty storage.
+function clearAllLocalData() {
+  window.localStorage.clear()
+  window.location.reload()
+}
 </script>
 
 <template>
@@ -22,7 +28,7 @@ const { t } = useI18n()
         <h2 class="section-title">{{ t('legal.dataTitle') }}</h2>
         <p>{{ t('legal.data') }}</p>
         <p>{{ t('legal.privacy') }}</p>
-        <AppButton variant="danger" @click="assessmentStore.reset">
+        <AppButton variant="danger" @click="clearAllLocalData">
           {{ t('legal.resetLocal') }}
         </AppButton>
       </section>
