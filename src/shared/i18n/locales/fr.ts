@@ -17,6 +17,9 @@ export const frMessages = {
     text:
       'Resilience 976 ne remplace ni les alertes officielles, ni les plans de sauvegarde, ni l’avis d’un professionnel, ni l’intervention des secours.',
   },
+  languageDemo: {
+    text: 'En cours de traduction et de validation — version de démonstration linguistique – traduction non validée.',
+  },
   navigation: {
     ariaLabel: 'Navigation principale',
     menu: 'Menu',
