@@ -1,0 +1,33 @@
+# Resilience 976 - Mon Plan Resilience
+
+> Outil de sensibilisation et de preparation aux risques naturels a Mayotte (cyclone, fortes pluies et inondation, seisme, mouvement de terrain). Diagnostic gratuit, sans compte : reponses et progression conservees uniquement dans le navigateur, aucune donnee nominative collectee. Ne remplace ni les alertes officielles, ni les consignes des autorites competentes.
+
+Le service propose un diagnostic personnalise, un plan d'actions, une checklist, un kit d'urgence adapte a la composition du foyer, des micro-formations video, un quiz et des mises en situation. Les contenus (questions, actions, quantites, sources) restent a valider par un referent metier avant publication officielle.
+
+## Parcours principal
+
+- [Accueil](https://resilience-976.fr/): presentation du service et du parcours en six etapes.
+- [Diagnostic](https://resilience-976.fr/diagnostic): questionnaire de preparation, sans compte.
+- [Resultats](https://resilience-976.fr/resultats): score par domaine, priorites immediates et plan d'actions.
+- [Checklist](https://resilience-976.fr/checklist): suivi des actions recommandees et actions personnelles.
+- [Kit d'urgence](https://resilience-976.fr/kit): liste adaptee a la composition du foyer.
+- [Ressources](https://resilience-976.fr/ressources): fiches pratiques et sources officielles.
+
+## Formations et mise en pratique
+
+- [Videos](https://resilience-976.fr/videos): micro-formations courtes par risque.
+- [Quiz](https://resilience-976.fr/quiz): quiz interactif avec correction expliquee et attestation.
+- [Mises en situation](https://resilience-976.fr/mises-en-situation): scenarios de decision avec debrief.
+
+## Confidentialite et methode
+
+- [Politique de confidentialite](https://resilience-976.fr/politique-de-confidentialite): quelles donnees sont conservees, ou, pourquoi.
+- [Mentions legales](https://resilience-976.fr/mentions-legales): nature du service, effacement des donnees locales.
+- [Declaration d'accessibilite](https://resilience-976.fr/declaration-accessibilite): etat de conformite RGAA.
+- [Support](https://resilience-976.fr/support): signaler une erreur ou proposer une correction.
+
+## Optional
+
+- [Tableau de bord](https://resilience-976.fr/tableau-de-bord): indicateurs de sensibilisation agreges et anonymes.
+- [Priorites d'action](https://resilience-976.fr/tableau-de-bord/priorites): synthese des points les plus faibles, tous modules confondus.
+- [Experimentation utilisateurs](https://resilience-976.fr/experimentation-utilisateurs): questionnaire anonymise de test utilisateur.
