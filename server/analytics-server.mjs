@@ -25,6 +25,7 @@ const VIDEOS_FILE = resolve(process.env.VIDEOS_DATA_FILE ?? 'src/data/videos.jso
 const SCENARIOS_FILE = resolve(
   process.env.SCENARIOS_DATA_FILE ?? 'src/data/scenarios.json',
 )
+const ENGAGEMENT_TARGET = 5000
 const ALLOWED_ORIGINS = (
   process.env.ANALYTICS_ALLOWED_ORIGINS ??
   'http://127.0.0.1:5173,http://localhost:5173'
@@ -2183,6 +2184,87 @@ function buildDashboardTrend(events) {
     .map(([date, value]) => ({ date, ...value }))
 }
 
+// Aggregate-only projection: extrapolates the recent pace of *new* engaged
+// visitors (first diagnostic_started per visitorId, bucketed by day) toward
+// the campaign target. Deliberately not per-visitor — a churn/completion
+// score for an individual anonymous visitor would contradict the privacy
+// policy's promise that the local id "ne permet pas de vous identifier
+// personnellement". Returns null when there isn't a single day of
+// engagement yet, rather than a divide-by-zero date.
+function buildEngagementProjection(events, target, engagedVisitorCount) {
+  const firstEngagementByVisitor = new Map()
+
+  for (const event of events) {
+    if (event.name !== 'diagnostic_started') {
+      continue
+    }
+
+    const existing = firstEngagementByVisitor.get(event.visitorId)
+
+    if (!existing || event.createdAt < existing) {
+      firstEngagementByVisitor.set(event.visitorId, event.createdAt)
+    }
+  }
+
+  const dailyNewVisitors = new Map()
+
+  for (const createdAt of firstEngagementByVisitor.values()) {
+    const day = createdAt.slice(0, 10)
+    dailyNewVisitors.set(day, (dailyNewVisitors.get(day) ?? 0) + 1)
+  }
+
+  const days = Array.from(dailyNewVisitors.keys()).sort()
+
+  if (days.length === 0) {
+    return null
+  }
+
+  // Trailing window capped at 30 days, same as the other trend charts:
+  // short enough to reflect the current pace, long enough that a single
+  // unusually quiet or busy day doesn't swing the estimate.
+  const windowDays = Math.min(30, days.length)
+  const recentDays = days.slice(-windowDays)
+  const recentTotal = recentDays.reduce(
+    (sum, day) => sum + (dailyNewVisitors.get(day) ?? 0),
+    0,
+  )
+  const averageDailyRate = Math.round((recentTotal / windowDays) * 10) / 10
+  const remainingVisitors = Math.max(0, target - engagedVisitorCount)
+
+  if (remainingVisitors === 0) {
+    return {
+      averageDailyRate,
+      windowDays,
+      remainingVisitors: 0,
+      projectedDate: null,
+      targetReached: true,
+    }
+  }
+
+  if (averageDailyRate <= 0) {
+    return {
+      averageDailyRate: 0,
+      windowDays,
+      remainingVisitors,
+      projectedDate: null,
+      targetReached: false,
+    }
+  }
+
+  const daysToTarget = Math.ceil(remainingVisitors / averageDailyRate)
+  const projectedDate = new Date(Date.now() + daysToTarget * 24 * 3600 * 1000)
+    .toISOString()
+    .slice(0, 10)
+
+  return {
+    averageDailyRate,
+    windowDays,
+    remainingVisitors,
+    projectedDate,
+    targetReached: false,
+  }
+}
+
 function buildDashboard(events, updatedAt, feedbackDatabaseCount = 0) {
   // Funnel steps count unique visitors, not raw events: a visitor who
   // resumes, refreshes /resultats, or fires several actionEvents (e.g. a
@@ -2252,7 +2334,8 @@ function buildDashboard(events, updatedAt, feedbackDatabaseCount = 0) {
   return {
     generatedAt: new Date().toISOString(),
     updatedAt,
-    target: 5000,
+    target: ENGAGEMENT_TARGET,
+    projection: buildEngagementProjection(events, ENGAGEMENT_TARGET, engagedVisitorIds.size),
     totals: {
       visits: visitCount,
       engagedVisitors: engagedVisitorIds.size,

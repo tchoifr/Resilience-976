@@ -11,6 +11,13 @@ interface DashboardStats {
   generatedAt: string
   updatedAt: string | null
   target: number
+  projection: {
+    averageDailyRate: number
+    windowDays: number
+    remainingVisitors: number
+    projectedDate: string | null
+    targetReached: boolean
+  } | null
   totals: {
     visits: number | null
     engagedVisitors: number
@@ -45,6 +52,13 @@ const populationSource = computed(() =>
 
 const displayValue = (value: number | null | undefined) =>
   typeof value === 'number' ? value.toLocaleString('fr-FR') : '—'
+
+const formatProjectedDate = (value: string) =>
+  new Date(`${value}T00:00:00`).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
 
 const startedTrend = computed(
   () => stats.value?.trend.map((point) => ({ date: point.date, value: point.started })) ?? [],
@@ -171,6 +185,30 @@ onMounted(async () => {
         habitants au 1er janvier 2026).
         <SourceLink :source="populationSource" />
       </p>
+
+      <section v-if="stats" class="panel dashboard-panel">
+        <h2>Estimation d’atteinte de l’objectif</h2>
+        <p v-if="!stats.projection" class="muted">
+          Pas encore assez d’activité enregistrée pour estimer une date.
+        </p>
+        <p v-else-if="stats.projection.targetReached" class="muted">
+          Objectif de {{ displayValue(stats.target) }} visiteurs engagés déjà atteint.
+        </p>
+        <p v-else-if="stats.projection.projectedDate">
+          Au rythme actuel (~{{ stats.projection.averageDailyRate }} nouveaux visiteurs
+          engagés/jour en moyenne sur les {{ stats.projection.windowDays }} derniers jours),
+          l’objectif serait atteint vers le
+          <strong>{{ formatProjectedDate(stats.projection.projectedDate) }}</strong>.
+        </p>
+        <p v-else class="muted">
+          Le rythme des {{ stats.projection.windowDays }} derniers jours est proche de zéro :
+          impossible d’estimer une date sans relance d’activité.
+        </p>
+        <p class="muted">
+          Extrapolation simple du rythme récent — pas une prévision garantie, à recalculer
+          après chaque nouvelle campagne.
+        </p>
+      </section>
 
       <section class="panel dashboard-panel">
         <div class="dashboard-section-heading">
