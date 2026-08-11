@@ -1080,6 +1080,43 @@ function buildQuizQuestionBreakdown(rows, quizIndex) {
   })
 }
 
+function buildQuizTrend(rows) {
+  const byDate = new Map()
+
+  for (const row of rows) {
+    const scorePercent = row.total === 0 ? 0 : Math.round((row.score / row.total) * 100)
+    const day = row.createdAt.slice(0, 10)
+    const current = byDate.get(day) ?? { sessions: 0, scorePercentSum: 0 }
+
+    current.sessions += 1
+    current.scorePercentSum += scorePercent
+    byDate.set(day, current)
+  }
+
+  return Array.from(byDate.entries())
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .slice(-30)
+    .map(([date, value]) => ({
+      date,
+      sessions: value.sessions,
+      averageScorePercent: Math.round(value.scorePercentSum / value.sessions),
+    }))
+}
+
+// Lowest correct rate first: which question the audience actually gets
+// wrong most often, i.e. where the underlying content isn't landing.
+function buildQuestionPriority(questionBreakdown) {
+  return questionBreakdown
+    .filter((question) => question.totalAnswered > 0)
+    .map((question) => ({
+      id: question.id,
+      risk: question.risk,
+      correctRate: Math.round((question.correctCount / question.totalAnswered) * 100),
+      totalAnswered: question.totalAnswered,
+    }))
+    .sort((a, b) => a.correctRate - b.correctRate)
+}
+
 function buildQuizStats(rows, quizIndex) {
   const campaigns = new Map()
   let scorePercentSum = 0
@@ -1099,6 +1136,8 @@ function buildQuizStats(rows, quizIndex) {
     campaigns.set(row.campaignId, current)
   }
 
+  const questionBreakdown = buildQuizQuestionBreakdown(rows, quizIndex)
+
   return {
     generatedAt: new Date().toISOString(),
     total: rows.length,
@@ -1114,7 +1153,9 @@ function buildQuizStats(rows, quizIndex) {
             : Math.round(campaign.scorePercentSum / campaign.participants),
       }))
       .sort((a, b) => b.participants - a.participants),
-    questionBreakdown: buildQuizQuestionBreakdown(rows, quizIndex),
+    questionBreakdown,
+    questionPriority: buildQuestionPriority(questionBreakdown),
+    trend: buildQuizTrend(rows),
   }
 }
 
@@ -1124,7 +1165,7 @@ async function readVideoProgressRows() {
   return currentDatabase
     .prepare(
       `
-        SELECT visitor_id, video_id, status, quiz_answered_correctly
+        SELECT visitor_id, video_id, status, quiz_answered_correctly, updated_at
         FROM video_progress
       `,
     )
@@ -1134,7 +1175,47 @@ async function readVideoProgressRows() {
       videoId: row.video_id,
       status: row.status,
       quizAnsweredCorrectly: Boolean(row.quiz_answered_correctly),
+      updatedAt: row.updated_at,
     }))
+}
+
+// video_progress is an upsert table (one row per visitor+video, overwritten
+// as they progress), not an append log, so there is no per-day start/finish
+// event to trend. updated_at — last time that row changed — is the closest
+// available signal and is used as a proxy for daily engagement.
+function buildVideoTrend(rows) {
+  const byDate = new Map()
+
+  for (const row of rows) {
+    const day = row.updatedAt.slice(0, 10)
+    byDate.set(day, (byDate.get(day) ?? 0) + 1)
+  }
+
+  return Array.from(byDate.entries())
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .slice(-30)
+    .map(([date, count]) => ({ date, count }))
+}
+
+// Lowest completion rate first, among visitors who engaged with that video
+// at all — the capsule that loses the most people once they've started it.
+function buildVideoPriority(videos) {
+  return videos
+    .map((video) => {
+      const totalEngaged = video.startedCount + video.completedCount
+
+      if (totalEngaged === 0) {
+        return null
+      }
+
+      return {
+        id: video.id,
+        completionRate: Math.round((video.completedCount / totalEngaged) * 100),
+        totalEngaged,
+      }
+    })
+    .filter((entry) => entry !== null)
+    .sort((a, b) => a.completionRate - b.completionRate)
 }
 
 function buildVideoProgressStats(rows, videosIndex) {
@@ -1163,23 +1244,27 @@ function buildVideoProgressStats(rows, videosIndex) {
     countsByVideo.set(row.videoId, current)
   }
 
+  const videos = videosIndex.videos.map((video) => {
+    const counts = countsByVideo.get(video.id) ?? {
+      startedCount: 0,
+      completedCount: 0,
+      quizCorrectCount: 0,
+    }
+
+    return {
+      id: video.id,
+      startedCount: counts.startedCount,
+      completedCount: counts.completedCount,
+      quizCorrectCount: counts.quizCorrectCount,
+    }
+  })
+
   return {
     generatedAt: new Date().toISOString(),
     totalParticipants: participantIds.size,
-    videos: videosIndex.videos.map((video) => {
-      const counts = countsByVideo.get(video.id) ?? {
-        startedCount: 0,
-        completedCount: 0,
-        quizCorrectCount: 0,
-      }
-
-      return {
-        id: video.id,
-        startedCount: counts.startedCount,
-        completedCount: counts.completedCount,
-        quizCorrectCount: counts.quizCorrectCount,
-      }
-    }),
+    videos,
+    videoPriority: buildVideoPriority(videos),
+    trend: buildVideoTrend(rows),
   }
 }
 
@@ -1189,12 +1274,13 @@ async function readScenarioResultRows() {
   return currentDatabase
     .prepare(
       `
-        SELECT scenario_id, choices_json
+        SELECT created_at, scenario_id, choices_json
         FROM scenario_results
       `,
     )
     .all()
     .map((row) => ({
+      createdAt: row.created_at,
       scenarioId: row.scenario_id,
       choices: parseRatingsJson(row.choices_json),
     }))
@@ -1233,6 +1319,50 @@ function buildScenarioStepBreakdown(rows, scenario) {
   })
 }
 
+function buildScenarioTrend(rows) {
+  const byDate = new Map()
+
+  for (const row of rows) {
+    const day = row.createdAt.slice(0, 10)
+    byDate.set(day, (byDate.get(day) ?? 0) + 1)
+  }
+
+  return Array.from(byDate.entries())
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .slice(-30)
+    .map(([date, count]) => ({ date, count }))
+}
+
+// Lowest average chosen score first, across every scenario's steps — the
+// decision point respondents get wrong most often, wherever it happens to
+// live. Steps nobody answered are skipped rather than shown as a false 0.
+function buildStepPriority(scenarios) {
+  return scenarios
+    .flatMap((scenario) =>
+      scenario.stepBreakdown.map((step) => {
+        const totalResponses = step.options.reduce((sum, option) => sum + option.count, 0)
+
+        if (totalResponses === 0) {
+          return null
+        }
+
+        const scoreSum = step.options.reduce(
+          (sum, option) => sum + option.score * option.count,
+          0,
+        )
+
+        return {
+          scenarioId: scenario.id,
+          stepId: step.id,
+          averageScore: Math.round(scoreSum / totalResponses),
+          totalResponses,
+        }
+      }),
+    )
+    .filter((entry) => entry !== null)
+    .sort((a, b) => a.averageScore - b.averageScore)
+}
+
 function buildScenarioStats(rows, scenariosIndex) {
   const sessionsByScenario = new Map()
 
@@ -1240,14 +1370,18 @@ function buildScenarioStats(rows, scenariosIndex) {
     sessionsByScenario.set(row.scenarioId, (sessionsByScenario.get(row.scenarioId) ?? 0) + 1)
   }
 
+  const scenarios = scenariosIndex.scenarios.map((scenario) => ({
+    id: scenario.id,
+    sessions: sessionsByScenario.get(scenario.id) ?? 0,
+    stepBreakdown: buildScenarioStepBreakdown(rows, scenario),
+  }))
+
   return {
     generatedAt: new Date().toISOString(),
     total: rows.length,
-    scenarios: scenariosIndex.scenarios.map((scenario) => ({
-      id: scenario.id,
-      sessions: sessionsByScenario.get(scenario.id) ?? 0,
-      stepBreakdown: buildScenarioStepBreakdown(rows, scenario),
-    })),
+    scenarios,
+    stepPriority: buildStepPriority(scenarios),
+    trend: buildScenarioTrend(rows),
   }
 }
 

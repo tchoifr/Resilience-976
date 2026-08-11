@@ -585,7 +585,12 @@ textarea:focus-visible {
 }
 
 .trend-sparkline__point {
-  opacity: 0;
+  opacity: 0.5;
+}
+
+.trend-sparkline__point--only {
+  opacity: 1;
+  r: 3;
 }
 
 .trend-sparkline__point:hover,

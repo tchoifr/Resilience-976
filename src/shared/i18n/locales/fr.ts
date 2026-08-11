@@ -673,8 +673,18 @@ export const frMessages = {
     summary: {
       total: 'Sessions enregistrées',
     },
+    priority: {
+      title: 'Questions les moins réussies',
+      intro: 'Questions classées du taux de bonnes réponses le plus faible au plus élevé.',
+      correctRate: '{rate}% de bonnes réponses',
+      respondents: '{count} répondant(s)',
+    },
     questionBreakdown: {
       title: 'Détail par question',
+    },
+    trend: {
+      title: 'Évolution du score moyen',
+      intro: 'Score moyen quotidien sur les 30 derniers jours d’activité.',
     },
   },
   videoStats: {
@@ -688,11 +698,21 @@ export const frMessages = {
     summary: {
       total: 'Parcours enregistrés',
     },
+    priority: {
+      title: 'Capsules les moins terminées',
+      intro: 'Capsules classées du taux de complétion le plus faible au plus élevé, parmi les personnes qui les ont commencées.',
+      completionRate: '{rate}% de complétion',
+      engaged: '{count} engagé(s)',
+    },
     breakdown: {
       title: 'Détail par capsule',
       started: 'Commencé',
       completed: 'Terminé',
       quizCorrect: 'quiz réussi(s)',
+    },
+    trend: {
+      title: 'Évolution de l’engagement',
+      intro: 'Nombre de mises à jour de progression par jour, sur les 30 derniers jours.',
     },
   },
   scenarioStats: {
@@ -706,9 +726,19 @@ export const frMessages = {
     summary: {
       total: 'Sessions enregistrées',
     },
+    priority: {
+      title: 'Décisions les moins réussies',
+      intro: 'Étapes classées du score moyen des choix le plus faible au plus élevé, toutes mises en situation confondues.',
+      averageScore: '{score}/100 en moyenne',
+      respondents: '{count} répondant(s)',
+    },
     breakdown: {
       title: 'Détail par scénario',
       sessions: 'session(s)',
+    },
+    trend: {
+      title: 'Évolution des sessions',
+      intro: 'Nombre de sessions terminées par jour, sur les 30 derniers jours.',
     },
   },
   kitStats: {

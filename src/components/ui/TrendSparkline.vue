@@ -85,6 +85,7 @@ function formatDate(date: string): string {
         :cy="yFor(point.value)"
         r="1.8"
         class="trend-sparkline__point"
+        :class="{ 'trend-sparkline__point--only': !hasLine }"
         :style="{ fill: color }"
       >
         <title>{{ formatDate(point.date) }} : {{ point.value }}{{ suffix }}</title>

@@ -4,6 +4,7 @@ import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
 import StackedBar from '@/components/ui/StackedBar.vue'
+import TrendSparkline from '@/components/ui/TrendSparkline.vue'
 import { quizQuestions } from '@/features/assessment/services/content.service'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
@@ -19,6 +20,13 @@ interface QuizStats {
     correctCount: number
     options: Array<{ index: number; label: string; count: number }>
   }>
+  questionPriority: Array<{
+    id: string
+    risk: string
+    correctRate: number
+    totalAnswered: number
+  }>
+  trend: Array<{ date: string; sessions: number; averageScorePercent: number }>
 }
 
 const defaultStatsEndpoint = import.meta.env.PROD
@@ -53,6 +61,28 @@ const questionRows = computed(() =>
       })),
     }
   }),
+)
+
+const priorityItems = computed(() =>
+  (stats.value?.questionPriority ?? []).map((item) => {
+    const question = quizQuestions.value.find((entry) => entry.id === item.id)
+
+    return {
+      id: item.id,
+      label: question?.text ?? item.id,
+      riskLabel: t(`quiz.riskLabels.${item.risk}`),
+      correctRate: item.correctRate,
+      totalAnswered: item.totalAnswered,
+    }
+  }),
+)
+
+const trendPoints = computed(
+  () =>
+    stats.value?.trend.map((point) => ({
+      date: point.date,
+      value: point.averageScorePercent,
+    })) ?? [],
 )
 
 onMounted(async () => {
@@ -104,6 +134,30 @@ onMounted(async () => {
         </section>
 
         <section class="panel dashboard-panel">
+          <h2>{{ t('quizStats.priority.title') }}</h2>
+          <p class="muted">{{ t('quizStats.priority.intro') }}</p>
+          <ol class="priority-list">
+            <li
+              v-for="(item, index) in priorityItems"
+              :key="item.id"
+              class="priority-row"
+            >
+              <span class="priority-row__rank">{{ index + 1 }}</span>
+              <span class="priority-row__label">{{ item.riskLabel }} — {{ item.label }}</span>
+              <span class="priority-row__meta">
+                {{
+                  t('quizStats.priority.correctRate', { rate: item.correctRate })
+                }}
+                ·
+                {{
+                  t('quizStats.priority.respondents', { count: item.totalAnswered })
+                }}
+              </span>
+            </li>
+          </ol>
+        </section>
+
+        <section class="panel dashboard-panel">
           <h2>{{ t('quizStats.questionBreakdown.title') }}</h2>
           <div class="stack">
             <StackedBar
@@ -113,6 +167,16 @@ onMounted(async () => {
               :segments="row.segments"
             />
           </div>
+        </section>
+
+        <section v-if="trendPoints.length > 0" class="panel dashboard-panel">
+          <h2>{{ t('quizStats.trend.title') }}</h2>
+          <p class="muted">{{ t('quizStats.trend.intro') }}</p>
+          <TrendSparkline
+            :points="trendPoints"
+            :label="t('quizStats.trend.title')"
+            suffix="%"
+          />
         </section>
       </template>
     </div>

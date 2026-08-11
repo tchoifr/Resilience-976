@@ -4,6 +4,7 @@ import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
 import StackedBar from '@/components/ui/StackedBar.vue'
+import TrendSparkline from '@/components/ui/TrendSparkline.vue'
 import { scenarios } from '@/features/assessment/services/content.service'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
@@ -20,6 +21,13 @@ interface ScenarioStats {
       options: Array<{ id: string; label: string; score: number; count: number }>
     }>
   }>
+  stepPriority: Array<{
+    scenarioId: string
+    stepId: string
+    averageScore: number
+    totalResponses: number
+  }>
+  trend: Array<{ date: string; count: number }>
 }
 
 const defaultStatsEndpoint = import.meta.env.PROD
@@ -61,6 +69,25 @@ const scenarioRows = computed(() =>
         }),
       }
     }),
+)
+
+const priorityItems = computed(() =>
+  (stats.value?.stepPriority ?? []).map((item) => {
+    const scenario = scenarios.value.find((entry) => entry.id === item.scenarioId)
+    const step = scenario?.steps.find((entry) => entry.id === item.stepId)
+
+    return {
+      key: `${item.scenarioId}_${item.stepId}`,
+      scenarioTitle: scenario?.title ?? item.scenarioId,
+      label: step?.prompt ?? item.stepId,
+      averageScore: item.averageScore,
+      totalResponses: item.totalResponses,
+    }
+  }),
+)
+
+const trendPoints = computed(
+  () => stats.value?.trend.map((point) => ({ date: point.date, value: point.count })) ?? [],
 )
 
 onMounted(async () => {
@@ -112,6 +139,30 @@ onMounted(async () => {
         </section>
 
         <section class="panel dashboard-panel">
+          <h2>{{ t('scenarioStats.priority.title') }}</h2>
+          <p class="muted">{{ t('scenarioStats.priority.intro') }}</p>
+          <ol class="priority-list">
+            <li
+              v-for="(item, index) in priorityItems"
+              :key="item.key"
+              class="priority-row"
+            >
+              <span class="priority-row__rank">{{ index + 1 }}</span>
+              <span class="priority-row__label">{{ item.scenarioTitle }} — {{ item.label }}</span>
+              <span class="priority-row__meta">
+                {{
+                  t('scenarioStats.priority.averageScore', { score: item.averageScore })
+                }}
+                ·
+                {{
+                  t('scenarioStats.priority.respondents', { count: item.totalResponses })
+                }}
+              </span>
+            </li>
+          </ol>
+        </section>
+
+        <section class="panel dashboard-panel">
           <h2>{{ t('scenarioStats.breakdown.title') }}</h2>
           <div class="stack">
             <div v-for="scenarioRow in scenarioRows" :key="scenarioRow.id" class="stack">
@@ -127,6 +178,12 @@ onMounted(async () => {
               />
             </div>
           </div>
+        </section>
+
+        <section v-if="trendPoints.length > 0" class="panel dashboard-panel">
+          <h2>{{ t('scenarioStats.trend.title') }}</h2>
+          <p class="muted">{{ t('scenarioStats.trend.intro') }}</p>
+          <TrendSparkline :points="trendPoints" :label="t('scenarioStats.trend.title')" />
         </section>
       </template>
     </div>
