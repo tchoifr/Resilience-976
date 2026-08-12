@@ -5,6 +5,12 @@ import { dirname, resolve } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { DatabaseSync } from 'node:sqlite'
 
+import {
+  buildTranslationSystemPrompt,
+  parseTranslationCompletion,
+  sanitizeTranslationText,
+} from './translation-draft.mjs'
+
 const PORT = Number.parseInt(process.env.PORT ?? '8787', 10)
 const HOST = process.env.HOST ?? '127.0.0.1'
 const DATA_FILE = resolve(
@@ -40,6 +46,14 @@ const ASSISTANT_RATE_LIMIT = Number.parseInt(
   10,
 )
 const ASSISTANT_RATE_WINDOW_MS = 60_000
+const SHIMAORE_GLOSSARY_FILE = resolve(
+  process.env.SHIMAORE_GLOSSARY_DATA_FILE ?? 'src/data/shimaore-glossary.json',
+)
+const TRANSLATION_RATE_LIMIT = Number.parseInt(
+  process.env.TRANSLATION_RATE_LIMIT ?? '20',
+  10,
+)
+const TRANSLATION_RATE_WINDOW_MS = 60_000
 const ALLOWED_ORIGINS = (
   process.env.ANALYTICS_ALLOWED_ORIGINS ??
   'http://127.0.0.1:5173,http://localhost:5173'
@@ -113,6 +127,7 @@ const allowedPaths = new Set([
   '/tableau-de-bord/visiteur',
   '/tableau-de-bord/priorites',
   '/assistant-documentaire',
+  '/outils/traduction-shimaore',
 ])
 
 const actionEvents = new Set([
@@ -417,6 +432,17 @@ function sanitizeAssistantQuestion(value) {
   return text.slice(0, 300)
 }
 
+let shimaoreGlossary = null
+
+async function getShimaoreGlossary() {
+  if (shimaoreGlossary) {
+    return shimaoreGlossary
+  }
+
+  shimaoreGlossary = JSON.parse(await readFile(SHIMAORE_GLOSSARY_FILE, 'utf8'))
+  return shimaoreGlossary
+}
+
 const assistantRateLimitByIp = new Map()
 
 function getClientIp(request) {
@@ -444,6 +470,29 @@ function allowAssistantRequest(request) {
 
   timestamps.push(now)
   assistantRateLimitByIp.set(ip, timestamps)
+  return true
+}
+
+// Compteur distinct de celui de l'assistant : un usage interne en rafale
+// (traduire un fichier phrase par phrase) ne doit pas consommer le quota
+// des visiteurs reels de l'assistant public.
+const translationRateLimitByIp = new Map()
+
+function allowTranslationRequest(request) {
+  const ip = getClientIp(request)
+  const now = Date.now()
+  const windowStart = now - TRANSLATION_RATE_WINDOW_MS
+  const timestamps = (translationRateLimitByIp.get(ip) ?? []).filter(
+    (timestamp) => timestamp > windowStart,
+  )
+
+  if (timestamps.length >= TRANSLATION_RATE_LIMIT) {
+    translationRateLimitByIp.set(ip, timestamps)
+    return false
+  }
+
+  timestamps.push(now)
+  translationRateLimitByIp.set(ip, timestamps)
   return true
 }
 
@@ -534,6 +583,45 @@ async function askHuggingFace(question, entriesIndex) {
   }
 
   return parseAssistantCompletion(rawContent, entriesIndex.byId)
+}
+
+async function askHuggingFaceForTranslation(text, glossary) {
+  const response = await fetch(HF_ROUTER_URL, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${HF_TOKEN}`,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: HF_CHAT_MODEL,
+      temperature: 0.2,
+      max_tokens: 800,
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: buildTranslationSystemPrompt(glossary) },
+        { role: 'user', content: text },
+      ],
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error(`hugging_face_http_${response.status}`)
+  }
+
+  const payload = await response.json()
+  const rawContent = payload.choices?.[0]?.message?.content
+
+  if (typeof rawContent !== 'string') {
+    throw new Error('hugging_face_empty_response')
+  }
+
+  const result = parseTranslationCompletion(rawContent)
+
+  if (!result) {
+    throw new Error('translation_parse_failed')
+  }
+
+  return result
 }
 
 function sanitizeKitProfile(input) {
@@ -2790,6 +2878,39 @@ const server = createServer(async (request, response) => {
       } catch (error) {
         console.error('[assistant] hugging face request failed', error)
         sendJson(response, 502, { error: 'assistant_upstream_error' }, origin)
+      }
+      return
+    }
+
+    if (
+      request.method === 'POST' &&
+      requestUrl.pathname === '/api/i18n/draft-shimaore'
+    ) {
+      const body = await readBody(request)
+      const text = sanitizeTranslationText(body.text)
+
+      if (!text) {
+        sendJson(response, 400, { error: 'invalid_text' }, origin)
+        return
+      }
+
+      if (!HF_TOKEN) {
+        sendJson(response, 503, { error: 'translation_unconfigured' }, origin)
+        return
+      }
+
+      if (!allowTranslationRequest(request)) {
+        sendJson(response, 429, { error: 'rate_limited' }, origin)
+        return
+      }
+
+      try {
+        const glossary = await getShimaoreGlossary()
+        const result = await askHuggingFaceForTranslation(text, glossary)
+        sendJson(response, 200, result, origin)
+      } catch (error) {
+        console.error('[translation-draft] hugging face request failed', error)
+        sendJson(response, 502, { error: 'translation_upstream_error' }, origin)
       }
       return
     }
