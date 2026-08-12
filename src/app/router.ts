@@ -92,6 +92,13 @@ const router = createRouter({
       },
     },
     {
+      path: '/outils/traduction-shimaore',
+      component: () => import('@/views/TranslationDraftView.vue'),
+      meta: {
+        seoKey: 'translationDraft',
+      },
+    },
+    {
       path: '/tableau-de-bord',
       component: () => import('@/views/DashboardView.vue'),
       meta: {

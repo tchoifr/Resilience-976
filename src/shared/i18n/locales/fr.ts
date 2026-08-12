@@ -181,6 +181,11 @@ export const frMessages = {
       description:
         'Posez une question parmi les sujets couverts : réponse courte, source affichée, redirection vers les canaux officiels si besoin.',
     },
+    translationDraft: {
+      title: 'Outil de traduction shimaore - Resilience 976',
+      description:
+        'Brouillon de traduction français vers shimaore via le swahili comme langue pivot, à relire par un locuteur natif avant publication.',
+    },
     dashboard: {
       title: 'Tableau de bord - Resilience 976',
       description:
@@ -954,6 +959,28 @@ export const frMessages = {
       'Cette question sort du périmètre couvert par cet assistant. Consultez les canaux officiels ci-dessous.',
     llmDisclosure: 'Réponse reformulée par IA à partir du contenu validé ci-dessus.',
     openResources: 'Voir les ressources',
+  },
+  translationDraft: {
+    eyebrow: 'Outil interne',
+    title: 'Brouillon de traduction shimaore',
+    intro:
+      'Colle un texte en français pour obtenir un brouillon de traduction en shimaore, via le swahili comme langue pivot (proximité lexicale entre les deux langues).',
+    guardrail:
+      'Brouillon non validé — à faire relire par un locuteur natif avant toute publication dans swb.ts.',
+    inputLabel: 'Texte en français',
+    inputPlaceholder: 'Ex : Commencer le diagnostic',
+    submit: 'Traduire',
+    translating: 'Traduction en cours…',
+    swahiliLabel: 'Swahili :',
+    shimaoreLabel: 'Shimaore :',
+    copy: 'Copier le shimaore',
+    errors: {
+      invalidText: 'Le texte est vide ou invalide.',
+      unconfigured: 'L’outil n’est pas configuré (clé Hugging Face manquante).',
+      rateLimited: 'Trop de demandes, réessayez dans quelques instants.',
+      upstream: 'La traduction a échoué, réessayez.',
+      network: 'Erreur réseau, réessayez.',
+    },
   },
   quiz: {
     eyebrow: 'Entrée rapide et ludique',
