@@ -1,6 +1,7 @@
 import { computed } from 'vue'
 
 import actionsJson from '@/data/actions.json'
+import assistantEntriesJson from '@/data/assistant-entries.json'
 import kitJson from '@/data/kit.json'
 import questionsJson from '@/data/questions.json'
 import quizQuestionsJson from '@/data/quiz-questions.json'
@@ -18,6 +19,7 @@ import swbSourcesJson from '@/data/swb/sources.json'
 import swbVideosJson from '@/data/swb/videos.json'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
+import type { AssistantEntry } from '@/features/assistant/types/assistant'
 import type { QuizQuestion } from '@/features/quiz/types/quiz'
 import type { Scenario } from '@/features/scenarios/types/scenario'
 
@@ -28,6 +30,7 @@ import type { Resource, Source } from '../types/source'
 import type { VideoCapsule } from '../types/video'
 import {
   actionsSchema,
+  assistantEntriesSchema,
   kitSchema,
   questionsSchema,
   quizQuestionsSchema,
@@ -80,6 +83,9 @@ const scenariosByLocale: Record<ContentLocale, Scenario[]> = {
   swb: scenariosSchema.parse(swbScenariosJson),
 }
 
+// Same: French only for this first iteration.
+const assistantEntriesList: AssistantEntry[] = assistantEntriesSchema.parse(assistantEntriesJson)
+
 function forLocale<T>(byLocale: Record<ContentLocale, T>, fallback: T): T {
   return byLocale[locale.value as ContentLocale] ?? fallback
 }
@@ -94,6 +100,7 @@ export const quizQuestions = computed(() =>
   forLocale(quizQuestionsByLocale, quizQuestionsByLocale.fr),
 )
 export const scenarios = computed(() => forLocale(scenariosByLocale, scenariosByLocale.fr))
+export const assistantEntries = computed(() => assistantEntriesList)
 
 export const sourcesById = computed(
   () => new Map(sources.value.map((source) => [source.id, source])),

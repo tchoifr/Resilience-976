@@ -85,6 +85,20 @@ const router = createRouter({
       },
     },
     {
+      path: '/assistant-documentaire',
+      component: () => import('@/views/AssistantView.vue'),
+      meta: {
+        seoKey: 'assistant',
+      },
+    },
+    {
+      path: '/outils/traduction-shimaore',
+      component: () => import('@/views/TranslationDraftView.vue'),
+      meta: {
+        seoKey: 'translationDraft',
+      },
+    },
+    {
       path: '/tableau-de-bord',
       component: () => import('@/views/DashboardView.vue'),
       meta: {

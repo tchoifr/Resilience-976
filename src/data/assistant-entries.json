@@ -1,0 +1,101 @@
+[
+  {
+    "id": "assistant_household_preparation",
+    "topic": "household_preparation",
+    "question": "Comment préparer mon logement avant un cyclone ?",
+    "keywords": [
+      "logement", "maison", "preparer", "preparation", "fenetres",
+      "ouvertures", "volets", "exterieur", "objets", "toiture"
+    ],
+    "answer": "Avant l’arrivée d’un cyclone, fixez ou rentrez les objets extérieurs qui pourraient devenir des projectiles, et vérifiez que les ouvertures (fenêtres, volets) sont solides. Repérez aussi les points faibles du logement (toiture, évacuations d’eau) en amont.",
+    "sourceIds": ["source_prefecture_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "assistant_kit_composition",
+    "topic": "kit_composition",
+    "question": "Que dois-je mettre dans mon kit d’urgence ?",
+    "keywords": [
+      "kit", "urgence", "sac", "contenu", "composer", "preparer", "eau",
+      "nourriture", "radio", "lampe", "trousse"
+    ],
+    "answer": "Un kit d’urgence de base réunit une réserve d’eau et des aliments simples pour environ 3 jours, une lampe et une énergie de secours, une trousse de premiers secours, un moyen de recevoir les informations officielles (radio à piles) et des copies protégées de vos documents essentiels.",
+    "sourceIds": ["source_gouvernement_risques", "source_croix_rouge"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "assistant_document_protection",
+    "topic": "document_protection",
+    "question": "Comment protéger mes documents importants ?",
+    "keywords": [
+      "documents", "papiers", "proteger", "copies", "pochette", "etanche",
+      "importants", "perdre"
+    ],
+    "answer": "Rassemblez les copies de vos documents essentiels (identité, santé, assurance) dans une pochette étanche, facile à emporter si vous devez évacuer rapidement. Conservez-les hors de l’application, dans un endroit sûr.",
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "assistant_power_outage",
+    "topic": "power_outage",
+    "question": "Que faire en cas de coupure d’électricité ?",
+    "keywords": [
+      "electricite", "courant", "coupure", "panne", "lumiere", "frigo",
+      "refrigerateur"
+    ],
+    "answer": "Utilisez une lampe à piles plutôt que des bougies pour limiter les risques d’incendie. Limitez les ouvertures du réfrigérateur pour conserver le froid plus longtemps, et privilégiez une radio à piles pour rester informé si le réseau mobile est saturé.",
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "assistant_water_outage",
+    "topic": "water_outage",
+    "question": "Que faire en cas de coupure d’eau ?",
+    "keywords": ["eau", "coupure", "robinet", "potable", "boire"],
+    "answer": "Utilisez vos réserves d’eau potable prévues à l’avance : environ 3 litres par jour et par personne pour boire et cuisiner. Limitez les usages d’hygiène pour faire durer la réserve, et évitez toute eau non contrôlée.",
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "assistant_cyclone_eye_behavior",
+    "topic": "cyclone_eye_behavior",
+    "question": "Que faire pendant l’œil du cyclone ?",
+    "keywords": [
+      "oeil", "cyclone", "accalmie", "calme", "vent", "sortir", "reprendre"
+    ],
+    "answer": "L’accalmie de l’œil du cyclone est temporaire : le vent reprend ensuite dans l’autre sens, souvent avec la même intensité. Restez à l’abri et attendez la fin officielle de l’alerte avant de sortir.",
+    "sourceIds": ["source_prefecture_mayotte", "source_meteo_france_vigilance_mayotte"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "assistant_vulnerable_people_help",
+    "topic": "vulnerable_people_help",
+    "question": "Comment aider une personne vulnérable de mon entourage ?",
+    "keywords": [
+      "personne", "vulnerable", "agee", "aider", "aide", "isolee",
+      "entourage", "voisin"
+    ],
+    "answer": "Proposez une aide simple et consentie avant l’événement, sans collecter de données sensibles. Pendant l’événement, si vous perdez le contact, essayez de la joindre et alertez les secours compétents si nécessaire plutôt que de vous exposer vous-même.",
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  },
+  {
+    "id": "assistant_return_to_normal",
+    "topic": "return_to_normal",
+    "question": "Que faire après l’événement, au retour à la normale ?",
+    "keywords": [
+      "apres", "retour", "normale", "evenement", "fini", "termine", "degats"
+    ],
+    "answer": "Restez prudent : des dangers résiduels peuvent subsister même après la fin de l’alerte (fils électriques au sol, arbres fragilisés, routes coupées). Faites appel à un professionnel ou aux secours pour remettre en marche l’électricité ou le gaz.",
+    "sourceIds": ["source_gouvernement_risques"],
+    "validationStatus": "to_validate",
+    "revisionDate": "2026-08-10"
+  }
+]

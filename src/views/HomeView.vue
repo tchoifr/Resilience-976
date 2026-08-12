@@ -124,6 +124,19 @@ const journeySteps = [
       </AppAlert>
 
       <RetroStatsBanner />
+
+      <section class="panel stack">
+        <div class="dashboard-section-heading">
+          <h2 class="section-title">{{ t('home.assistant.title') }}</h2>
+          <span class="pill pill--warning">{{ t('home.assistant.badge') }}</span>
+        </div>
+        <p>{{ t('home.assistant.intro') }}</p>
+        <div class="cluster">
+          <RouterLink class="link-button link-button--primary" to="/assistant-documentaire">
+            {{ t('home.assistant.cta') }}
+          </RouterLink>
+        </div>
+      </section>
     </div>
   </section>
 </template>

@@ -19,6 +19,9 @@ export type AnalyticsEventName =
   | 'scenario_completed'
   | 'video_attestation_generated'
   | 'kit_pdf_generated'
+  | 'assistant_question_asked'
+  | 'assistant_answered'
+  | 'assistant_unanswered'
 
 export interface AnalyticsEvent {
   name: AnalyticsEventName
