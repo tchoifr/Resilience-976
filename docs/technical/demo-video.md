@@ -3,7 +3,8 @@
 ## Principe
 
 `scripts/record-demo.mjs` pilote un navigateur avec Playwright pour enregistrer une
-vidéo `.webm` du parcours complet du site : accueil, diagnostic, résultats
+vidéo `.webm` du parcours complet du site : accueil, diagnostic (six écrans
+thématiques de quatre questions, puis le récapitulatif des réponses), résultats
 (téléchargement du certificat PDF, ouverture et défilement du PDF), checklist
 (téléchargement et lecture du PDF), kit, ressources, puis la bibliothèque de vidéos
 (ouverture de la première vidéo, scroll, réponse au quiz, validation, retour à la
@@ -31,6 +32,21 @@ Le site doit tourner avant de lancer le script :
 npm run build
 npm run preview -- --port 4174
 ```
+
+Avec `preview`, les appels `/api/*` ne sont pas proxifies : la banniere de
+l'accueil affiche donc `000000` pages vues et aucun ordre d'arrivee. Pour une
+video destinee a la communication, lancer plutot le serveur de statistiques et
+le serveur de developpement, qui proxifie `/api` :
+
+```bash
+npm run analytics:server
+npm run dev -- --port 5173
+node scripts/record-demo.mjs http://127.0.0.1:5173 ./demo-video fr
+```
+
+Le port 5173 est la seule origine autorisee par defaut cote serveur
+(`ANALYTICS_ALLOWED_ORIGINS`) : sur un autre port, les evenements sont refuses
+en 403 et les compteurs restent a zero.
 
 Puis, dans un autre terminal :
 
