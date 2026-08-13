@@ -605,9 +605,12 @@ export const swbMessages = {
   // Brouillon non relu par un locuteur natif (comme le reste de ce fichier).
   retroStats: {
     idBadgeLabel: 'ID YA MUTRU',
-    // « We ndiwe mutru n° » disait « vous etes le visiteur n° », ce que le
-    // compteur n'affiche plus. Faute de traduction validee pour « il y a eu
-    // N visites », ces deux chaines retombent sur le francais.
+    // « We ndiwe mutru n° » est la formulation qui existait pour l'ancien
+    // compteur : elle redevient exacte pour l'ordre d'arrivee.
+    arrivalFirst: 'WE NDIWE MUTRU N° 1',
+    arrivalRank: 'WE NDIWE MUTRU N° {rank}',
+    // Les libelles du compteur de pages vues restent en francais : aucune
+    // formulation relue n'existe pour « il y a eu N pages vues ».
     // Les deux moities de l'ancienne ligne d'objectif, separees comme en
     // francais : le libelle du bloc d'un cote, l'objectif de l'autre.
     engagedLabel: 'WATRU WANDZIANZISHE',
