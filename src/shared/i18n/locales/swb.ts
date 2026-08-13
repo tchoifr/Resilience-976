@@ -465,8 +465,6 @@ export const swbMessages = {
     title: 'Zi swali za udzisa',
     summary: {
       submissions: '{count} javu(bu) ziandzishiwe',
-      description:
-        'Baze cloud harimwa seriveri wakati inashughuli, na kopiya ya papahi harimwa mudjihazi unu.',
       statusSaving: 'Uandzisha harimwa baze inashughuli.',
       statusDatabase: 'Javu ya mwisho iandzishiwe harimwa baze cloud.',
       statusLocal: 'Kopiya ya papahi ihifadhiwe. Baze kayipo wala kayishughuli.',
@@ -517,8 +515,6 @@ export const swbMessages = {
     },
     actions: {
       submit: 'Hifadhi javu',
-      exportCsv: 'Export CSV',
-      exportJson: 'Export JSON',
     },
     lastSubmission: {
       title: 'Javu ya mwisho',
@@ -609,11 +605,13 @@ export const swbMessages = {
   // Brouillon non relu par un locuteur natif (comme le reste de ce fichier).
   retroStats: {
     idBadgeLabel: 'ID YA MUTRU',
-    idBadgeAria: 'Identifiant ya mutru {id}',
-    counterLabel: 'WE NDIWE MUTRU N°',
-    counterAria:
-      'We ndiwe mutru namba {visits}. {engaged} watru wandzianzishe, lengo JNR 2026 : {target}',
-    goalLine: '{engaged} WATRU WANDZIANZISHE · LENGO JNR 2026 : {target}',
+    // « We ndiwe mutru n° » disait « vous etes le visiteur n° », ce que le
+    // compteur n'affiche plus. Faute de traduction validee pour « il y a eu
+    // N visites », ces deux chaines retombent sur le francais.
+    // Les deux moities de l'ancienne ligne d'objectif, separees comme en
+    // francais : le libelle du bloc d'un cote, l'objectif de l'autre.
+    engagedLabel: 'WATRU WANDZIANZISHE',
+    goalLine: 'LENGO JNR 2026 : {target}',
     ticker: {
       diagnostics: '{count} udzisa zioandzishiwe',
       quiz: '{count} quiz zicheziwe',

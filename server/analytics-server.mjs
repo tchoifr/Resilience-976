@@ -1,9 +1,17 @@
-/* global console, process, URL */
+/* global console, process, URL, fetch */
 import { createServer } from 'node:http'
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { DatabaseSync } from 'node:sqlite'
+
+import {
+  buildContentIndex,
+  buildContentLinksSystemPrompt,
+  parseContentLinksCompletion,
+  sanitizeContentLinksQuestion,
+} from './content-links.mjs'
+import { createRateLimiter, getClientIp } from './rate-limit.mjs'
 
 const PORT = Number.parseInt(process.env.PORT ?? '8787', 10)
 const HOST = process.env.HOST ?? '127.0.0.1'
@@ -26,6 +34,26 @@ const SCENARIOS_FILE = resolve(
   process.env.SCENARIOS_DATA_FILE ?? 'src/data/scenarios.json',
 )
 const ENGAGEMENT_TARGET = 5000
+const RESOURCES_FILE = resolve(
+  process.env.RESOURCES_DATA_FILE ?? 'src/data/resources.json',
+)
+// Cle personnelle Hugging Face avec la permission "Inference Providers"
+// (https://huggingface.co/settings/tokens). Jamais exposee au navigateur :
+// uniquement lue ici, cote serveur.
+const HF_TOKEN = process.env.HF_TOKEN ?? ''
+const HF_CHAT_MODEL = process.env.HF_CHAT_MODEL ?? 'Qwen/Qwen2.5-7B-Instruct'
+const HF_ROUTER_URL = 'https://router.huggingface.co/v1/chat/completions'
+const CONTENT_LINKS_RATE_LIMIT = Number.parseInt(
+  process.env.CONTENT_LINKS_RATE_LIMIT ?? '20',
+  10,
+)
+const CONTENT_LINKS_RATE_WINDOW_MS = 60_000
+// Volontairement large : la limite est par IP, or une session de groupe
+// (atelier, classe, association) partage une seule IP publique. Le but est
+// d'arreter un script emballe, pas de faire echouer les reponses d'un
+// atelier — a la baisse, ce sont de vrais visiteurs qu'on perdrait.
+const WRITE_RATE_LIMIT = Number.parseInt(process.env.WRITE_RATE_LIMIT ?? '600', 10)
+const WRITE_RATE_WINDOW_MS = 60_000
 const ALLOWED_ORIGINS = (
   process.env.ANALYTICS_ALLOWED_ORIGINS ??
   'http://127.0.0.1:5173,http://localhost:5173'
@@ -80,6 +108,7 @@ const allowedPaths = new Set([
   '/videos',
   '/quiz',
   '/mises-en-situation',
+  '/assistant-liens',
   '/tableau-de-bord',
   '/tableau-de-bord/experimentation',
   '/tableau-de-bord/diagnostics',
@@ -304,6 +333,38 @@ async function sanitizeQuizAnswers(input) {
   return sanitized
 }
 
+let resourcesIndex = null
+
+async function getResourcesIndex() {
+  if (resourcesIndex) {
+    return resourcesIndex
+  }
+
+  const resources = JSON.parse(await readFile(RESOURCES_FILE, 'utf8'))
+  const byId = new Map(resources.map((resource) => [resource.id, resource]))
+
+  resourcesIndex = { resources, byId }
+  return resourcesIndex
+}
+
+let contentLinksIndex = null
+
+async function getContentLinksIndex() {
+  if (contentLinksIndex) {
+    return contentLinksIndex
+  }
+
+  const [{ videos }, { scenarios }, { resources }, { questions }] = await Promise.all([
+    getVideosIndex(),
+    getScenariosIndex(),
+    getResourcesIndex(),
+    getQuizQuestionsIndex(),
+  ])
+
+  contentLinksIndex = buildContentIndex(videos, scenarios, resources, questions)
+  return contentLinksIndex
+}
+
 let videosIndex = null
 
 async function getVideosIndex() {
@@ -378,6 +439,51 @@ async function sanitizeScenarioResult(input) {
     score: sanitizeInteger(input.score, 0, 100, 0),
     choices: scenario ? sanitizeScenarioChoices(input.choices, scenario) : {},
   }
+}
+
+const contentLinksRateLimiter = createRateLimiter({
+  limit: CONTENT_LINKS_RATE_LIMIT,
+  windowMs: CONTENT_LINKS_RATE_WINDOW_MS,
+})
+
+// Limite commune a toutes les ecritures : sans elle, n'importe quel script
+// peut gonfler la base et fausser toutes les statistiques du site.
+const writeRateLimiter = createRateLimiter({
+  limit: WRITE_RATE_LIMIT,
+  windowMs: WRITE_RATE_WINDOW_MS,
+})
+
+async function askHuggingFaceForContentLinks(question, index) {
+  const response = await fetch(HF_ROUTER_URL, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${HF_TOKEN}`,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: HF_CHAT_MODEL,
+      temperature: 0.2,
+      max_tokens: 300,
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: buildContentLinksSystemPrompt(index) },
+        { role: 'user', content: question },
+      ],
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error(`hugging_face_http_${response.status}`)
+  }
+
+  const payload = await response.json()
+  const rawContent = payload.choices?.[0]?.message?.content
+
+  if (typeof rawContent !== 'string') {
+    throw new Error('hugging_face_empty_response')
+  }
+
+  return parseContentLinksCompletion(rawContent, index)
 }
 
 function sanitizeKitProfile(input) {
@@ -2378,6 +2484,20 @@ const server = createServer(async (request, response) => {
     return
   }
 
+  // Un navigateur envoie toujours Origin sur une requete non-GET, y compris
+  // en meme-origine : l'exiger sur les ecritures bloque les requetes venues
+  // d'un autre site (CSRF). On ne peut pas en faire autant sur les GET, que
+  // le navigateur envoie sans Origin quand ils sont meme-origine.
+  if (request.method !== 'GET' && !request.headers.origin) {
+    sendJson(response, 403, { error: 'origin_required' }, 'null')
+    return
+  }
+
+  if (request.method !== 'GET' && !writeRateLimiter.allow(getClientIp(request))) {
+    sendJson(response, 429, { error: 'rate_limited' }, origin)
+    return
+  }
+
   try {
     if (request.method === 'POST' && requestUrl.pathname === '/api/events') {
       const body = await readBody(request)
@@ -2605,6 +2725,41 @@ const server = createServer(async (request, response) => {
 
       const profile = await getVisitorProfile(visitorId)
       sendJson(response, 200, profile, origin)
+      return
+    }
+
+    if (request.method === 'POST' && requestUrl.pathname === '/api/assistant-liens') {
+      const body = await readBody(request)
+      const question = sanitizeContentLinksQuestion(body.question)
+
+      if (!question) {
+        sendJson(response, 400, { error: 'invalid_question' }, origin)
+        return
+      }
+
+      if (!HF_TOKEN) {
+        sendJson(response, 503, { error: 'assistant_links_unconfigured' }, origin)
+        return
+      }
+
+      if (!contentLinksRateLimiter.allow(getClientIp(request))) {
+        sendJson(response, 429, { error: 'rate_limited' }, origin)
+        return
+      }
+
+      try {
+        const index = await getContentLinksIndex()
+        const { matchedIds, refused } = await askHuggingFaceForContentLinks(question, index)
+        const matches = matchedIds.map((id) => {
+          const entry = index.byId.get(id)
+          return { title: entry.title, type: entry.type, url: entry.url }
+        })
+
+        sendJson(response, 200, { matches, refused }, origin)
+      } catch (error) {
+        console.error('[assistant-liens] hugging face request failed', error)
+        sendJson(response, 502, { error: 'assistant_links_upstream_error' }, origin)
+      }
       return
     }
 

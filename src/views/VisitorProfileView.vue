@@ -5,6 +5,7 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 
 import AppButton from '@/components/ui/AppButton.vue'
 import type { VisitorProfileResponse } from '@/features/visitor-graph/types/visitor-graph'
+import { normalizeVisitorId } from '@/shared/analytics/visitor-id.service'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
 const { t } = useI18n()
@@ -30,7 +31,9 @@ const hasSearched = ref(false)
 const errorMessage = ref('')
 
 async function search(visitorId: string) {
-  const trimmed = visitorId.trim()
+  // La banniere d'accueil affiche l'identifiant sans tirets : on les remet
+  // avant d'interroger le serveur, qui ne connait que la forme canonique.
+  const trimmed = normalizeVisitorId(visitorId)
 
   if (!trimmed || !profileEnabled) {
     return
@@ -63,7 +66,7 @@ async function search(visitorId: string) {
 }
 
 function submitForm() {
-  const trimmed = inputId.value.trim()
+  const trimmed = normalizeVisitorId(inputId.value)
 
   if (!trimmed) {
     return
@@ -123,7 +126,7 @@ onMounted(() => {
           type="text"
           :placeholder="t('visitorProfile.inputPlaceholder')"
         />
-        <AppButton type="submit" :disabled="!inputId.trim()">
+        <AppButton type="submit" icon="search" :disabled="!inputId.trim()">
           {{ t('visitorProfile.search') }}
         </AppButton>
       </form>

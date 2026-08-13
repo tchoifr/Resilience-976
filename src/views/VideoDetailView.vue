@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 
 import AppAlert from '@/components/ui/AppAlert.vue'
 import AppButton from '@/components/ui/AppButton.vue'
+import LinkButton from '@/components/ui/LinkButton.vue'
 import SourceLink from '@/components/ui/SourceLink.vue'
 import {
   actionsById,
@@ -138,6 +139,9 @@ function markCompleted() {
 
           <section class="panel stack">
             <h2 class="section-title">{{ t('videos.quizTitle') }}</h2>
+            <!-- La regle est enoncee avant la question, pas apres un echec :
+                 le visiteur doit savoir a quoi il s'engage en repondant. -->
+            <p class="muted">{{ t('videos.quizRule') }}</p>
             <fieldset class="video-quiz">
               <legend>{{ video.quiz.question }}</legend>
               <label v-for="(option, index) in video.quiz.options" :key="option" class="answer-option">
@@ -146,12 +150,13 @@ function markCompleted() {
               </label>
             </fieldset>
             <div class="cluster">
-              <AppButton :disabled="selectedAnswer === null" @click="submitAnswer">
+              <AppButton icon="check" :disabled="selectedAnswer === null" @click="submitAnswer">
                 {{ t('videos.validateAnswer') }}
               </AppButton>
               <AppButton
                 v-if="video.externalVideoUrl && !video.videoUrl"
                 variant="secondary"
+                icon="play"
                 :disabled="isCompleted"
                 @click="markCompleted"
               >
@@ -223,12 +228,12 @@ function markCompleted() {
               {{ linkedResource.title }}
             </p>
             <div class="cluster">
-              <RouterLink class="link-button link-button--secondary" to="/checklist">
+              <LinkButton to="/checklist" variant="secondary">
                 {{ t('videos.openPlan') }}
-              </RouterLink>
-              <RouterLink class="link-button link-button--secondary" to="/ressources">
+              </LinkButton>
+              <LinkButton to="/ressources" variant="secondary">
                 {{ t('videos.openResources') }}
-              </RouterLink>
+              </LinkButton>
             </div>
           </section>
 
@@ -242,20 +247,21 @@ function markCompleted() {
           </section>
 
           <nav class="video-navigation" :aria-label="t('videos.sequenceNavigation')">
-            <RouterLink
+            <LinkButton
               v-if="previousVideo"
-              class="link-button link-button--secondary"
+              variant="secondary"
+              icon="arrow-left"
               :to="`/videos/${previousVideo.slug}`"
             >
               {{ t('videos.previous') }}
-            </RouterLink>
-            <RouterLink
+            </LinkButton>
+            <LinkButton
               v-if="nextVideo"
-              class="link-button link-button--primary"
+              icon="arrow-right"
               :to="`/videos/${nextVideo.slug}`"
             >
               {{ t('videos.next') }}
-            </RouterLink>
+            </LinkButton>
           </nav>
         </aside>
       </div>
@@ -265,9 +271,9 @@ function markCompleted() {
     <div class="panel stack">
       <p class="eyebrow">{{ t('notFound.eyebrow') }}</p>
       <h1>{{ t('notFound.title') }}</h1>
-      <RouterLink class="link-button link-button--primary" to="/videos">
+      <LinkButton to="/videos" icon="arrow-left">
         {{ t('videos.backToLibrary') }}
-      </RouterLink>
+      </LinkButton>
     </div>
   </section>
 </template>

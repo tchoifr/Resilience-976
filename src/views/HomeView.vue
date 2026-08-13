@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
 
 import { computed } from 'vue'
 
 import AppAlert from '@/components/ui/AppAlert.vue'
+import LinkButton from '@/components/ui/LinkButton.vue'
 import RetroStatsBanner from '@/components/ui/RetroStatsBanner.vue'
 import { useAssessmentStore } from '@/features/assessment/stores/assessment.store'
 import { useI18n } from '@/shared/i18n/i18n.service'
@@ -62,12 +62,12 @@ const journeySteps = [
           <p>{{ t('home.intro') }}</p>
 
           <div class="cluster hero-actions">
-            <RouterLink class="link-button link-button--primary" to="/diagnostic">
+            <LinkButton to="/diagnostic" icon="arrow-right">
               {{ assessmentStore.hasAnswers ? t('home.resume') : t('home.start') }}
-            </RouterLink>
-            <RouterLink class="link-button link-button--secondary" to="/ressources">
+            </LinkButton>
+            <LinkButton to="/ressources" variant="secondary">
               {{ t('home.resources') }}
-            </RouterLink>
+            </LinkButton>
           </div>
 
           <div class="trust-row" :aria-label="t('home.trustAria')">

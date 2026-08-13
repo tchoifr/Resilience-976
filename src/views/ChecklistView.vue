@@ -2,6 +2,8 @@
 import { computed, onMounted, ref } from 'vue'
 
 import AppButton from '@/components/ui/AppButton.vue'
+import AppIcon from '@/components/ui/AppIcon.vue'
+import DangerConfirmButton from '@/components/ui/DangerConfirmButton.vue'
 import ProgressBar from '@/components/ui/ProgressBar.vue'
 import {
   actions,
@@ -94,6 +96,14 @@ function toggleChecklistItem(id: string) {
 
 function toggleCustomChecklistItem(id: string) {
   assessmentStore.toggleCustomChecklistItem(id)
+  trackChecklistProgressThresholds()
+}
+
+// Supprimer une action fait varier le total autant que le nombre de cases
+// cochees : sans ce recalcul, un palier de progression deja franchi serait
+// signale une seconde fois.
+function removeCustomItem(id: string) {
+  assessmentStore.removeCustomChecklistItem(id)
   trackChecklistProgressThresholds()
 }
 
@@ -217,33 +227,46 @@ function customCountLabel(count: number): string {
               :placeholder="t('checklist.placeholder')"
             />
           </label>
-          <AppButton type="submit">{{ t('checklist.add') }}</AppButton>
+          <AppButton type="submit" icon="plus">{{ t('checklist.add') }}</AppButton>
         </form>
 
         <div
           v-if="assessmentStore.customChecklistItems.length > 0"
           class="custom-items"
         >
-          <label
+          <!-- Le bouton de suppression est hors du label : place dedans, tout
+               clic dessus cocherait aussi la case. -->
+          <div
             v-for="item in assessmentStore.customChecklistItems"
             :key="item.id"
             class="check-row custom-check-row"
           >
-            <input
-              type="checkbox"
-              :checked="item.completed"
-              @change="toggleCustomChecklistItem(item.id)"
-            />
-            <span>
-              <strong>{{ item.label }}</strong>
-              <small>{{ t('checklist.personalAction') }}</small>
-            </span>
-          </label>
+            <label class="custom-check-row__label">
+              <input
+                type="checkbox"
+                :checked="item.completed"
+                @change="toggleCustomChecklistItem(item.id)"
+              />
+              <span>
+                <strong>{{ item.label }}</strong>
+                <small>{{ t('checklist.personalAction') }}</small>
+              </span>
+            </label>
+            <button
+              class="custom-check-row__remove"
+              type="button"
+              :aria-label="t('checklist.removeItem', { label: item.label })"
+              @click="removeCustomItem(item.id)"
+            >
+              <AppIcon name="trash" />
+            </button>
+          </div>
         </div>
       </section>
 
       <div class="cluster">
         <AppButton
+          icon="download"
           :disabled="isGeneratingChecklistPdf"
           @click="exportChecklistPdf"
         >
@@ -253,12 +276,14 @@ function customCountLabel(count: number): string {
               : t('checklist.downloadPdf')
           }}
         </AppButton>
-        <AppButton variant="secondary" @click="printPage">{{
+        <AppButton variant="secondary" icon="printer" @click="printPage">{{
           t('checklist.printPage')
         }}</AppButton>
-        <AppButton variant="danger" @click="assessmentStore.reset">{{
-          t('common.resetData')
-        }}</AppButton>
+        <DangerConfirmButton
+          :label="t('common.resetData')"
+          :question="t('common.resetDataConfirm')"
+          @confirm="assessmentStore.reset"
+        />
       </div>
     </div>
   </section>

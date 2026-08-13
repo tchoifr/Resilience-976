@@ -33,6 +33,12 @@
   --color-text-strong: #10233f;
   --color-text-muted: #52616b;
   --color-accent-text: var(--color-primary-dark);
+  /* Banniere retro : en theme clair elle porte le turquoise de la marque,
+     le bleu nuit etant reserve au theme sombre. Le bandeau defilant prend
+     l'autre teinte pour rester detache du fond de la banniere. */
+  --retro-banner-bg: var(--color-primary);
+  --retro-ticker-bg: var(--color-primary-dark);
+  --retro-highlight: #ffffff;
   --color-track: #d9e5e8;
   --color-selected-bg: #e7f5f4;
   --color-header-bg: rgba(255, 255, 255, 0.92);
@@ -83,6 +89,9 @@
   --color-text-strong: #f4fafd;
   --color-text-muted: #93aabb;
   --color-accent-text: #5fd6de;
+  --retro-banner-bg: var(--color-primary-dark);
+  --retro-ticker-bg: var(--color-primary);
+  --retro-highlight: var(--color-teal-on-dark);
   --color-track: #24425a;
   --color-selected-bg: #1c3a44;
   --color-header-bg: rgba(11, 24, 37, 0.92);
@@ -334,7 +343,8 @@ textarea:focus-visible {
 }
 
 .app-header__inner,
-.app-footer__inner {
+.app-footer__columns,
+.app-footer__bottom {
   width: min(100% - 32px, var(--container));
   margin: 0 auto;
 }
@@ -392,6 +402,51 @@ textarea:focus-visible {
 .nav a.router-link-active {
   background: transparent;
   color: var(--color-accent-text);
+}
+
+.nav-group {
+  position: relative;
+}
+
+.nav-group__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  padding: 8px 0;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.nav-group__toggle--active {
+  color: var(--color-accent-text);
+}
+
+.nav-group__chevron {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+}
+
+.nav-group__panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 40;
+  display: grid;
+  gap: 4px;
+  min-width: 200px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+  padding: var(--space-2);
 }
 
 .language-switcher select {
@@ -814,12 +869,52 @@ textarea:focus-visible {
   color: var(--color-text-strong);
 }
 
-.app-footer__inner {
+.app-footer__columns {
+  display: grid;
+  grid-template-columns: 1.4fr repeat(3, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+  padding: var(--space-4) 0 0;
+}
+
+.footer-column {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.footer-column__title {
+  margin: 0 0 4px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.footer-column a {
+  color: var(--color-text);
+  font-size: 0.88rem;
+  text-decoration: none;
+}
+
+.footer-column a:hover,
+.footer-column a:focus-visible {
+  text-decoration: underline;
+}
+
+.footer-slogan {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.app-footer__bottom {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-3);
-  padding: var(--space-4) 0;
+  margin-top: var(--space-4);
+  padding: var(--space-3) 0 var(--space-4);
+  border-top: 1px solid var(--color-border);
 }
 
 .footer-brand {
@@ -884,20 +979,6 @@ textarea:focus-visible {
   width: 18px;
   height: 18px;
   fill: currentColor;
-}
-
-.footer-legal-nav {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-3);
-}
-
-.footer-legal-nav a {
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 
 .hero {
@@ -1121,6 +1202,24 @@ textarea:focus-visible {
   background: var(--color-teal);
 }
 
+/* La couleur double le libelle affiche a cote de la jauge, elle ne le
+   remplace pas : seule, elle serait inaccessible (WCAG 1.4.1). */
+.domain-score__bar--insufficient {
+  background: var(--color-danger);
+}
+
+.domain-score__bar--fragile {
+  background: var(--color-warning);
+}
+
+.domain-score__bar--good {
+  background: var(--color-teal);
+}
+
+.domain-score__bar--very_good {
+  background: var(--color-success);
+}
+
 .action-card {
   display: grid;
   gap: var(--space-2);
@@ -1171,14 +1270,26 @@ textarea:focus-visible {
   list-style: none;
 }
 
+/* Ces liens portaient le meme fond en pastille que .pill, utilise juste
+   au-dessus d'eux pour des badges non cliquables : le meme langage visuel
+   servait donc a du cliquable et a du non-cliquable. Ils prennent desormais
+   l'apparence d'un lien, et l'icone posee dans SourceLink annonce qu'ils
+   mènent hors du site. */
 .source-link {
   display: inline-flex;
-  border-radius: 999px;
-  background: var(--color-muted);
+  align-items: center;
+  gap: 5px;
   color: var(--color-accent-text);
-  padding: 4px 10px;
   font-size: 0.86rem;
   font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.source-link:hover,
+.source-link:focus-visible {
+  color: var(--color-primary);
+  text-decoration-thickness: 2px;
 }
 
 .alert {
@@ -1251,6 +1362,14 @@ textarea:focus-visible {
 
 .experiment-summary strong {
   color: var(--color-text-strong);
+}
+
+/* Le code participant est un UUID : en fonte a chasse fixe, il se relit et se
+   recopie caractere par caractere sans confondre O et 0. */
+.experiment-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
 }
 
 .experiment-form {
@@ -1368,6 +1487,35 @@ textarea:focus-visible {
   border-radius: var(--radius-sm);
   background: var(--color-surface);
   padding: var(--space-3);
+}
+
+.custom-check-row {
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.custom-check-row__label {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  flex: 1;
+  cursor: pointer;
+}
+
+.custom-check-row__remove {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-danger-strong);
+  cursor: pointer;
+}
+
+.custom-check-row__remove:hover {
+  background: var(--color-danger-bg);
 }
 
 .custom-check-row small {
@@ -1643,6 +1791,76 @@ textarea:focus-visible {
   grid-column: 1 / -1;
 }
 
+/* Progression du diagnostic : un segment par theme, sur le fond teal de la
+   barre laterale. La coche et le libelle portent l'information autant que la
+   couleur. */
+.theme-progress {
+  display: grid;
+  gap: 8px;
+  margin-top: var(--space-3);
+}
+
+.theme-progress__segments {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 4px;
+}
+
+.theme-progress__segment {
+  display: grid;
+  place-items: center;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  color: var(--color-primary-dark);
+  font-size: 0.62rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.theme-progress__segment--done {
+  background: #ffffff;
+}
+
+.theme-progress__segment--current {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.theme-progress__label {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* Quatre questions par ecran : chacune redevient une carte delimitee, et les
+   reponses reprennent une hauteur raisonnable pour que le theme entier reste
+   parcourable. */
+.theme-questions {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.theme-questions .question-card {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  padding: var(--space-4);
+}
+
+.theme-questions .question-card legend {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.theme-questions .answer-option {
+  min-height: 84px;
+  padding: var(--space-2);
+  font-size: 0.92rem;
+  box-shadow: none;
+}
+
 .answer-option {
   min-height: 136px;
   display: grid;
@@ -1715,26 +1933,75 @@ textarea:focus-visible {
   color: var(--color-text-strong);
 }
 
+/* Sans cela, les deux colonnes s'etirent a la meme hauteur et .stack,
+   qui est une grille, dilate ses lignes pour l'occuper : la colonne la
+   moins remplie voit ses cartes s'ecarter de plusieurs centaines de
+   pixels. */
+.action-plan-grid {
+  align-items: start;
+}
+
 .action-card {
-  position: relative;
   border-radius: 12px;
   box-shadow: 0 10px 24px rgba(16, 42, 67, 0.08);
-  padding-right: 40px;
 }
 
-.action-card::after {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  color: var(--color-primary);
-  font-weight: 900;
-  content: ">";
-  transform: translateY(-50%);
-}
-
-.source-link,
 .pill {
   border-radius: 8px;
+}
+
+/* Isole une action irreversible des actions courantes : sans separation,
+   elle se trouve a portee de clic par erreur. */
+/* Confirmation en deux temps : la question s'affiche a la place du bouton,
+   dans un cadre rouge pale qui la distingue du reste de la page. */
+.danger-confirm__prompt {
+  display: grid;
+  gap: var(--space-2);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-sm);
+  background: var(--color-danger-bg);
+  padding: var(--space-3);
+}
+
+.danger-confirm__question {
+  margin: 0;
+  color: var(--color-danger-fg);
+  font-weight: 700;
+}
+
+/* Recapitulatif des reponses : la question au-dessus, la reponse en dessous,
+   pour rester lisible sur un ecran etroit sans tableau qui deborde. */
+.answer-recap {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.answer-recap__theme {
+  margin: 0;
+  color: var(--color-text-strong);
+  font-size: 1.05rem;
+}
+
+.answer-recap dt {
+  color: var(--color-text-strong);
+  font-weight: 700;
+}
+
+.answer-recap dd {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+}
+
+.answer-recap__missing {
+  color: var(--color-danger-fg);
+  font-weight: 700;
+}
+
+.danger-zone {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
 }
 
 .video-progress-panel {
@@ -1970,10 +2237,8 @@ textarea:focus-visible {
     display: none;
   }
 
-  .app-footer__inner {
-    align-items: flex-start;
-    flex-direction: column;
-    justify-content: center;
+  .app-footer__columns {
+    grid-template-columns: 1fr 1fr;
   }
 
   .app-header__inner {
@@ -2029,6 +2294,21 @@ textarea:focus-visible {
     padding: 10px 12px;
   }
 
+  /* Dans le menu mobile, le panneau se deplie dans le flux plutot que
+     par-dessus : il n'y a pas la place pour un panneau flottant. */
+  .nav-group__panel {
+    position: static;
+    box-shadow: none;
+    min-width: 0;
+  }
+
+  .nav-group__toggle {
+    min-height: 44px;
+    width: 100%;
+    justify-content: space-between;
+    padding: 10px 12px;
+  }
+
   .language-switcher,
   .language-switcher select {
     width: 100%;
@@ -2051,6 +2331,10 @@ textarea:focus-visible {
   .page {
     width: min(100% - 24px, var(--container));
     padding-top: var(--space-4);
+  }
+
+  .app-footer__columns {
+    grid-template-columns: 1fr;
   }
 
   .panel,

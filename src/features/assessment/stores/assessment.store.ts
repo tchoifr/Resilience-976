@@ -12,6 +12,10 @@ import {
 export function createInitialAssessmentState(): AssessmentState {
   return {
     version: ASSESSMENT_VERSION,
+    // Index du theme affiche (0 a 5), et non plus de la question : le
+    // diagnostic presente un domaine par ecran. Tout changement de sens de
+    // ce champ impose de monter ASSESSMENT_VERSION, sinon les parcours
+    // enregistres reprennent a un index errone.
     currentIndex: 0,
     answers: {},
     household: {
@@ -84,7 +88,9 @@ export const useAssessmentStore = defineStore('assessment', {
       }
 
       this.customChecklistItems.push({
-        id: `custom_${Date.now()}`,
+        // Deux ajouts dans la meme milliseconde partageaient le meme
+        // identifiant : cocher ou supprimer l'un emportait l'autre.
+        id: `custom_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
         label: trimmed,
         completed: false,
       })
@@ -98,6 +104,10 @@ export const useAssessmentStore = defineStore('assessment', {
       }
 
       item.completed = !item.completed
+      this.persist()
+    },
+    removeCustomChecklistItem(id: string) {
+      this.customChecklistItems = this.customChecklistItems.filter((entry) => entry.id !== id)
       this.persist()
     },
     reset() {

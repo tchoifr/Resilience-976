@@ -88,7 +88,7 @@ async function downloadAttestation() {
           {{ t('quiz.campaignNotice', { campaignId }) }}
         </AppAlert>
         <div class="cluster">
-          <AppButton @click="startQuiz">{{ t('quiz.start') }}</AppButton>
+          <AppButton icon="play" @click="startQuiz">{{ t('quiz.start') }}</AppButton>
         </div>
       </template>
 
@@ -131,12 +131,13 @@ async function downloadAttestation() {
           <div class="cluster">
             <AppButton
               v-if="!quizStore.isAnswered"
+              icon="check"
               :disabled="quizStore.selectedIndex === null"
               @click="quizStore.submit"
             >
               {{ t('quiz.submit') }}
             </AppButton>
-            <AppButton v-else @click="nextQuestion">
+            <AppButton v-else icon="arrow-right" @click="nextQuestion">
               {{ quizStore.isLastQuestion ? t('quiz.seeResults') : t('quiz.next') }}
             </AppButton>
           </div>
@@ -162,10 +163,12 @@ async function downloadAttestation() {
           <p>{{ t('quiz.results.summary', { score: quizStore.score, total: quizStore.total }) }}</p>
 
           <div class="cluster">
-            <AppButton :disabled="isGeneratingPdf" @click="downloadAttestation">
+            <AppButton icon="download" :disabled="isGeneratingPdf" @click="downloadAttestation">
               {{ isGeneratingPdf ? t('quiz.results.preparingPdf') : t('quiz.results.downloadAttestation') }}
             </AppButton>
-            <AppButton variant="secondary" @click="startQuiz">{{ t('quiz.restart') }}</AppButton>
+            <AppButton variant="secondary" icon="refresh" @click="startQuiz">{{
+              t('quiz.restart')
+            }}</AppButton>
           </div>
 
           <p class="muted">{{ t('quiz.results.disclaimer') }}</p>

@@ -3,6 +3,7 @@ import { computed, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 
 import AppButton from '@/components/ui/AppButton.vue'
+import LinkButton from '@/components/ui/LinkButton.vue'
 import ProgressBar from '@/components/ui/ProgressBar.vue'
 import SourceLink from '@/components/ui/SourceLink.vue'
 import {
@@ -12,6 +13,7 @@ import {
 } from '@/features/assessment/services/content.service'
 import type { Source } from '@/features/assessment/types/source'
 import { syncScenarioResult } from '@/features/scenarios/services/scenario-sync.service'
+import { getScenarioLevel } from '@/features/scenarios/services/scenario.service'
 import { useScenarioStore } from '@/features/scenarios/stores/scenario.store'
 import { trackEvent } from '@/shared/analytics/analytics.service'
 import { useI18n } from '@/shared/i18n/i18n.service'
@@ -117,7 +119,11 @@ watch(
           </fieldset>
 
           <div class="cluster">
-            <AppButton :disabled="scenarioStore.selectedOptionId === null" @click="confirmStep">
+            <AppButton
+              icon="check"
+              :disabled="scenarioStore.selectedOptionId === null"
+              @click="confirmStep"
+            >
               {{
                 scenarioStore.isLastStep
                   ? t('scenarioPlay.seeDebrief')
@@ -133,7 +139,10 @@ watch(
           <h2 class="section-title">{{ t('scenarioPlay.debrief.title') }}</h2>
           <p>
             {{ t('scenarioPlay.debrief.scoreLabel') }} :
-            <strong>{{ scenarioStore.score }}/100</strong>
+            <strong>
+              {{ t(`scenarioPlay.debrief.levels.${getScenarioLevel(scenarioStore.score)}`) }}
+            </strong>
+            <span class="muted">({{ scenarioStore.score }}/100)</span>
           </p>
 
           <div v-for="choice in scenarioStore.choices" :key="choice.step.id" class="stack">
@@ -151,14 +160,14 @@ watch(
           </ul>
 
           <div class="cluster">
-            <RouterLink
+            <LinkButton
               v-if="linkedVideo"
-              class="link-button link-button--secondary"
+              variant="secondary"
               :to="`/videos/${linkedVideo.slug}`"
             >
               {{ t('scenarioPlay.debrief.watchCapsule') }}
-            </RouterLink>
-            <AppButton variant="secondary" @click="startScenario">
+            </LinkButton>
+            <AppButton variant="secondary" icon="refresh" @click="startScenario">
               {{ t('scenarioPlay.debrief.restart') }}
             </AppButton>
           </div>
@@ -170,9 +179,9 @@ watch(
     <div class="panel stack">
       <p class="eyebrow">{{ t('notFound.eyebrow') }}</p>
       <h1>{{ t('notFound.title') }}</h1>
-      <RouterLink class="link-button link-button--primary" to="/mises-en-situation">
+      <LinkButton to="/mises-en-situation" icon="arrow-left">
         {{ t('scenarioPlay.backToList') }}
-      </RouterLink>
+      </LinkButton>
     </div>
   </section>
 </template>

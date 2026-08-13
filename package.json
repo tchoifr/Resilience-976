@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "analytics:server": "node server/analytics-server.mjs",
+    "analytics:server": "node --env-file-if-exists=.env server/analytics-server.mjs",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "type-check": "vue-tsc -b",

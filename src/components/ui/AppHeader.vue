@@ -1,28 +1,33 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { useI18n } from '@/shared/i18n/i18n.service'
 
 import LanguageSwitcher from './LanguageSwitcher.vue'
+import NavGroup from './NavGroup.vue'
 import ThemeSwitcher from './ThemeSwitcher.vue'
 
 const route = useRoute()
 const isMenuOpen = ref(false)
 const { t } = useI18n()
 
-const navLinks = [
-  { to: '/', labelKey: 'navigation.home' },
-  { to: '/diagnostic', labelKey: 'navigation.diagnostic' },
-  { to: '/resultats', labelKey: 'navigation.results' },
-  { to: '/checklist', labelKey: 'navigation.checklist' },
-  { to: '/kit', labelKey: 'navigation.kit' },
-  { to: '/ressources', labelKey: 'navigation.resources' },
-  { to: '/videos', labelKey: 'navigation.videos' },
-  { to: '/quiz', labelKey: 'navigation.quiz' },
-  { to: '/mises-en-situation', labelKey: 'navigation.scenarios' },
-  { to: '/experimentation-utilisateurs', labelKey: 'navigation.experiment' },
-]
+// Regroupe par intention plutot que par page : « ou en suis-je » d'un cote,
+// « qu'ai-je a apprendre » de l'autre. L'experimentation quitte le menu :
+// c'est un formulaire de retour et non une destination, elle vit desormais
+// dans le pied de page sous le libelle « Donner mon avis ».
+const planLinks = computed(() => [
+  { to: '/diagnostic', label: t('navigation.diagnostic') },
+  { to: '/resultats', label: t('navigation.results') },
+  { to: '/checklist', label: t('navigation.checklist') },
+  { to: '/kit', label: t('navigation.kit') },
+])
+
+const learnLinks = computed(() => [
+  { to: '/videos', label: t('navigation.videos') },
+  { to: '/quiz', label: t('navigation.quiz') },
+  { to: '/mises-en-situation', label: t('navigation.scenarios') },
+])
 
 function toggleMenu() {
   isMenuOpen.value = !isMenuOpen.value
@@ -69,8 +74,11 @@ watch(
         :class="{ 'nav--open': isMenuOpen }"
         :aria-label="t('navigation.ariaLabel')"
       >
-        <RouterLink v-for="link in navLinks" :key="link.to" :to="link.to" @click="closeMenu">
-          {{ t(link.labelKey) }}
+        <RouterLink to="/" @click="closeMenu">{{ t('navigation.home') }}</RouterLink>
+        <NavGroup :label="t('navigation.myPlan')" :links="planLinks" />
+        <NavGroup :label="t('navigation.learn')" :links="learnLinks" />
+        <RouterLink to="/ressources" @click="closeMenu">
+          {{ t('navigation.resources') }}
         </RouterLink>
         <LanguageSwitcher />
         <ThemeSwitcher />

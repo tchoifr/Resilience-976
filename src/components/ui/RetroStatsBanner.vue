@@ -1,8 +1,9 @@
 <script setup lang="ts">
-/* global fetch */
+/* global fetch, navigator */
 import { computed, onMounted, ref } from 'vue'
 
 import { getVisitorId } from '@/shared/analytics/analytics.service'
+import { formatVisitorIdForDisplay } from '@/shared/analytics/visitor-id.service'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
 const { t } = useI18n()
@@ -50,16 +51,25 @@ const videoParticipants = ref(0)
 const scenarioSessions = ref(0)
 
 const digits = computed(() => String(visits.value).padStart(6, '0').split(''))
-const engagedDigits = computed(() => String(engagedVisitors.value).padStart(6, '0'))
+const engagedDigits = computed(() => String(engagedVisitors.value).padStart(6, '0').split(''))
 
-const visitorId = getVisitorId()
-const parts = visitorId.split('-')
+// L'identifiant est affiche en entier, mais sans tirets : la recherche du
+// tableau de bord les remet elle-meme, le visiteur n'a donc que 32 caracteres
+// a lire ou a recopier.
+const visitorId = formatVisitorIdForDisplay(getVisitorId())
+const copied = ref(false)
 
-const shortVisitorId = (
-  (parts[0] ?? '').slice(0, 4) +
-  (parts[1] ?? '').slice(0, 4) +
-  (parts[2] ?? '').slice(0, 4)
-).toUpperCase()
+async function copyVisitorId() {
+  try {
+    await navigator.clipboard.writeText(visitorId)
+    copied.value = true
+    window.setTimeout(() => {
+      copied.value = false
+    }, 2000)
+  } catch {
+    copied.value = false
+  }
+}
 
 const tickerItems = computed(() => [
   t('retroStats.ticker.diagnostics', { count: journeysCompleted.value.toLocaleString('fr-FR') }),
@@ -114,37 +124,45 @@ onMounted(async () => {
 
 <template>
   <div class="retro-banner">
-    <div
-      class="retro-id-badge"
-      role="img"
-      :aria-label="t('retroStats.idBadgeAria', { id: visitorId })"
-    >
+    <div class="retro-id-badge">
       <span class="retro-id-badge__label">{{ t('retroStats.idBadgeLabel') }}</span>
-      <span class="retro-id-badge__value">{{ shortVisitorId }}</span>
+      <span class="retro-id-badge__value">{{ visitorId }}</span>
+      <button type="button" class="retro-id-badge__copy" @click="copyVisitorId">
+        {{ copied ? t('retroStats.idCopied') : t('retroStats.idCopy') }}
+      </button>
+    </div>
+
+    <!-- Deux compteurs distincts : les visites mesurent la frequentation, les
+         visiteurs engages mesurent l'objectif JNR. Les melanger dans un seul
+         bloc laissait croire a un seul indicateur. -->
+    <div
+      class="retro-counter"
+      role="img"
+      :aria-label="t('retroStats.counterAria', { visits })"
+    >
+      <span class="retro-counter__label">{{ t('retroStats.counterLabel') }}</span>
+      <div class="retro-counter__digits" aria-hidden="true">
+        <span v-for="(digit, index) in digits" :key="index">{{ digit }}</span>
+      </div>
+      <span class="retro-counter__unit" aria-hidden="true">{{ t('retroStats.counterUnit') }}</span>
     </div>
 
     <div
       class="retro-counter"
       role="img"
       :aria-label="
-        t('retroStats.counterAria', {
-          visits,
+        t('retroStats.engagedAria', {
           engaged: engagedVisitors,
           target,
         })
       "
     >
-      <span class="retro-counter__label">{{ t('retroStats.counterLabel') }}</span>
+      <span class="retro-counter__label">{{ t('retroStats.engagedLabel') }}</span>
       <div class="retro-counter__digits" aria-hidden="true">
-        <span v-for="(digit, index) in digits" :key="index">{{ digit }}</span>
+        <span v-for="(digit, index) in engagedDigits" :key="index">{{ digit }}</span>
       </div>
       <span class="retro-counter__goal">
-        {{
-          t('retroStats.goalLine', {
-            engaged: engagedDigits,
-            target: target.toLocaleString('fr-FR'),
-          })
-        }}
+        {{ t('retroStats.goalLine', { target: target.toLocaleString('fr-FR') }) }}
       </span>
     </div>
 
@@ -170,7 +188,7 @@ onMounted(async () => {
   gap: 18px;
   align-items: center;
   justify-content: center;
-  background: var(--color-primary-dark);
+  background: var(--retro-banner-bg);
   border-radius: var(--radius-md);
   padding: 20px;
   animation: retro-banner-in 0.5s ease-out;
@@ -210,16 +228,35 @@ onMounted(async () => {
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .retro-id-badge__value {
   font-family: ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
   font-weight: 700;
-  font-size: 1.05rem;
-  letter-spacing: 0.1em;
-  color: var(--color-teal-on-dark);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--retro-highlight);
   text-shadow: 0 0 8px rgba(0, 161, 173, 0.85);
+  overflow-wrap: anywhere;
+  max-width: 22ch;
+  text-align: center;
+}
+
+.retro-id-badge__copy {
+  border: 1px solid var(--color-teal);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--retro-highlight);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  cursor: pointer;
+}
+
+.retro-id-badge__copy:hover,
+.retro-id-badge__copy:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .retro-counter {
@@ -236,7 +273,7 @@ onMounted(async () => {
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.85);
   margin-bottom: 8px;
 }
 
@@ -261,18 +298,31 @@ onMounted(async () => {
   font-variant-numeric: tabular-nums;
 }
 
+/* « IL Y A EU / 001247 / VISITES » se lit en trois lignes : sans l'unite
+   sous les chiffres, le compteur n'annoncerait plus ce qu'il compte. */
+.retro-counter__unit {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.85);
+}
+
 .retro-counter__goal {
   display: block;
   font-size: 0.68rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.65);
+  /* 0.65 tombait a 3,83:1 sur le turquoise clair, sous le seuil AA ;
+     0.85 remonte a 5,38:1 sans eclaircir le bloc. */
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .retro-ticker {
   min-width: 0;
   width: 100%;
   max-width: 480px;
-  background: var(--color-primary);
+  background: var(--retro-ticker-bg);
   border-radius: var(--radius-sm);
   overflow: hidden;
   padding: 10px 0;
@@ -307,5 +357,13 @@ onMounted(async () => {
   .retro-ticker__track {
     animation: none;
   }
+}
+
+/* En theme sombre, le fond --color-primary-dark de la banniere se detache
+   mal du fond de page (#060f18) : elle perd le relief qu'elle a en theme
+   clair. Une bordure turquoise lui redonne son contour sans changer sa
+   couleur de fond, deja porteuse de l'identite du bloc. */
+:global(:root[data-theme="dark"]) .retro-banner {
+  border: 1px solid var(--color-teal);
 }
 </style>

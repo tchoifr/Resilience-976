@@ -27,3 +27,20 @@ export function buildScenarioSession(scenario: Scenario): ScenarioSessionStep[] 
     options: shuffle(step.options),
   }))
 }
+
+// Un score sur 100 ne dit rien a qui vient de terminer une mise en
+// situation : le niveau qualitatif est ce qu'il retient. Le seuil bas est
+// formule sans jugement, conformement au ton editorial du site.
+export function getScenarioLevel(
+  score: number,
+): 'toImprove' | 'good' | 'excellent' {
+  if (score <= 49) {
+    return 'toImprove'
+  }
+
+  if (score <= 79) {
+    return 'good'
+  }
+
+  return 'excellent'
+}

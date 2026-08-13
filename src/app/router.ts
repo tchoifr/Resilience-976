@@ -85,6 +85,13 @@ const router = createRouter({
       },
     },
     {
+      path: '/assistant-liens',
+      component: () => import('@/views/ContentLinksView.vue'),
+      meta: {
+        seoKey: 'contentLinks',
+      },
+    },
+    {
       path: '/tableau-de-bord',
       component: () => import('@/views/DashboardView.vue'),
       meta: {
