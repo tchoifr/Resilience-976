@@ -159,6 +159,25 @@ Exemple:
 }
 ```
 
+### `GET /api/visitors/rank?visitorId=<uuid>`
+
+Ordre d'arrivee d'un visiteur, calcule sur son tout premier evenement.
+`rank` vaut `null` tant qu'aucun evenement n'a ete enregistre pour cet
+identifiant. Un identifiant mal forme renvoie `400 invalid_visitor_id`.
+
+```json
+{ "rank": 72, "total": 72 }
+```
+
+### `GET /api/assistant-liens/status`
+
+Indique si une cle Hugging Face est configuree sur le serveur, sans declencher
+d'appel au modele. La cle elle-meme n'est jamais renvoyee.
+
+```json
+{ "configured": true, "model": "Qwen/Qwen2.5-7B-Instruct" }
+```
+
 ## Stockage
 
 Les evenements analytics et les retours du formulaire sont ecrits dans SQLite:
@@ -239,6 +258,7 @@ ANALYTICS_ALLOWED_ORIGINS=https://domaine-final.fr
 VITE_ANALYTICS_ENABLED=true
 VITE_ANALYTICS_ENDPOINT=/api/events
 VITE_DASHBOARD_ENDPOINT=/api/dashboard
+VITE_VISITOR_RANK_ENDPOINT=/api/visitors/rank
 VITE_FEEDBACK_DATABASE_ENABLED=true
 VITE_FEEDBACK_ENDPOINT=/api/feedback
 VITE_GOOGLE_ANALYTICS_ENABLED=false
