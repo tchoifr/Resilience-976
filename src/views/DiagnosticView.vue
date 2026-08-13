@@ -70,9 +70,28 @@ onMounted(() => {
   }
 })
 
+// Changer de theme remplace quatre questions par quatre autres sans bouger la
+// page : le visiteur arrivait sur le nouvel ecran deja fait defiler en bas,
+// devant les boutons, sans voir les questions. On remonte donc en haut de la
+// zone, et le focus suit pour la navigation au clavier.
 async function focusTheme() {
   await nextTick()
-  questionRegion.value?.focus()
+
+  const region = questionRegion.value
+
+  if (!region) {
+    return
+  }
+
+  // `preventScroll` evite que le focus ramene la page a sa facon : le
+  // defilement est pilote juste apres, d'un seul geste.
+  region.focus({ preventScroll: true })
+  region.scrollIntoView({
+    block: 'start',
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ? 'auto'
+      : 'smooth',
+  })
 }
 
 function goPrevious() {
