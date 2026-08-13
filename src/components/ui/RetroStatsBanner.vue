@@ -29,6 +29,10 @@ function endpoint(devPath: string, envOverride: string | undefined): string {
 }
 
 const dashboardEndpoint = endpoint('/api/dashboard', import.meta.env.VITE_DASHBOARD_ENDPOINT)
+const visitorRankEndpoint = endpoint(
+  '/api/visitors/rank',
+  import.meta.env.VITE_VISITOR_RANK_ENDPOINT,
+)
 const quizStatsEndpoint = endpoint(
   '/api/quiz-results/stats',
   import.meta.env.VITE_QUIZ_STATS_ENDPOINT,
@@ -58,6 +62,18 @@ const engagedDigits = computed(() => String(engagedVisitors.value).padStart(6, '
 // a lire ou a recopier.
 const visitorId = formatVisitorIdForDisplay(getVisitorId())
 const copied = ref(false)
+const arrivalRank = ref<number | null>(null)
+
+// « 1er » puis « 2e » : la forme francaise change au premier rang seulement.
+const arrivalLabel = computed(() => {
+  if (arrivalRank.value === null) {
+    return ''
+  }
+
+  return arrivalRank.value === 1
+    ? t('retroStats.arrivalFirst')
+    : t('retroStats.arrivalRank', { rank: arrivalRank.value })
+})
 
 async function copyVisitorId() {
   try {
@@ -94,11 +110,17 @@ onMounted(async () => {
     return
   }
 
-  const [dashboard, quiz, video, scenario] = await Promise.all([
+  const [dashboard, quiz, video, scenario, arrival] = await Promise.all([
     fetchJson<DashboardStats>(dashboardEndpoint),
     fetchJson<{ total: number }>(quizStatsEndpoint),
     fetchJson<{ totalParticipants: number }>(videoStatsEndpoint),
     fetchJson<{ total: number }>(scenarioStatsEndpoint),
+    // Le rang n'existe qu'a partir du premier evenement enregistre : a la
+    // toute premiere visite, le serveur repond `rank: null` et la ligne reste
+    // masquee plutot que d'annoncer un rang faux.
+    fetchJson<{ rank: number | null }>(
+      `${visitorRankEndpoint}?visitorId=${encodeURIComponent(getVisitorId())}`,
+    ),
   ])
 
   if (dashboard) {
@@ -119,6 +141,10 @@ onMounted(async () => {
   if (scenario) {
     scenarioSessions.value = scenario.total
   }
+
+  if (arrival) {
+    arrivalRank.value = arrival.rank
+  }
 })
 </script>
 
@@ -130,6 +156,7 @@ onMounted(async () => {
       <button type="button" class="retro-id-badge__copy" @click="copyVisitorId">
         {{ copied ? t('retroStats.idCopied') : t('retroStats.idCopy') }}
       </button>
+      <span v-if="arrivalLabel" class="retro-id-badge__rank">{{ arrivalLabel }}</span>
     </div>
 
     <!-- Deux compteurs distincts : les visites mesurent la frequentation, les
@@ -257,6 +284,13 @@ onMounted(async () => {
 .retro-id-badge__copy:hover,
 .retro-id-badge__copy:focus-visible {
   background: rgba(255, 255, 255, 0.12);
+}
+
+.retro-id-badge__rank {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .retro-counter {

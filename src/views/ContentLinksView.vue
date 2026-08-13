@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { nextTick, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 
 import AppAlert from '@/components/ui/AppAlert.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import LinkButton from '@/components/ui/LinkButton.vue'
-import { askContentLinks } from '@/features/content-links/services/content-links.service'
+import {
+  askContentLinks,
+  fetchContentLinksStatus,
+} from '@/features/content-links/services/content-links.service'
 import type { ContentLinkMatch } from '@/features/content-links/types/content-links'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
@@ -22,6 +25,24 @@ const inputText = ref('')
 const messages = ref<ContentLinksMessage[]>([])
 const isLoading = ref(false)
 const transcript = ref<HTMLElement | null>(null)
+
+// « checking » tant que la reponse n'est pas arrivee, « off » aussi bien
+// quand la cle manque que quand le serveur ne repond pas : dans les deux cas
+// la recherche ne rendra rien, autant l'annoncer d'une seule facon.
+const engineState = ref<'checking' | 'on' | 'off'>('checking')
+const engineStatusLabel = computed(() => {
+  if (engineState.value === 'checking') {
+    return t('contentLinks.statusChecking')
+  }
+
+  return engineState.value === 'on'
+    ? t('contentLinks.statusConnected')
+    : t('contentLinks.statusDisconnected')
+})
+
+onMounted(async () => {
+  engineState.value = (await fetchContentLinksStatus()) === true ? 'on' : 'off'
+})
 
 function typeLabel(type: ContentLinkMatch['type']): string {
   return t(`contentLinks.type.${type}`)
@@ -77,8 +98,25 @@ function submitForm() {
   <section class="page">
     <div class="stack">
       <p class="eyebrow">{{ t('contentLinks.eyebrow') }}</p>
-      <h1>{{ t('contentLinks.title') }}</h1>
+      <div class="page-heading">
+        <h1>{{ t('contentLinks.title') }}</h1>
+        <span class="pill pill--warning">{{ t('contentLinks.alphaBadge') }}</span>
+      </div>
       <p class="muted">{{ t('contentLinks.intro') }}</p>
+
+      <!-- Le point colore est double d'un libelle : l'etat de la connexion ne
+           doit pas dependre de la seule couleur. -->
+      <p class="engine-status" :class="`engine-status--${engineState}`" aria-live="polite">
+        <span class="engine-status__dot" aria-hidden="true"></span>
+        {{ engineStatusLabel }}
+      </p>
+
+      <AppAlert :title="t('contentLinks.alphaBadge')" variant="warning">
+        {{ t('contentLinks.alphaNote') }}
+        <template v-if="engineState === 'off'">
+          {{ t('contentLinks.statusDisconnectedHelp') }}
+        </template>
+      </AppAlert>
 
       <section class="panel stack">
         <div ref="transcript" class="assistant-transcript" aria-live="polite">
@@ -130,6 +168,29 @@ function submitForm() {
 </template>
 
 <style scoped>
+.engine-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-weight: 700;
+}
+
+.engine-status__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--color-text-muted);
+}
+
+.engine-status--on .engine-status__dot {
+  background: var(--color-success-fg);
+}
+
+.engine-status--off .engine-status__dot {
+  background: var(--color-danger-fg);
+}
+
 .assistant-transcript {
   display: grid;
   gap: var(--space-3);

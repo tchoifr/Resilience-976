@@ -23,7 +23,8 @@
     "seo:sitemap": "node scripts/generate-sitemap.mjs",
     "seo:campaign-links": "node scripts/generate-campaign-links.mjs",
     "docs:raf-pdf": "node scripts/generate-raf-pdf.mjs",
-    "feedback:export": "node scripts/export-feedback.mjs"
+    "feedback:export": "node scripts/export-feedback.mjs",
+    "i18n:check": "node scripts/check-translations.mjs"
   },
   "dependencies": {
     "jspdf": "^4.2.1",

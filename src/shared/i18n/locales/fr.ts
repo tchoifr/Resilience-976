@@ -47,6 +47,8 @@ export const frMessages = {
     publicService: 'Plateforme publique et gratuite',
     noPersonalData: 'Sans compte, sans donnée personnelle',
     slogan: 'Ensemble, soyons prêts face aux risques.',
+    mission:
+      'Resilience 976 aide les habitants de Mayotte à évaluer leur préparation face aux risques majeurs et à passer à l’action, sans compte et sans donnée personnelle.',
     ariaLabel: 'Liens réglementaires',
     columnJourney: 'Le parcours',
     columnLearn: 'Se former',
@@ -246,10 +248,13 @@ export const frMessages = {
     idCopy: 'Copier',
     idCopied: 'Copié',
     counterLabel: 'IL Y A EU',
-    counterUnit: 'VISITES',
-    counterAria: 'Il y a eu {visits} visites sur le site.',
+    counterUnit: 'PAGES VUES',
+    counterAria: 'Il y a eu {visits} pages vues sur le site.',
+    arrivalFirst: 'VOUS ÊTES LE 1ᵉʳ VISITEUR',
+    arrivalRank: 'VOUS ÊTES LE {rank}ᵉ VISITEUR',
     engagedLabel: 'VISITEURS ENGAGÉS',
-    engagedAria: '{engaged} visiteurs engagés, objectif JNR 2026 : {target}',    goalLine: 'OBJECTIF JNR 2026 : {target}',
+    engagedAria: '{engaged} visiteurs engagés, objectif JNR 2026 : {target}',
+    goalLine: 'OBJECTIF JNR 2026 : {target}',
     ticker: {
       diagnostics: '{count} diagnostics complétés',
       quiz: '{count} quiz joués',
@@ -1024,6 +1029,14 @@ export const frMessages = {
     title: 'Assistant de liens vers le contenu du site',
     intro:
       'Posez une question sur un risque ou un sujet : l’outil renvoie des liens directs vers le contenu déjà validé du site (vidéos, mises en situation, ressources, quiz). Il ne rédige jamais de nouvelle réponse.',
+    alphaBadge: 'Version alpha',
+    alphaNote:
+      'Fonctionnalité en cours d’expérimentation : les liens proposés peuvent être incomplets ou hors sujet.',
+    statusChecking: 'Vérification du moteur…',
+    statusConnected: 'Moteur de recherche connecté',
+    statusDisconnected: 'Moteur de recherche non connecté',
+    statusDisconnectedHelp:
+      'Aucune clé Hugging Face n’est configurée sur ce serveur : la recherche renverra le message de repli.',
     inputLabel: 'Votre question',
     inputPlaceholder: 'Ex. les risques par rapport aux séismes',
     submit: 'Rechercher',

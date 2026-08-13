@@ -5,6 +5,24 @@ const contentLinksEndpoint =
   import.meta.env.VITE_CONTENT_LINKS_ENDPOINT ?? '/api/assistant-liens'
 const REQUEST_TIMEOUT_MS = 15_000
 
+// Etat de la configuration du serveur, interroge au chargement de la page :
+// null quand le serveur ne repond pas, c'est-a-dire indisponible lui aussi.
+export async function fetchContentLinksStatus(): Promise<boolean | null> {
+  try {
+    const response = await fetch(`${contentLinksEndpoint}/status`)
+
+    if (!response.ok) {
+      return null
+    }
+
+    const payload = await response.json()
+
+    return typeof payload.configured === 'boolean' ? payload.configured : null
+  } catch {
+    return null
+  }
+}
+
 // null signifie un echec technique (reseau, timeout, endpoint non
 // configure, reponse malformee) : l'appelant doit alors afficher le meme
 // message de repli qu'un refus explicite, sans distinguer les deux cas a

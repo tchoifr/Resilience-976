@@ -12,6 +12,7 @@ import {
   sanitizeContentLinksQuestion,
 } from './content-links.mjs'
 import { createRateLimiter, getClientIp } from './rate-limit.mjs'
+import { computeVisitorArrival } from './visitor-rank.mjs'
 
 const PORT = Number.parseInt(process.env.PORT ?? '8787', 10)
 const HOST = process.env.HOST ?? '127.0.0.1'
@@ -2725,6 +2726,26 @@ const server = createServer(async (request, response) => {
 
       const profile = await getVisitorProfile(visitorId)
       sendJson(response, 200, profile, origin)
+      return
+    }
+
+    if (request.method === 'GET' && requestUrl.pathname === '/api/visitors/rank') {
+      const visitorId = requestUrl.searchParams.get('visitorId') ?? ''
+
+      if (!isValidVisitorId(visitorId)) {
+        sendJson(response, 400, { error: 'invalid_visitor_id' }, origin)
+        return
+      }
+
+      const events = await readEvents()
+      sendJson(response, 200, computeVisitorArrival(events, visitorId), origin)
+      return
+    }
+
+    // Etat de la configuration, pas de l'appel : la page peut annoncer que le
+    // modele n'est pas branche sans depenser une requete Hugging Face.
+    if (request.method === 'GET' && requestUrl.pathname === '/api/assistant-liens/status') {
+      sendJson(response, 200, { configured: Boolean(HF_TOKEN), model: HF_CHAT_MODEL }, origin)
       return
     }
 
