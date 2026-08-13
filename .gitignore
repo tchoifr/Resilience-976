@@ -11,6 +11,9 @@ coverage/
 playwright-report/
 test-results/
 
+# Videos de demonstration (une vingtaine de Mo par enregistrement)
+demo-video*/
+
 # Local analytics data
 server/data/
 

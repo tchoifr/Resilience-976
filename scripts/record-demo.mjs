@@ -23,7 +23,14 @@ import { chromium } from 'playwright'
 const BASE_URL = process.argv[2] ?? 'http://127.0.0.1:4174'
 const VIDEO_DIR = process.argv[3] ?? './demo-video'
 const LOCALE = process.argv[4] ?? 'fr'
-const DOWNLOADS_DIR = path.join(VIDEO_DIR, 'downloads')
+// Chemin absolu : les PDF sont ensuite ouverts via une URL file://, qui ne
+// sait pas resoudre un chemin relatif au dossier de travail.
+const DOWNLOADS_DIR = path.resolve(VIDEO_DIR, 'downloads')
+
+// Les boutons de telechargement PDF portent tous l'icone « download » du jeu
+// maison : viser son trace evite de dependre du libelle, donc de la langue.
+const DOWNLOAD_BUTTON =
+  'button:has(svg path[d="M3 15v4a2 2 0 002 2h14a2 2 0 002-2v-4"])'
 
 async function smoothScrollToBottom(page, stepPause = 350) {
   const height = await page.evaluate(() => document.body.scrollHeight)
@@ -71,6 +78,80 @@ async function downloadAndViewPdf(page, buttonSelector, returnUrl) {
   await page.waitForTimeout(800)
 }
 
+// Les entrees du parcours vivent dans des sous-menus replies : il faut ouvrir
+// le groupe avant de cliquer le lien. Le groupe est designe par sa position
+// (0 = « Mon plan », 1 = « Se former ») pour rester independant de la langue.
+// Une pause separe les deux gestes pour que le menu se voie a l'ecran.
+async function navigateFromMenu(page, groupIndex, href) {
+  const nav = page.locator('#main-navigation')
+
+  await nav.locator('.nav-group__toggle').nth(groupIndex).click()
+  await page.waitForTimeout(600)
+  await nav.locator(`a[href="${href}"]`).click()
+  await page.waitForTimeout(1000)
+}
+
+// Le diagnostic presente un theme par ecran, soit quatre questions : il faut
+// toutes les renseigner avant que « Continuer » s'active. Les reponses sont
+// variees d'une question a l'autre pour obtenir un score intermediaire, plus
+// parlant en demonstration qu'un score nul ou parfait.
+async function completeDiagnostic(page) {
+  const progress = page.locator('.theme-progress__segments')
+  const themeCount = Number(await progress.getAttribute('aria-valuemax'))
+  let answered = 0
+
+  for (let theme = 1; theme <= themeCount; theme += 1) {
+    // La barre de progression porte le rang du theme affiche : l'attendre
+    // evite de repondre sur l'ecran precedent, encore rendu.
+    await page.waitForFunction(
+      (rank) =>
+        document
+          .querySelector('.theme-progress__segments')
+          ?.getAttribute('aria-valuenow') === String(rank),
+      theme,
+    )
+    await page.waitForTimeout(600)
+
+    const cards = page.locator('.question-card')
+    const cardCount = await cards.count()
+
+    for (let index = 0; index < cardCount; index += 1) {
+      const options = cards.nth(index).locator('input[type="radio"]')
+      const optionCount = await options.count()
+
+      if (optionCount > 0) {
+        await options.nth(answered % optionCount).check()
+        await page.waitForTimeout(350)
+      }
+
+      answered += 1
+    }
+
+    // Les quatre questions d'un theme ne tiennent pas dans un ecran : on les
+    // parcourt avant de continuer, sinon la moitie du diagnostic n'apparait
+    // jamais dans la video.
+    await smoothScrollToBottom(page, 250)
+    await scrollToTop(page)
+
+    // Un seul bouton principal a chaque ecran : « Continuer », puis
+    // « Confirmer le diagnostic » au dernier theme.
+    await page.locator('.cluster .button--primary').click()
+    await page.waitForTimeout(theme === themeCount ? 1200 : 700)
+
+    if (theme < themeCount) {
+      continue
+    }
+
+    // Le diagnostic confirme remplace le formulaire par le recapitulatif des
+    // reponses : on le montre avant d'ouvrir les resultats.
+    await smoothScrollToBottom(page, 450)
+    await scrollToTop(page)
+    await page.locator('.cluster .button--primary').click()
+    await page.waitForTimeout(1000)
+    return
+  }
+}
+
 async function visitStaticPage(page, href) {
   await page.locator(`footer nav a[href="${href}"]`).click()
   await page.waitForTimeout(1000)
@@ -116,49 +197,33 @@ async function main() {
   await page.waitForSelector('.question-card input[type="radio"]')
   await page.waitForTimeout(800)
 
-  // --- Diagnostic : réponses variées pour un score non nul ---
-  // Le flux a deux etapes sur la derniere question : "Confirmer" (aucune
-  // navigation), puis un second clic separe sur "Voir mes resultats" (aucun
-  // radio a cocher a cette derniere etape).
-  let index = 0
-  for (;;) {
-    const options = page.locator('.question-card input[type="radio"]')
-    const count = await options.count()
-
-    if (count > 0) {
-      const choice = index % count
-      await options.nth(choice).check()
-      await page.waitForTimeout(500)
-    }
-
-    await page.locator('.cluster .button--primary').click()
-    await page.waitForTimeout(500)
-
-    if (page.url().includes('/resultats')) {
-      break
-    }
-
-    index += 1
-  }
+  // --- Diagnostic : six themes de quatre questions ---
+  await completeDiagnostic(page)
 
   // --- Résultats + téléchargement et lecture du certificat PDF ---
   await page.waitForTimeout(1200)
   await smoothScrollToBottom(page, 500)
   await scrollToTop(page)
 
-  await downloadAndViewPdf(page, '.cluster .button--primary', BASE_URL + '/resultats')
+  await downloadAndViewPdf(
+    page,
+    DOWNLOAD_BUTTON,
+    BASE_URL + '/resultats',
+  )
 
   // --- Checklist + téléchargement et lecture du PDF ---
-  await page.locator('nav a[href="/checklist"]').click()
-  await page.waitForTimeout(1000)
+  await navigateFromMenu(page, 0, '/checklist')
   await smoothScrollToBottom(page, 450)
   await scrollToTop(page)
 
-  await downloadAndViewPdf(page, '.cluster .button--primary', BASE_URL + '/checklist')
+  await downloadAndViewPdf(
+    page,
+    DOWNLOAD_BUTTON,
+    BASE_URL + '/checklist',
+  )
 
   // --- Kit : ajuster le foyer, puis télécharger et lire le PDF ---
-  await page.locator('nav a[href="/kit"]').click()
-  await page.waitForTimeout(1000)
+  await navigateFromMenu(page, 0, '/kit')
 
   const childrenStepper = page.locator('.household-grid .stepper').nth(1)
   await childrenStepper.locator('.button--secondary').nth(1).click()
@@ -167,18 +232,21 @@ async function main() {
   await smoothScrollToBottom(page, 450)
   await scrollToTop(page)
 
-  await downloadAndViewPdf(page, '.cluster .button--primary', BASE_URL + '/kit')
+  await downloadAndViewPdf(
+    page,
+    DOWNLOAD_BUTTON,
+    BASE_URL + '/kit',
+  )
 
   // --- Ressources ---
-  await page.locator('nav a[href="/ressources"]').click()
+  await page.locator('#main-navigation a[href="/ressources"]').click()
   await page.waitForTimeout(1000)
   await smoothScrollToBottom(page, 450)
   await scrollToTop(page)
   await page.waitForTimeout(400)
 
   // --- Vidéos : liste, ouverture de la première, quiz, retour à la liste ---
-  await page.locator('nav a[href="/videos"]').click()
-  await page.waitForTimeout(1000)
+  await navigateFromMenu(page, 1, '/videos')
   await smoothScrollToBottom(page, 450)
   await scrollToTop(page)
 
@@ -196,8 +264,7 @@ async function main() {
   await page.waitForTimeout(1000)
 
   // --- Quiz interactif : tirage aléatoire, score en direct, attestation PDF ---
-  await page.locator('nav a[href="/quiz"]').click()
-  await page.waitForTimeout(1000)
+  await navigateFromMenu(page, 1, '/quiz')
 
   await page.locator('.cluster .button--primary').click()
   await page.waitForTimeout(700)
@@ -214,11 +281,14 @@ async function main() {
   await smoothScrollToBottom(page, 450)
   await scrollToTop(page)
 
-  await downloadAndViewPdf(page, '.cluster .button--primary', BASE_URL + '/quiz')
+  await downloadAndViewPdf(
+    page,
+    DOWNLOAD_BUTTON,
+    BASE_URL + '/quiz',
+  )
 
   // --- Mises en situation : un scénario complet jusqu'au débrief ---
-  await page.locator('nav a[href="/mises-en-situation"]').click()
-  await page.waitForTimeout(1000)
+  await navigateFromMenu(page, 1, '/mises-en-situation')
   await smoothScrollToBottom(page, 450)
   await scrollToTop(page)
 
