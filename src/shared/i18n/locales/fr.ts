@@ -23,6 +23,8 @@ export const frMessages = {
   navigation: {
     ariaLabel: 'Navigation principale',
     menu: 'Menu',
+    myPlan: 'Mon plan',
+    learn: 'Se former',
     home: 'Accueil',
     diagnostic: 'Diagnostic',
     results: 'Résultats',
@@ -45,7 +47,13 @@ export const frMessages = {
     publicService: 'Plateforme publique et gratuite',
     noPersonalData: 'Sans compte, sans donnée personnelle',
     slogan: 'Ensemble, soyons prêts face aux risques.',
+    mission:
+      'Resilience 976 aide les habitants de Mayotte à évaluer leur préparation face aux risques majeurs et à passer à l’action, sans compte et sans donnée personnelle.',
     ariaLabel: 'Liens réglementaires',
+    columnJourney: 'Le parcours',
+    columnLearn: 'Se former',
+    columnAbout: 'À propos',
+    giveFeedback: 'Donner mon avis',
   },
   common: {
     progress: 'Progression',
@@ -55,7 +63,12 @@ export const frMessages = {
     validationToDo: 'À valider',
     validationDone: 'Validé',
     yes: 'Oui',
+    no: 'Non',
     resetData: 'Effacer mes données',
+    resetDataConfirm:
+      'Effacer vos réponses, votre checklist et votre kit sur cet appareil ? Cette action est définitive.',
+    confirmDelete: 'Confirmer l’effacement',
+    cancel: 'Annuler',
   },
   status: {
     priorityNow: 'Priorité immédiate',
@@ -224,14 +237,24 @@ export const frMessages = {
       title: 'Page introuvable - Resilience 976',
       description: 'La page demandée n’existe pas.',
     },
+    contentLinks: {
+      title: 'Assistant de liens - Resilience 976',
+      description:
+        'Trouvez rapidement les vidéos, mises en situation, ressources et quiz du site liés à un risque ou un sujet.',
+    },
   },
   retroStats: {
     idBadgeLabel: 'ID VISITEUR',
-    idBadgeAria: 'Identifiant visiteur {id}',
-    counterLabel: 'VOUS ÊTES LE VISITEUR N°',
-    counterAria:
-      'Vous êtes le visiteur numéro {visits}. {engaged} visiteurs engagés, objectif JNR 2026 : {target}',
-    goalLine: '{engaged} VISITEURS ENGAGÉS · OBJECTIF JNR 2026 : {target}',
+    idCopy: 'Copier',
+    idCopied: 'Copié',
+    counterLabel: 'IL Y A EU',
+    counterUnit: 'PAGES VUES',
+    counterAria: 'Il y a eu {visits} pages vues sur le site.',
+    arrivalFirst: 'VOUS ÊTES LE 1ᵉʳ VISITEUR',
+    arrivalRank: 'VOUS ÊTES LE {rank}ᵉ VISITEUR',
+    engagedLabel: 'VISITEURS ENGAGÉS',
+    engagedAria: '{engaged} visiteurs engagés, objectif JNR 2026 : {target}',
+    goalLine: 'OBJECTIF JNR 2026 : {target}',
     ticker: {
       diagnostics: '{count} diagnostics complétés',
       quiz: '{count} quiz joués',
@@ -277,13 +300,24 @@ export const frMessages = {
   diagnostic: {
     title: 'Diagnostic',
     questionCount: 'Question {current} / {total}',
+    themeProgress: 'Thème {current} sur {total}',
+    themeIncomplete: 'Répondez aux {count} questions de ce thème pour continuer.',
+    themeDone: 'Thème terminé',
     missingAnswer: 'Sélectionnez une réponse pour continuer.',
     previous: 'Précédent',
     next: 'Continuer',
     confirm: 'Confirmer le diagnostic',
-    confirmedMessage: 'Vos réponses sont confirmées.',
+    confirmedTitle: 'Diagnostic confirmé',
+    confirmedMessage:
+      'Vos réponses sont enregistrées sur cet appareil. Vous pouvez les relire, les modifier ou tout effacer pour recommencer.',
+    resetHint: 'Efface vos réponses sur cet appareil et repart du premier thème.',
     results: 'Voir mes résultats',
     noQuestionError: 'Aucune question disponible',
+  },
+  answers: {
+    title: 'Mes réponses',
+    intro: '{answered} réponses sur {total}, enregistrées sur cet appareil.',
+    missing: 'Sans réponse',
   },
   results: {
     eyebrow: 'Résultats',
@@ -292,6 +326,12 @@ export const frMessages = {
     incomplete: 'Aucun diagnostic n’est encore renseigné sur cet appareil.',
     startDiagnostic: 'Commencer le diagnostic',
     domainScores: 'Scores par domaine',
+    domainLevels: {
+      insufficient: 'À renforcer',
+      fragile: 'Fragile',
+      good: 'Correct',
+      very_good: 'Solide',
+    },
     emptyScores: 'Les scores apparaîtront après vos premières réponses.',
     immediatePriorities: 'Vos 3 priorités immédiates',
     weekActions: 'Actions sous sept jours',
@@ -325,6 +365,7 @@ export const frMessages = {
     placeholder: 'Ex. Récupérer les médicaments, appeler un voisin...',
     add: 'Ajouter à ma checklist',
     personalAction: 'Action personnelle',
+    removeItem: 'Supprimer l’action « {label} »',
     downloadPdf: 'Télécharger ma checklist PDF',
     printPage: 'Imprimer la page',
   },
@@ -450,6 +491,8 @@ export const frMessages = {
       'Une vraie vidéo officielle est disponible sur le site source. Elle s’ouvre dans un nouvel onglet pour éviter de charger un traceur externe sans action de votre part.',
     openOfficialVideo: 'Ouvrir la vidéo officielle',
     quizTitle: 'Question de vérification',
+    quizRule:
+      'Votre progression avance quand vous trouvez la bonne réponse. En cas d’erreur, vous pouvez réessayer autant de fois que nécessaire.',
     validateAnswer: 'Valider ma réponse',
     markCompleted: 'Marquer comme terminé',
     markExternalCompleted: 'J’ai regardé la vidéo',
@@ -541,12 +584,12 @@ export const frMessages = {
       'Ce kit personnalisé est un support de préparation. Il ne remplace pas les consignes diffusées par les autorités compétentes.',
   },
   userExperiment: {
-    eyebrow: 'Expérimentation utilisateurs',
-    title: 'Questionnaire de test',
+    eyebrow: 'Votre avis',
+    title: 'Donnez votre avis sur le site',
+    intro:
+      'Vous avez parcouru Resilience 976 ? Dites-nous ce qui vous a servi et ce qui vous a bloqué. Vos réponses sont anonymes et nous aident à améliorer le site.',
     summary: {
       submissions: '{count} retour(s) enregistré(s)',
-      description:
-        'Données dans le cloud quand elle est active, avec copie locale de secours sur cet appareil.',
       statusSaving: 'Enregistrement dans le cloud en cours.',
       statusDatabase: 'Dernier retour enregistré dans le cloud.',
       statusLocal: 'Copie locale conservée. Base indisponible ou désactivée.',
@@ -598,13 +641,12 @@ export const frMessages = {
       concern: 'Y a-t-il une recommandation inadaptée ou préoccupante ?',
     },
     actions: {
-      submit: 'Enregistrer le retour',
-      exportCsv: 'Export CSV',
-      exportJson: 'Export JSON',
+      submit: 'Envoyer mon avis',
     },
     lastSubmission: {
       title: 'Dernier retour',
-      code: 'Code',
+      sentAt: 'Envoyé le',
+      code: 'Code participant',
       duration: 'Durée',
       minutesSuffix: 'min',
     },
@@ -971,10 +1013,46 @@ export const frMessages = {
     debrief: {
       title: 'Débrief',
       scoreLabel: 'Score de sécurité',
+      levels: {
+        toImprove: 'À renforcer',
+        good: 'Bien',
+        excellent: 'Excellent',
+      },
+      reflexCountOne: '{good} bon réflexe sur {total}',
+      reflexCount: '{good} bons réflexes sur {total}',
+      goodReflex: 'Bon réflexe',
+      toReview: 'À revoir',
       yourChoice: 'Votre choix',
+      safestOption: 'Réponse la plus sûre',
       safestBehavior: 'Comportement le plus sûr',
       watchCapsule: 'Revoir la capsule liée',
       restart: 'Recommencer ce scénario',
+    },
+  },
+  contentLinks: {
+    eyebrow: 'Trouver le bon contenu',
+    title: 'Assistant de liens vers le contenu du site',
+    intro:
+      'Posez une question sur un risque ou un sujet : l’outil renvoie des liens directs vers le contenu déjà validé du site (vidéos, mises en situation, ressources, quiz). Il ne rédige jamais de nouvelle réponse.',
+    alphaBadge: 'Version alpha',
+    alphaNote:
+      'Fonctionnalité en cours d’expérimentation : les liens proposés peuvent être incomplets ou hors sujet.',
+    statusChecking: 'Vérification du moteur…',
+    statusConnected: 'Moteur de recherche connecté',
+    statusDisconnected: 'Moteur de recherche non connecté',
+    statusDisconnectedHelp:
+      'Aucune clé Hugging Face n’est configurée sur ce serveur : la recherche renverra le message de repli.',
+    inputLabel: 'Votre question',
+    inputPlaceholder: 'Ex. les risques par rapport aux séismes',
+    submit: 'Rechercher',
+    emptyState: 'Posez une question pour voir apparaître les liens correspondants.',
+    fallbackText: 'Aucun contenu du site ne correspond clairement à cette question.',
+    openResources: 'Voir toutes les ressources',
+    type: {
+      video: 'Vidéo',
+      scenario: 'Mise en situation',
+      resource: 'Ressources',
+      quiz: 'Quiz',
     },
   },
 } as const

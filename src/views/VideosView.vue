@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 
 import AppButton from '@/components/ui/AppButton.vue'
+import LinkButton from '@/components/ui/LinkButton.vue'
 import ProgressBar from '@/components/ui/ProgressBar.vue'
 import { videos } from '@/features/assessment/services/content.service'
 import {
@@ -68,7 +69,12 @@ async function downloadAttestation() {
           <h1>{{ t('videos.title') }}</h1>
           <p class="muted">{{ t('videos.intro') }}</p>
         </div>
-        <AppButton v-if="completedCount > 0" variant="secondary" @click="resetProgress">
+        <AppButton
+          v-if="completedCount > 0"
+          variant="secondary"
+          icon="refresh"
+          @click="resetProgress"
+        >
           {{ t('videos.resetProgress') }}
         </AppButton>
       </div>
@@ -79,7 +85,7 @@ async function downloadAttestation() {
           {{ t('videos.completedCount', { completed: completedCount, total: videos.length }) }}
         </p>
         <div v-if="isJourneyComplete" class="cluster">
-          <AppButton :disabled="isGeneratingPdf" @click="downloadAttestation">
+          <AppButton icon="download" :disabled="isGeneratingPdf" @click="downloadAttestation">
             {{ isGeneratingPdf ? t('videos.preparingPdf') : t('videos.downloadAttestation') }}
           </AppButton>
         </div>
@@ -131,9 +137,9 @@ async function downloadAttestation() {
               </div>
             </dl>
           </div>
-          <RouterLink class="link-button link-button--primary" :to="`/videos/${video.slug}`">
+          <LinkButton :to="`/videos/${video.slug}`" icon="arrow-right">
             {{ t('videos.watch') }}
-          </RouterLink>
+          </LinkButton>
         </article>
       </div>
     </div>

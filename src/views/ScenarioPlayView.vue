@@ -3,6 +3,7 @@ import { computed, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 
 import AppButton from '@/components/ui/AppButton.vue'
+import LinkButton from '@/components/ui/LinkButton.vue'
 import ProgressBar from '@/components/ui/ProgressBar.vue'
 import SourceLink from '@/components/ui/SourceLink.vue'
 import {
@@ -12,6 +13,8 @@ import {
 } from '@/features/assessment/services/content.service'
 import type { Source } from '@/features/assessment/types/source'
 import { syncScenarioResult } from '@/features/scenarios/services/scenario-sync.service'
+import { buildScenarioDebrief } from '@/features/scenarios/services/scenario-debrief.service'
+import { getScenarioLevel } from '@/features/scenarios/services/scenario.service'
 import { useScenarioStore } from '@/features/scenarios/stores/scenario.store'
 import { trackEvent } from '@/shared/analytics/analytics.service'
 import { useI18n } from '@/shared/i18n/i18n.service'
@@ -34,6 +37,24 @@ const sources = computed<Source[]>(() => {
   return scenario.value.sourceIds
     .map((sourceId) => sourcesById.value.get(sourceId))
     .filter((source): source is Source => source !== undefined)
+})
+const debrief = computed(() => buildScenarioDebrief(scenarioStore.choices))
+const scenarioLevel = computed(() => getScenarioLevel(scenarioStore.score))
+const levelVariant = computed(() => {
+  if (scenarioLevel.value === 'excellent') {
+    return 'success'
+  }
+
+  return scenarioLevel.value === 'good' ? 'warning' : 'danger'
+})
+// « 1 bons réflexes » se lisait mal : le singulier a sa propre chaine.
+const reflexCountLabel = computed(() => {
+  const key =
+    debrief.value.goodCount <= 1
+      ? 'scenarioPlay.debrief.reflexCountOne'
+      : 'scenarioPlay.debrief.reflexCount'
+
+  return t(key, { good: debrief.value.goodCount, total: debrief.value.total })
 })
 const progressPercent = computed(() =>
   scenarioStore.total === 0
@@ -117,7 +138,11 @@ watch(
           </fieldset>
 
           <div class="cluster">
-            <AppButton :disabled="scenarioStore.selectedOptionId === null" @click="confirmStep">
+            <AppButton
+              icon="check"
+              :disabled="scenarioStore.selectedOptionId === null"
+              @click="confirmStep"
+            >
               {{
                 scenarioStore.isLastStep
                   ? t('scenarioPlay.seeDebrief')
@@ -131,18 +156,56 @@ watch(
       <template v-else-if="scenarioStore.status === 'debrief'">
         <section class="panel stack">
           <h2 class="section-title">{{ t('scenarioPlay.debrief.title') }}</h2>
-          <p>
-            {{ t('scenarioPlay.debrief.scoreLabel') }} :
-            <strong>{{ scenarioStore.score }}/100</strong>
-          </p>
 
-          <div v-for="choice in scenarioStore.choices" :key="choice.step.id" class="stack">
-            <p><strong>{{ choice.step.prompt }}</strong></p>
-            <p class="muted">
-              {{ t('scenarioPlay.debrief.yourChoice') }} : {{ choice.selectedOption.label }}
-            </p>
-            <p>{{ t('scenarioPlay.debrief.safestBehavior') }} : {{ choice.step.explanation }}</p>
+          <!-- Le niveau et le nombre de bons reflexes d'abord : c'est ce que
+               le visiteur cherche en arrivant sur le debrief. -->
+          <div class="debrief-summary">
+            <span class="pill" :class="`pill--${levelVariant}`">
+              {{ t(`scenarioPlay.debrief.levels.${scenarioLevel}`) }}
+            </span>
+            <p class="muted">{{ reflexCountLabel }}</p>
           </div>
+
+          <ol class="debrief-steps">
+            <li
+              v-for="(entry, index) in debrief.entries"
+              :key="entry.choice.step.id"
+              class="debrief-step"
+              :class="entry.isBest ? 'debrief-step--good' : 'debrief-step--review'"
+            >
+              <p class="debrief-step__prompt">
+                <span class="debrief-step__number">{{ index + 1 }}</span>
+                {{ entry.choice.step.prompt }}
+              </p>
+
+              <!-- La pastille est doublee du libelle : le bon reflexe ne doit
+                   pas se deviner a la seule couleur. -->
+              <p class="debrief-step__verdict">
+                <span aria-hidden="true">{{ entry.isBest ? '✓' : '!' }}</span>
+                {{
+                  entry.isBest
+                    ? t('scenarioPlay.debrief.goodReflex')
+                    : t('scenarioPlay.debrief.toReview')
+                }}
+              </p>
+
+              <dl class="debrief-step__detail">
+                <div>
+                  <dt>{{ t('scenarioPlay.debrief.yourChoice') }}</dt>
+                  <dd>{{ entry.choice.selectedOption.label }}</dd>
+                </div>
+                <div v-if="!entry.isBest">
+                  <dt>{{ t('scenarioPlay.debrief.safestOption') }}</dt>
+                  <dd>{{ entry.bestOption.label }}</dd>
+                </div>
+              </dl>
+
+              <p class="muted">
+                {{ t('scenarioPlay.debrief.safestBehavior') }} :
+                {{ entry.choice.step.explanation }}
+              </p>
+            </li>
+          </ol>
 
           <ul v-if="sources.length > 0" class="source-list">
             <li v-for="source in sources" :key="source.id">
@@ -151,14 +214,14 @@ watch(
           </ul>
 
           <div class="cluster">
-            <RouterLink
+            <LinkButton
               v-if="linkedVideo"
-              class="link-button link-button--secondary"
+              variant="secondary"
               :to="`/videos/${linkedVideo.slug}`"
             >
               {{ t('scenarioPlay.debrief.watchCapsule') }}
-            </RouterLink>
-            <AppButton variant="secondary" @click="startScenario">
+            </LinkButton>
+            <AppButton variant="secondary" icon="refresh" @click="startScenario">
               {{ t('scenarioPlay.debrief.restart') }}
             </AppButton>
           </div>
@@ -170,9 +233,9 @@ watch(
     <div class="panel stack">
       <p class="eyebrow">{{ t('notFound.eyebrow') }}</p>
       <h1>{{ t('notFound.title') }}</h1>
-      <RouterLink class="link-button link-button--primary" to="/mises-en-situation">
+      <LinkButton to="/mises-en-situation" icon="arrow-left">
         {{ t('scenarioPlay.backToList') }}
-      </RouterLink>
+      </LinkButton>
     </div>
   </section>
 </template>

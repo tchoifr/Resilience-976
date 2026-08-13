@@ -148,7 +148,7 @@ async function downloadKitPdf() {
       </section>
 
       <div class="cluster">
-        <AppButton :disabled="isGeneratingPdf" @click="downloadKitPdf">
+        <AppButton icon="download" :disabled="isGeneratingPdf" @click="downloadKitPdf">
           {{ isGeneratingPdf ? t('kit.preparingPdf') : t('kit.downloadPdf') }}
         </AppButton>
       </div>

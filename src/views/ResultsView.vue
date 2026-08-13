@@ -5,6 +5,8 @@ import { RouterLink } from 'vue-router'
 import ActionCard from '@/components/ui/ActionCard.vue'
 import AppAlert from '@/components/ui/AppAlert.vue'
 import AppButton from '@/components/ui/AppButton.vue'
+import DangerConfirmButton from '@/components/ui/DangerConfirmButton.vue'
+import LinkButton from '@/components/ui/LinkButton.vue'
 import ScoreGauge from '@/components/ui/ScoreGauge.vue'
 import {
   actions,
@@ -17,7 +19,10 @@ import {
   buildActionPlan,
   getRecommendedActions,
 } from '@/features/assessment/services/recommendation.service'
-import { calculateAssessment } from '@/features/assessment/services/scoring.service'
+import {
+  calculateAssessment,
+  getDomainLevelId,
+} from '@/features/assessment/services/scoring.service'
 import { getKitItems } from '@/features/assessment/services/kit.service'
 import { useAssessmentStore } from '@/features/assessment/stores/assessment.store'
 import type { ScoreLevel } from '@/features/assessment/types/assessment'
@@ -155,11 +160,15 @@ async function exportPdf(mode: 'download' | 'print') {
           >
             <div class="domain-score__label">
               <span>{{ getDomainLabel(domain.id) }}</span>
-              <span>{{ domain.score }}/100</span>
+              <span>
+                {{ t(`results.domainLevels.${getDomainLevelId(domain.score)}`) }}
+                — {{ domain.score }}/100
+              </span>
             </div>
             <div class="domain-score__track">
               <div
                 class="domain-score__bar"
+                :class="`domain-score__bar--${getDomainLevelId(domain.score)}`"
                 :style="{ width: `${domain.score}%` }"
               ></div>
             </div>
@@ -194,13 +203,18 @@ async function exportPdf(mode: 'download' | 'print') {
       </AppAlert>
 
       <div class="cluster">
-        <RouterLink class="link-button link-button--primary" to="/checklist">{{
+        <LinkButton to="/checklist" icon="arrow-right">{{
           t('results.openChecklist')
-        }}</RouterLink>
-        <RouterLink class="link-button link-button--secondary" to="/kit">{{
+        }}</LinkButton>
+        <LinkButton to="/kit" variant="secondary" icon="box">{{
           t('results.openKit')
-        }}</RouterLink>
-        <AppButton :disabled="isGeneratingPdf" @click="exportPdf('download')">
+        }}</LinkButton>
+        <AppButton
+          variant="secondary"
+          icon="download"
+          :disabled="isGeneratingPdf"
+          @click="exportPdf('download')"
+        >
           {{
             isGeneratingPdf
               ? t('results.preparingPdf')
@@ -209,14 +223,22 @@ async function exportPdf(mode: 'download' | 'print') {
         </AppButton>
         <AppButton
           variant="secondary"
+          icon="printer"
           :disabled="isGeneratingPdf"
           @click="exportPdf('print')"
         >
           {{ t('results.printCertificate') }}
         </AppButton>
-        <AppButton variant="danger" @click="assessmentStore.reset">{{
-          t('common.resetData')
-        }}</AppButton>
+      </div>
+
+      <!-- Effacer ses donnees est irreversible : la placer dans la meme
+           rangee que les actions courantes l'expose au clic par erreur. -->
+      <div class="cluster danger-zone">
+        <DangerConfirmButton
+          :label="t('common.resetData')"
+          :question="t('common.resetDataConfirm')"
+          @confirm="assessmentStore.reset"
+        />
       </div>
     </div>
   </section>

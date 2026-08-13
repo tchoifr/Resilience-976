@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppButton from '@/components/ui/AppButton.vue'
+import DangerConfirmButton from '@/components/ui/DangerConfirmButton.vue'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
 const { t } = useI18n()
@@ -10,10 +10,6 @@ const { t } = useI18n()
 // Confirmed first: unlike the previous assessment-only reset, this can no
 // longer be undone by simply redoing the diagnostic.
 function clearAllLocalData() {
-  if (!window.confirm(t('legal.resetLocalConfirm'))) {
-    return
-  }
-
   window.localStorage.clear()
   window.location.reload()
 }
@@ -34,9 +30,11 @@ function clearAllLocalData() {
         <h2 class="section-title">{{ t('legal.dataTitle') }}</h2>
         <p>{{ t('legal.data') }}</p>
         <p>{{ t('legal.privacy') }}</p>
-        <AppButton variant="danger" @click="clearAllLocalData">
-          {{ t('legal.resetLocal') }}
-        </AppButton>
+        <DangerConfirmButton
+          :label="t('legal.resetLocal')"
+          :question="t('legal.resetLocalConfirm')"
+          @confirm="clearAllLocalData"
+        />
       </section>
 
       <section class="panel stack">

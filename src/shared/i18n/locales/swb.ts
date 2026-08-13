@@ -465,8 +465,6 @@ export const swbMessages = {
     title: 'Zi swali za udzisa',
     summary: {
       submissions: '{count} javu(bu) ziandzishiwe',
-      description:
-        'Baze cloud harimwa seriveri wakati inashughuli, na kopiya ya papahi harimwa mudjihazi unu.',
       statusSaving: 'Uandzisha harimwa baze inashughuli.',
       statusDatabase: 'Javu ya mwisho iandzishiwe harimwa baze cloud.',
       statusLocal: 'Kopiya ya papahi ihifadhiwe. Baze kayipo wala kayishughuli.',
@@ -517,8 +515,6 @@ export const swbMessages = {
     },
     actions: {
       submit: 'Hifadhi javu',
-      exportCsv: 'Export CSV',
-      exportJson: 'Export JSON',
     },
     lastSubmission: {
       title: 'Javu ya mwisho',
@@ -609,11 +605,16 @@ export const swbMessages = {
   // Brouillon non relu par un locuteur natif (comme le reste de ce fichier).
   retroStats: {
     idBadgeLabel: 'ID YA MUTRU',
-    idBadgeAria: 'Identifiant ya mutru {id}',
-    counterLabel: 'WE NDIWE MUTRU N°',
-    counterAria:
-      'We ndiwe mutru namba {visits}. {engaged} watru wandzianzishe, lengo JNR 2026 : {target}',
-    goalLine: '{engaged} WATRU WANDZIANZISHE · LENGO JNR 2026 : {target}',
+    // « We ndiwe mutru n° » est la formulation qui existait pour l'ancien
+    // compteur : elle redevient exacte pour l'ordre d'arrivee.
+    arrivalFirst: 'WE NDIWE MUTRU N° 1',
+    arrivalRank: 'WE NDIWE MUTRU N° {rank}',
+    // Les libelles du compteur de pages vues restent en francais : aucune
+    // formulation relue n'existe pour « il y a eu N pages vues ».
+    // Les deux moities de l'ancienne ligne d'objectif, separees comme en
+    // francais : le libelle du bloc d'un cote, l'objectif de l'autre.
+    engagedLabel: 'WATRU WANDZIANZISHE',
+    goalLine: 'LENGO JNR 2026 : {target}',
     ticker: {
       diagnostics: '{count} udzisa zioandzishiwe',
       quiz: '{count} quiz zicheziwe',

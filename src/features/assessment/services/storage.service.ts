@@ -1,6 +1,9 @@
 import type { AssessmentState } from '../types/assessment'
 
-export const ASSESSMENT_VERSION = '1.0.0'
+// 1.1.0 : `currentIndex` designe un theme (0 a 5) et non plus une question
+// (0 a 23). Relire un etat 1.0.0 rouvrirait le diagnostic sur un theme
+// arbitraire ou hors bornes, d'ou la montee de version.
+export const ASSESSMENT_VERSION = '1.1.0'
 export const STORAGE_KEY = `resilience976-assessment:${ASSESSMENT_VERSION}`
 
 function canUseLocalStorage(): boolean {

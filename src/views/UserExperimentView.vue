@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/* global AbortController, Blob, fetch, URL */
+/* global AbortController, fetch */
 import { computed, onMounted, ref } from 'vue'
 
 import AppButton from '@/components/ui/AppButton.vue'
@@ -84,6 +84,61 @@ const saveStatusLabel = computed(() => {
 
   return ''
 })
+
+// Les libelles sont ceux des listes deroulantes du formulaire : reafficher la
+// valeur brute ('smartphone') ferait lire au visiteur autre chose que ce qu'il
+// a choisi.
+const deviceLabels: Record<string, string> = {
+  smartphone: 'userExperiment.session.deviceSmartphone',
+  ordinateur: 'userExperiment.session.deviceComputer',
+  tablette: 'userExperiment.session.deviceTablet',
+}
+const profileLabels: Record<string, string> = {
+  famille: 'userExperiment.session.profileFamily',
+  jeune: 'userExperiment.session.profileYoung',
+  senior: 'userExperiment.session.profileSenior',
+  aidant: 'userExperiment.session.profileHelper',
+  relais: 'userExperiment.session.profileRelay',
+  autre: 'userExperiment.session.profileOther',
+}
+const assistanceLabels: Record<string, string> = {
+  aucune: 'userExperiment.session.assistanceNone',
+  faible: 'userExperiment.session.assistanceLow',
+  importante: 'userExperiment.session.assistanceHigh',
+}
+
+// Une valeur inconnue (retour enregistre avant un changement de formulaire)
+// est reaffichee telle quelle plutot que remplacee par une cle technique.
+function labelFor(labels: Record<string, string>, value: string): string {
+  const key = labels[value]
+
+  return key ? t(key) : value
+}
+
+function deviceLabel(value: string): string {
+  return labelFor(deviceLabels, value)
+}
+
+function profileLabel(value: string): string {
+  return labelFor(profileLabels, value)
+}
+
+function assistanceLabel(value: string): string {
+  return labelFor(assistanceLabels, value)
+}
+
+function formatDateTime(iso: string): string {
+  const date = new Date(iso)
+
+  if (Number.isNaN(date.getTime())) {
+    return iso
+  }
+
+  return new Intl.DateTimeFormat('fr-FR', {
+    dateStyle: 'long',
+    timeStyle: 'short',
+  }).format(date)
+}
 
 function createInitialRatings(): Record<RatingKey, number> {
   return ratingQuestions.reduce(
@@ -186,75 +241,6 @@ function submitFeedback() {
   resetForm()
 }
 
-function downloadTextFile(filename: string, content: string, type: string) {
-  const url = URL.createObjectURL(new Blob([content], { type }))
-  const link = document.createElement('a')
-
-  link.href = url
-  link.download = filename
-  link.click()
-  URL.revokeObjectURL(url)
-}
-
-function exportJson() {
-  downloadTextFile(
-    'retours-utilisateurs-resilience-976.json',
-    JSON.stringify(savedFeedback.value, null, 2),
-    'application/json;charset=utf-8',
-  )
-}
-
-function toCsvValue(value: string | number | boolean): string {
-  return `"${String(value).replace(/"/g, '""')}"`
-}
-
-function exportCsv() {
-  const headers = [
-    'id',
-    'createdAt',
-    'visitorId',
-    'participantCode',
-    'device',
-    'browser',
-    'profile',
-    'assistance',
-    'durationMinutes',
-    'completedJourney',
-    ...ratingQuestions.map((question) => question.key),
-    'usefulAction',
-    'difficulty',
-    'priorityImprovement',
-    'concern',
-  ]
-  const rows = savedFeedback.value.map((entry) =>
-    [
-      entry.id,
-      entry.createdAt,
-      entry.visitorId,
-      entry.participantCode,
-      entry.device,
-      entry.browser,
-      entry.profile,
-      entry.assistance,
-      entry.durationMinutes,
-      entry.completedJourney,
-      ...ratingQuestions.map((question) => entry.ratings[question.key]),
-      entry.usefulAction,
-      entry.difficulty,
-      entry.priorityImprovement,
-      entry.concern,
-    ]
-      .map(toCsvValue)
-      .join(','),
-  )
-
-  downloadTextFile(
-    'retours-utilisateurs-resilience-976.csv',
-    [headers.join(','), ...rows].join('\n'),
-    'text/csv;charset=utf-8',
-  )
-}
-
 onMounted(() => {
   loadSavedFeedback()
   browser.value = window.navigator.userAgent.slice(0, 120)
@@ -266,12 +252,10 @@ onMounted(() => {
     <div class="stack">
       <p class="eyebrow">{{ t('userExperiment.eyebrow') }}</p>
       <h1>{{ t('userExperiment.title') }}</h1>
+      <p class="muted">{{ t('userExperiment.intro') }}</p>
 
       <section class="panel experiment-summary">
         <strong>{{ t('userExperiment.summary.submissions', { count: submissionsCount }) }}</strong>
-        <span>
-          {{ t('userExperiment.summary.description') }}
-        </span>
         <small v-if="saveStatusLabel" aria-live="polite">
           {{ saveStatusLabel }}
         </small>
@@ -411,44 +395,50 @@ onMounted(() => {
         </fieldset>
 
         <div class="cluster">
-          <AppButton type="submit">{{ t('userExperiment.actions.submit') }}</AppButton>
-          <AppButton
-            variant="secondary"
-            :disabled="submissionsCount === 0"
-            @click="exportCsv"
-          >
-            {{ t('userExperiment.actions.exportCsv') }}
-          </AppButton>
-          <AppButton
-            variant="secondary"
-            :disabled="submissionsCount === 0"
-            @click="exportJson"
-          >
-            {{ t('userExperiment.actions.exportJson') }}
-          </AppButton>
+          <AppButton type="submit" icon="check">{{
+            t('userExperiment.actions.submit')
+          }}</AppButton>
         </div>
       </form>
 
+      <!-- Les valeurs enregistrees sont des codes ('smartphone', 'aucune',
+           date ISO) : elles sont reaffichees avec les libelles du formulaire
+           et une date lisible, pour que le visiteur relise ce qu'il a saisi. -->
       <section v-if="lastSubmission" class="panel stack">
         <h2 class="section-title">{{ t('userExperiment.lastSubmission.title') }}</h2>
-        <div class="quality-list">
-          <div class="quality-row">
-            <strong>{{ t('userExperiment.lastSubmission.code') }}</strong>
-            <span>{{ lastSubmission.participantCode }}</span>
-            <small>{{ lastSubmission.createdAt }}</small>
+        <dl class="compact-definitions">
+          <div>
+            <dt>{{ t('userExperiment.lastSubmission.sentAt') }}</dt>
+            <dd>{{ formatDateTime(lastSubmission.createdAt) }}</dd>
           </div>
-          <div class="quality-row">
-            <strong>{{ t('userExperiment.lastSubmission.duration') }}</strong>
-            <span
-              >{{ lastSubmission.durationMinutes }}
-              {{ t('userExperiment.lastSubmission.minutesSuffix') }}</span
-            >
-            <small
-              >{{ lastSubmission.device }} -
-              {{ lastSubmission.assistance }}</small
-            >
+          <div>
+            <dt>{{ t('userExperiment.lastSubmission.code') }}</dt>
+            <dd class="experiment-code">{{ lastSubmission.participantCode }}</dd>
           </div>
-        </div>
+          <div>
+            <dt>{{ t('userExperiment.session.device') }}</dt>
+            <dd>{{ deviceLabel(lastSubmission.device) }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('userExperiment.session.profile') }}</dt>
+            <dd>{{ profileLabel(lastSubmission.profile) }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('userExperiment.session.assistance') }}</dt>
+            <dd>{{ assistanceLabel(lastSubmission.assistance) }}</dd>
+          </div>
+          <div>
+            <dt>{{ t('userExperiment.lastSubmission.duration') }}</dt>
+            <dd>
+              {{ lastSubmission.durationMinutes }}
+              {{ t('userExperiment.lastSubmission.minutesSuffix') }}
+            </dd>
+          </div>
+          <div>
+            <dt>{{ t('userExperiment.session.completed') }}</dt>
+            <dd>{{ lastSubmission.completedJourney ? t('common.yes') : t('common.no') }}</dd>
+          </div>
+        </dl>
       </section>
     </div>
   </section>

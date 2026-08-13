@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
-
+import LinkButton from '@/components/ui/LinkButton.vue'
 import { scenarios } from '@/features/assessment/services/content.service'
 import { getDomainLabel, useI18n } from '@/shared/i18n/i18n.service'
 
@@ -19,12 +18,9 @@ const { t } = useI18n()
           <span class="pill">{{ getDomainLabel(scenario.domain) }}</span>
           <h2 class="section-title">{{ scenario.title }}</h2>
           <p>{{ scenario.intro }}</p>
-          <RouterLink
-            class="link-button link-button--primary"
-            :to="`/mises-en-situation/${scenario.id}`"
-          >
+          <LinkButton :to="`/mises-en-situation/${scenario.id}`" icon="arrow-right">
             {{ t('scenarios.start') }}
-          </RouterLink>
+          </LinkButton>
         </article>
       </div>
     </div>

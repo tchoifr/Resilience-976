@@ -26,10 +26,14 @@ Statut: brouillon a valider avec le porteur et un referent risques
 ## Objectif temps
 
 - Diagnostic complet: 5 a 10 minutes.
-- Une question principale par ecran.
+- Un theme par ecran, soit quatre questions par ecran.
 - Aucune limite de temps.
 - Sauvegarde apres chaque reponse.
 - Continuer bloque seulement si une reponse obligatoire manque.
+
+Le regroupement par theme remplace l'affichage question par question : il
+donne au visiteur un repere sur ce qu'il lui reste (six themes) plutot qu'un
+pourcentage abstrait, sans allonger le temps de passation.
 
 ## Principes de ton editorial
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LinkButton from '@/components/ui/LinkButton.vue'
 import { useI18n } from '@/shared/i18n/i18n.service'
 
 const { t } = useI18n()
@@ -11,12 +12,10 @@ const { t } = useI18n()
       <h1>{{ t('notFound.title') }}</h1>
       <p class="muted">{{ t('notFound.text') }}</p>
       <div class="cluster">
-        <RouterLink class="link-button link-button--primary" to="/">{{
-          t('notFound.home')
-        }}</RouterLink>
-        <RouterLink class="link-button link-button--secondary" to="/diagnostic">
+        <LinkButton to="/" icon="arrow-left">{{ t('notFound.home') }}</LinkButton>
+        <LinkButton to="/diagnostic" variant="secondary">
           {{ t('notFound.diagnostic') }}
-        </RouterLink>
+        </LinkButton>
       </div>
     </div>
   </section>
