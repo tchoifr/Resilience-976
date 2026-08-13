@@ -1,7 +1,44 @@
-import { writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 
 const baseUrl = (process.env.VITE_PUBLIC_BASE_URL ?? 'https://exemple.fr').replace(/\/$/, '')
-const routes = ['/', '/ressources', '/mentions-legales']
+
+const readJson = (file) => JSON.parse(readFileSync(file, 'utf8'))
+const videos = readJson('src/data/videos.json')
+const scenarios = readJson('src/data/scenarios.json')
+
+// Toutes les pages publiques, y compris les pages de contenu generees a partir
+// des donnees : une capsule video ou une mise en situation est une page a part
+// entiere, avec son propre titre et sa propre description.
+//
+// Les pages du tableau de bord (/tableau-de-bord et ses sous-pages) sont
+// volontairement absentes : ce sont des vues d'exploitation, dont la page de
+// recherche par identifiant de visiteur. Les referencer reviendrait a inviter
+// les moteurs a les indexer. La page 404 est exclue pour la meme raison.
+const routes = [
+  '/',
+  '/diagnostic',
+  '/resultats',
+  '/checklist',
+  '/kit',
+  '/ressources',
+  '/videos',
+  ...videos.map((video) => `/videos/${video.slug}`),
+  '/quiz',
+  '/mises-en-situation',
+  ...scenarios.map((scenario) => `/mises-en-situation/${scenario.id}`),
+  '/assistant-liens',
+  '/experimentation-utilisateurs',
+  '/mentions-legales',
+  '/politique-de-confidentialite',
+  '/declaration-accessibilite',
+  '/support',
+]
+
+const duplicates = routes.filter((route, index) => routes.indexOf(route) !== index)
+
+if (duplicates.length > 0) {
+  throw new Error(`Routes en double dans le sitemap : ${duplicates.join(', ')}`)
+}
 
 const urls = routes
   .map((route) => {

@@ -11,6 +11,9 @@ coverage/
 playwright-report/
 test-results/
 
+# Rapports Lighthouse bruts (environ 700 Ko par page et par profil)
+lighthouse-report/
+
 # Local analytics data
 server/data/
 

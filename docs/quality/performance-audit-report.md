@@ -1,63 +1,122 @@
-# Rapport performance et qualite
+# Rapport performance et qualité (Lighthouse)
 
-Date: 12 aout 2026<br>
-Statut: constats corriges (images hero, contraste, robots.txt), mesures avant/apres ci-dessous. A rejouer sur l'URL finale avant mise en production, notamment pour les appels `/api/*` qui dependent du vrai backend et pour `VITE_PUBLIC_BASE_URL` (sitemap/robots.txt utilisent encore le placeholder `https://exemple.fr` en local).
+Date : 14 août 2026<br>
+Outil : Lighthouse 13.4.1 (`npx lighthouse`), Chrome headless<br>
+Statut : deux défauts trouvés et corrigés, mesures avant/après ci-dessous. À rejouer sur l'URL finale avant mise en production.
 
-## Commandes projet
+## Méthode
+
+L'audit tourne sur le **build de production**, servi par `vite preview`, avec le
+collecteur analytics joignable derrière `/api` — c'est-à-dire la même topologie
+que le nginx du VPS.
 
 ```bash
-npm run quality
-npm run test:e2e
-npm audit --audit-level=critical
+npm run analytics:server
+npm run build
+npm run preview -- --port 4174
+
+# Dans un autre terminal
+npm run audit:lighthouse
 ```
 
-## Lighthouse a produire
+`scripts/run-lighthouse.mjs` enchaîne les cinq pages suivies en mobile puis en
+desktop, écrit les rapports HTML et JSON, et imprime le tableau ci-dessous.
+Il accepte une URL et un dossier de sortie :
 
-Executer Lighthouse sur l'URL finale ou une preview stable:
+```bash
+npm run audit:lighthouse -- https://domaine-final.fr ./lighthouse-report
+```
 
-- `/`;
-- `/diagnostic`;
-- `/ressources`;
-- `/tableau-de-bord`;
-- `/experimentation-utilisateurs`.
+Deux points de méthode qui changent les résultats :
 
-Conserver pour chaque page:
+- **Sans backend derrière `/api`, les mesures sont fausses.** L'audit du
+  12 août tournait sur `vite preview` sans collecteur : les appels `/api/events`
+  répondaient 403 et le score « Bonnes pratiques » restait bloqué à 96 pour une
+  raison qui n'existe pas en production. `vite.config.ts` proxifie désormais
+  `/api` en mode `preview` comme il le faisait déjà en mode `dev`.
+- **La mesure mobile est bruitée.** Sur l'accueil, cinq exécutions successives
+  donnent une performance entre 94 et 96. Les écarts inférieurs à 3 points ne
+  doivent pas être interprétés.
 
-- performance;
-- accessibilite;
-- bonnes pratiques;
-- SEO;
-- capture ou export HTML/JSON du rapport;
-- date, navigateur, viewport et URL testee.
+## Résultats mesurés
 
-## Resultats mesures (local, build production, emulation mobile Lighthouse par defaut)
+### Mobile (émulation Lighthouse par défaut, 412×823, 4G lent, CPU ÷4)
 
-| Page                          | Performance | Accessibilite | Bonnes pratiques | SEO | LCP    | TBT    | Statut |
-| ------------------------------ | ----------: | -------------: | ----------------: | --: | -----: | -----: | ------ |
-| Accueil                       |          62 |             96 |                96 |  92 | 11.9 s | 430 ms | Avant  |
-| Accueil                       |      **95** |         **100** |                96 | **100** | **2.4 s** | **60 ms** | Apres  |
-| Diagnostic                    |          95 |             96 |                96 |  92 |  2.3 s |  70 ms | OK     |
-| Ressources                    |          95 |             96 |                96 |  92 |  2.2 s | 100 ms | OK     |
-| Tableau de bord               |          80 |             96 |                96 |  92 |  2.7 s | 500 ms | OK     |
-| Experimentation utilisateurs  |          86 |             96 |                96 |  92 |  2.3 s | 380 ms | OK     |
+| Page | Performance | Accessibilité | Bonnes pratiques | SEO | LCP | TBT | CLS |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Accueil | 95 | 100 | 100 | 100 | 2,6 s | 170 ms | 0 |
+| Diagnostic | 97 | 100 | 100 | 100 | 2,4 s | 90 ms | 0 |
+| Ressources | 97 | 100 | 100 | 100 | 2,4 s | 50 ms | 0 |
+| Tableau de bord | 97 | 100 | 100 | 100 | 2,4 s | 80 ms | 0 |
+| Expérimentation utilisateurs | 99 | 100 | 100 | 100 | 1,8 s | 40 ms | 0 |
 
-`npm run quality` (lint, type-check, tests unitaires, build) : passe.<br>
-`npm audit --audit-level=critical` : 0 vulnerabilite.
+### Desktop (`--preset=desktop`)
 
-## Constats et corrections
+| Page | Performance | Accessibilité | Bonnes pratiques | SEO | LCP | TBT | CLS |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Accueil | 100 | 100 | 100 | 100 | 0,6 s | 0 ms | 0 |
+| Diagnostic | 100 | 100 | 100 | 100 | 0,6 s | 0 ms | 0 |
+| Ressources | 100 | 100 | 100 | 100 | 0,6 s | 0 ms | 0 |
+| Tableau de bord | 100 | 100 | 100 | 100 | 0,6 s | 0 ms | 0 |
+| Expérimentation utilisateurs | 100 | 100 | 100 | 100 | 0,5 s | 0 ms | 0 |
 
-1. **Corrige — images hero surdimensionnees.** `public/images/{Mobile,Tablet,desktop}.png` et leurs variantes theme sombre pesaient chacune entre 1,8 Mo et 2,6 Mo (PNG non compresses), cause quasi exclusive du score Performance de l'accueil (62/100, LCP 11,9 s — Lighthouse en emulation mobile chargeait `Mobile.png`, 1,98 Mo, comme element LCP). Converties en WebP qualite 82 (`sharp-cli`) : 79-147 Ko par fichier, soit environ -95%. Verification visuelle faite (pas d'artefact de compression visible). Resultat : Performance 62 -> 95, LCP 11,9 s -> 2,4 s.
-2. **Corrige — contraste insuffisant (accessibilite).** Le teal `#00a1ad` en texte sur fond fonce n'atteignait pas 4.5:1 (WCAG AA) sur deux elements :
-   - `.retro-id-badge__value` (ID visiteur, accueil) : ratio 3.53 sur fond `#004250`.
-   - `.public-warning-banner strong` (bandeau "Outil de sensibilisation", present sur toutes les pages) : ratio 3.97 sur fond `#00394b`.
-   Nouveau token `--color-teal-on-dark: #1cb8c4` (meme teinte, eclaircie) applique aux deux, verifie a 5.16:1 et 4.59:1. Resultat : Accessibilite 96 -> 100.
-3. **Corrige — SEO, robots.txt invalide.** `public/robots.txt` declarait `Sitemap: /sitemap.xml` en URL relative ; la specification exige une URL absolue. `scripts/generate-sitemap.mjs` genere maintenant aussi `robots.txt` avec `${VITE_PUBLIC_BASE_URL}/sitemap.xml`, memes source de verite que le sitemap. Resultat : SEO 92 -> 100.
-4. **A rejouer en conditions reelles.** Une erreur console 403 sur `/api/events` est apparue en local (pas de backend derriere `vite preview`) — Bonnes pratiques reste a 96 a cause de ca ; probablement un artefact de test (aucun backend analytics n'ecoute derriere le preview), a revalider une fois le backend accessible depuis l'URL testee. `VITE_PUBLIC_BASE_URL` doit aussi etre defini au moment du build de production (sinon sitemap.xml et robots.txt utilisent le placeholder `https://exemple.fr`).
+### Comparaison avec la mesure du 12 août (mobile)
 
-## Controles manuels restants
+| Page | Perf. avant | Perf. après | A11y | Bonnes pratiques | SEO |
+| --- | ---: | ---: | --- | --- | --- |
+| Accueil | 95 | 95 | 100 → 100 | 96 → 100 | 100 → 100 |
+| Diagnostic | 95 | 97 | 96 → 100 | 96 → 100 | 92 → 100 |
+| Ressources | 95 | 97 | 96 → 100 | 96 → 100 | 92 → 100 |
+| Tableau de bord | 80 | 97 | 96 → 100 | 96 → 100 | 92 → 100 |
+| Expérimentation | 86 | 99 | 96 → 100 | 96 → 100 | 92 → 100 |
 
-- lecteur d'ecran NVDA ou VoiceOver;
-- mobile Android reel;
-- iPhone Safari reel;
-- telechargement PDF sur mobile;
-- lisibilite des exports PDF imprimes.
+Les gains d'accessibilité et de SEO viennent des correctifs du 12 août, qui
+n'avaient été mesurés que sur l'accueil. Le gain « Bonnes pratiques » vient de
+la correction de méthode décrite plus haut. Les gains de performance du tableau
+de bord et de l'expérimentation viennent des correctifs ci-dessous.
+
+## Défauts trouvés et corrigés
+
+### 1. Décalage de mise en page sur toutes les pages (CLS 0,0996)
+
+Lighthouse signalait un décalage unique, de score identique au dix-millième sur
+toutes les pages, attribué à `<footer class="app-footer">`.
+
+Cause : les vues sont chargées en différé. Tant que la vue n'est pas arrivée, la
+coquille de l'application — en-tête et pied de page — tient dans l'écran, donc le
+pied de page est visible ; quand le contenu arrive, il est chassé vers le bas.
+`.app-main` réservait `calc(100vh - 164px)`, une hauteur de pied de page supposée
+qui ne suffisait pas.
+
+Correction : `.app-main { min-height: 100vh }`, ce qui garantit que le pied de
+page démarre sous la ligne de flottaison quelle que soit la hauteur de l'en-tête.
+
+Résultat : CLS 0,0996 → **0** sur toutes les pages. Le seuil de Lighthouse étant
+0,1, le site passait à 4 millièmes de la zone rouge.
+
+### 2. Décalage majeur du tableau de bord en desktop (CLS 0,272)
+
+Le panneau « Estimation d'atteinte de l'objectif » était rendu sous condition
+(`v-if="stats"`) : il apparaissait à la réponse du collecteur et repoussait tout
+le tableau de bord de 380 px. En mobile le décalage passait inaperçu (colonne
+unique, panneau sous la ligne de flottaison), d'où un CLS à 0 côté mobile et
+0,272 côté desktop — un cas que la seule mesure mobile ne voyait pas.
+
+Correction : le panneau est rendu dès le départ, avec un message d'attente puis
+un message d'indisponibilité si le collecteur ne répond pas.
+
+Résultat : tableau de bord desktop, performance 86 → **100**, CLS 0,272 → **0**.
+
+## Ce qui reste à faire
+
+- **Rejouer sur l'URL finale.** Les mesures ci-dessus sont locales : latence
+  réseau nulle, pas de TLS, pas de CDN. `VITE_PUBLIC_BASE_URL` doit être défini
+  au moment du build, sinon `sitemap.xml` et `robots.txt` gardent le placeholder
+  `https://exemple.fr`.
+- **LCP mobile à 2,6 s sur l'accueil.** Pour 200 Ko transférés au total,
+  Lighthouse ne propose aucune optimisation : la valeur est essentiellement le
+  plancher imposé par le bridage 4G lent + CPU ÷4. Un gain supplémentaire
+  passerait par un préchargement de l'image du héros, à mesurer avant de
+  l'introduire.
+- **Appareils réels.** Android et iPhone, réseau mobile réel, téléchargement des
+  PDF.

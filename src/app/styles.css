@@ -178,8 +178,15 @@ textarea:focus-visible {
   transform: translateY(0);
 }
 
+/* 100vh et non « 100vh moins la hauteur supposee du pied de page » : les vues
+   sont chargees en differe, et tant que la vue n'est pas arrivee, la coquille
+   (en-tete + pied de page) tient dans l'ecran. Le pied de page se retrouve
+   alors visible, puis chasse hors de l'ecran quand le contenu arrive — un
+   decalage de mise en page qui consommait a lui seul tout le budget CLS
+   (0,0996 mesure par Lighthouse, seuil 0,1). Reserver un ecran entier au
+   contenu garantit que le pied de page demarre sous la ligne de flottaison. */
 .app-main {
-  min-height: calc(100vh - 164px);
+  min-height: 100vh;
 }
 
 .public-warning-banner {
