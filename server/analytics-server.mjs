@@ -2791,8 +2791,21 @@ const server = createServer(async (request, response) => {
 
     sendJson(response, 404, { error: 'not_found' }, origin)
   } catch (error) {
-    const statusCode = error.message === 'payload_too_large' ? 413 : 400
-    sendJson(response, statusCode, { error: error.message }, origin)
+    // Le message d'origine part dans le journal, pas au client : renvoyer la
+    // sortie de l'analyseur JSON revient a decrire le traitement interne a
+    // qui envoie une requete malformee.
+    const isPayloadTooLarge = error.message === 'payload_too_large'
+
+    if (!isPayloadTooLarge) {
+      console.error('[api] requete rejetee', error.message)
+    }
+
+    sendJson(
+      response,
+      isPayloadTooLarge ? 413 : 400,
+      { error: isPayloadTooLarge ? 'payload_too_large' : 'invalid_request' },
+      origin,
+    )
   }
 })
 

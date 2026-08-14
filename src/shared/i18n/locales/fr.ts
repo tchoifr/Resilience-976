@@ -443,10 +443,13 @@ export const frMessages = {
       'Resilience 976 est un service en cours de développement. Cette déclaration reflète l’état réel du site, sans anticiper un audit qui n’a pas encore eu lieu.',
     statusTitle: 'État de conformité',
     status:
-      'Aucun audit formel selon le référentiel général d’amélioration de l’accessibilité (RGAA) n’a été réalisé à ce stade. L’état de conformité n’est donc pas encore évalué. Une démarche de mise en accessibilité est prévue avant une diffusion officielle plus large.',
+      'Une pré-évaluation interne réalisée le 14 août 2026 sur un échantillon de 18 pages, selon le RGAA 4.1, relève 6 non-conformités sur 69 critères applicables. Elle ne vaut pas audit de conformité : celui-ci reste à conduire avant toute déclaration officielle.',
     knownIssuesTitle: 'Difficultés connues',
     knownIssues:
-      'Certains contenus (transcriptions de vidéos, contrastes, navigation au clavier) n’ont pas encore fait l’objet d’une vérification systématique. Cette liste sera complétée au fil des vérifications.',
+      'La capsule vidéo intégrée n’a ni sous-titres ni transcription complète. En version shimaoré, certains libellés restent affichés en français. Le site ne propose pas de page « plan du site ». Le bandeau de statistiques de l’accueil défile sans commande de pause ; il s’immobilise si votre appareil est réglé sur « animations réduites ».',
+    verifiedTitle: 'Ce qui a été vérifié',
+    verified:
+      'Contrastes de texte, alternatives des images, étiquettes des formulaires, structure des titres et validité du code : aucun défaut relevé sur les 18 pages testées. La navigation au clavier a été parcourue tabulation par tabulation, l’affichage vérifié jusqu’à 320 pixels de large et avec un texte agrandi à 200 %.',
     contactTitle: 'Signaler un problème d’accessibilité',
     contact:
       'Si vous rencontrez un obstacle pour accéder à un contenu ou une fonctionnalité, vous pouvez le signaler via le canal de contact indiqué sur la page support.',

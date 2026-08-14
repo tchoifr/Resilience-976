@@ -94,10 +94,13 @@ Le RGAA en demande deux parmi : menu de navigation, page « plan du site »,
 moteur de recherche. Le site n'a que le menu, repris à l'identique dans le pied
 de page.
 
-**Correction** : ajouter une page « Plan du site ». La liste des pages existe
-déjà, `scripts/generate-sitemap.mjs` l'énumère pour le `sitemap.xml` (30 URL).
-Cette page satisferait du même coup les critères 12.3 et 12.4, aujourd'hui non
-applicables.
+**Correction possible** : une page « Plan du site », qui satisferait du même
+coup les critères 12.3 et 12.4.
+
+**Décision du porteur (14 août 2026) : écartée.** Le `sitemap.xml` est tenu à
+jour et suffit à l'indexation ; aucune page « plan du site » ne sera ajoutée.
+La non-conformité est donc durable et assumée : elle est annoncée dans la
+déclaration d'accessibilité.
 
 ### 13.8 — Bandeau défilant sans dispositif de pause
 
@@ -106,8 +109,13 @@ préférence système « animations réduites » l'immobilise, mais le RGAA dema
 un contrôle offert à l'utilisateur, pas seulement le respect d'une préférence
 système.
 
-**Correction** : un bouton « Mettre en pause » sur le bandeau. C'est une
-modification visible de la page d'accueil, laissée à l'arbitrage.
+**Correction possible** : un bouton « Mettre en pause » sur le bandeau.
+
+**Décision du porteur (14 août 2026) : écartée.** Le bandeau reste sans
+commande de pause. Le site continue de respecter la préférence système
+« animations réduites », qui l'immobilise — ce n'est pas ce que demande le
+critère, mais cela couvre les utilisateurs les plus exposés au inconfort du
+mouvement. La non-conformité est annoncée dans la déclaration d'accessibilité.
 
 ## Les trois critères non évalués
 
@@ -150,7 +158,7 @@ n'a été réalisé et que l'état de conformité n'est pas évalué. C'est dés
 incomplet : une pré-évaluation existe. La déclaration ne peut pas pour autant
 annoncer un taux de conformité officiel, qui suppose un audit formel.
 
-Formulation proposée, à valider :
+**Appliquée le 14 août 2026.** La page annonce désormais :
 
 > Une pré-évaluation interne réalisée le 14 août 2026 sur un échantillon de
 > 18 pages, selon le RGAA 4.1, relève 6 non-conformités sur 69 critères
@@ -334,3 +342,8 @@ Verdicts : **C** conforme, **NC** non conforme, **NA** non applicable, **NE** no
 | 13.10 | Dans chaque page web, les fonctionnalités utilisables ou disponibles au moyen d’un geste complexe peuvent-elles être également disponibles au moyen d’un geste simple (hors cas particuliers) ? | **NA** | Aucun geste complexe. |
 | 13.11 | Dans chaque page web, les actions déclenchées au moyen d’un dispositif de pointage sur un point unique de l’écran peuvent-elles faire l’objet d’une annulation (hors cas particuliers) ? | **C** | Actions declenchees au relachement, annulables en deplacant le pointeur. |
 | 13.12 | Dans chaque page web, les fonctionnalités qui impliquent un mouvement de l’appareil ou vers l’appareil peuvent-elles être satisfaites de manière alternative (hors cas particuliers) ? | **NA** | Aucune fonctionnalite fondee sur un mouvement de l’appareil. |
+
+La section « Difficultés connues » a été reprise en même temps : elle affirmait
+que contrastes et navigation clavier n'avaient pas été vérifiés, ce qui n'est
+plus vrai. Une section « Ce qui a été vérifié » a été ajoutée, et les quatre
+difficultés réellement connues y sont nommées.
