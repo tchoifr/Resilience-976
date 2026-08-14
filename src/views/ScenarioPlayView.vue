@@ -104,7 +104,11 @@ watch(
       <RouterLink class="back-link" to="/mises-en-situation">
         {{ t('scenarioPlay.backToList') }}
       </RouterLink>
-      <p class="eyebrow">{{ scenario.title }}</p>
+      <!-- Le titre du scenario etait un simple paragraphe : la page n'avait
+           donc aucun <h1>, ce qui prive les lecteurs d'ecran du point d'entree
+           attendu dans la structure (critere RGAA 9.1). -->
+      <p class="eyebrow">{{ t('scenarioPlay.eyebrow') }}</p>
+      <h1>{{ scenario.title }}</h1>
       <p class="muted">{{ scenario.intro }}</p>
 
       <template v-if="scenarioStore.status === 'playing' && scenarioStore.currentStep">

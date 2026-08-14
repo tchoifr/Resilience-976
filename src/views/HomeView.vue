@@ -70,24 +70,26 @@ const journeySteps = [
             </LinkButton>
           </div>
 
-          <div class="trust-row" :aria-label="t('home.trustAria')">
-            <div class="trust-item">
+          <!-- Une liste plutot qu'un div porteur d'aria-label : sur un div sans
+               role, l'attribut est invalide et ignore par les lecteurs d'ecran. -->
+          <ul class="trust-row" :aria-label="t('home.trustAria')">
+            <li class="trust-item">
               <span class="trust-item__icon">1</span>
               {{ t('home.free') }}
-            </div>
-            <div class="trust-item">
+            </li>
+            <li class="trust-item">
               <span class="trust-item__icon">2</span>
               {{ t('home.noAccount') }}
-            </div>
-            <div class="trust-item">
+            </li>
+            <li class="trust-item">
               <span class="trust-item__icon">3</span>
               {{ t('home.local') }}
-            </div>
-            <div class="trust-item">
+            </li>
+            <li class="trust-item">
               <span class="trust-item__icon">4</span>
               {{ t('home.officialSources') }}
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
 
         <div class="hero-media" aria-hidden="true">

@@ -10,9 +10,17 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <div class="score-gauge" :aria-label="t('scoreGauge.aria', { score, level: level.label })">
-    <div class="score-gauge__circle" :style="{ '--score': `${props.score}%` }">
-      <div class="score-gauge__inner">{{ score }}/100</div>
+  <div class="score-gauge">
+    <!-- Le role est indispensable : un aria-label sur un div sans role est
+         invalide et purement ignore par les technologies d'assistance. La
+         jauge est une representation graphique du score, d'ou role="img". -->
+    <div
+      class="score-gauge__circle"
+      role="img"
+      :aria-label="t('scoreGauge.aria', { score, level: level.label })"
+      :style="{ '--score': `${props.score}%` }"
+    >
+      <div class="score-gauge__inner" aria-hidden="true">{{ score }}/100</div>
     </div>
     <div>
       <h2 class="section-title">{{ level.label }}</h2>

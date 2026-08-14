@@ -57,6 +57,7 @@ export const frMessages = {
   },
   common: {
     progress: 'Progression',
+    loading: 'Chargement…',
     important: 'Important',
     sources: 'Sources',
     sourceToValidate: 'Source à valider',
@@ -1005,6 +1006,7 @@ export const frMessages = {
     relatedCapsule: 'Capsule liée',
   },
   scenarioPlay: {
+    eyebrow: 'Mise en situation',
     backToList: 'Retour aux mises en situation',
     stepCount: 'Étape {current} sur {total}',
     confirm: 'Confirmer ce choix',

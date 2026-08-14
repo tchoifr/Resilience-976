@@ -189,6 +189,13 @@ textarea:focus-visible {
   min-height: 100vh;
 }
 
+.route-loading {
+  width: min(100% - 32px, var(--container));
+  margin: 0 auto;
+  padding: var(--space-5) 0;
+  color: var(--color-text-muted);
+}
+
 .public-warning-banner {
   background: var(--color-primary-dark);
 }
@@ -1003,6 +1010,10 @@ textarea:focus-visible {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-3);
   margin-top: var(--space-5);
+  /* Liste sans puces : la semantique sert aux lecteurs d'ecran, pas au rendu. */
+  margin-bottom: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .trust-item {
