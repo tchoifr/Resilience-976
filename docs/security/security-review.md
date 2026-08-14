@@ -263,8 +263,77 @@ L'utilisateur ne contrôle que le contenu de la question, jamais la destination.
 
 ## Scan OWASP ZAP
 
-Scan de référence (`zap-baseline`, image `ghcr.io/zaproxy/zaproxy:stable`)
-contre le build de production servi avec les en-têtes de `deploy/nginx.conf` :
+Le scan de référence a d’abord été mené en local, puis **sur la production**.
+Le second a trouvé ce que le premier ne pouvait pas voir ; c’est celui qui fait
+foi, et son rapport est joint au dossier de preuves
+(`docs/jnr_2026_MPR976/preuves/3 - …/03_Audits_techniques_MPR976_JNR_2026/`).
+
+### Scan de production — 14 août 2026, ZAP 2.17.0
+
+```bash
+docker volume create zapwrk
+docker run --rm -v zapwrk:/data alpine chown -R 1000:1000 /data
+docker run --rm -v zapwrk:/zap/wrk:rw ghcr.io/zaproxy/zaproxy:stable \
+  zap-baseline.py -t https://resilience-976.fr \
+  -r zap-report-production.html -J zap-report-production.json -I
+```
+
+Le volume Docker n’est pas un détail : un montage de dossier Windows est refusé
+en écriture par le conteneur, qui tourne sous l’identifiant 1000. Le scan se
+déroule alors normalement puis échoue à la toute fin, sur l’écriture du
+rapport — `AccessDeniedException /zap/wrk/`. Et `/zap/wrk` n’existe pas dans
+l’image : sans montage, ZAP refuse la commande et affiche son aide.
+
+**Résultat après correction : 0 échec, 62 règles passées, 5 avertissements.**
+
+| Avertissement | Risque | Lecture |
+| --- | --- | --- |
+| CSP : `style-src 'unsafe-inline'` | Moyen | Réel et connu. Nécessaire tant que des styles sont posés en ligne (jauge de score, largeur des barres de progression). Le reste de la politique est strict. |
+| Cross-Origin-Embedder-Policy absent | Faible | **Volontaire.** `require-corp` bloquerait la vidéo hébergée sur webissimo.developpement-durable.gouv.fr, qui n’envoie pas d’en-tête CORP. |
+| Modern Web Application | Information | Détection d’une application monopage, pas un défaut. |
+| Re-examine Cache-control Directives | Information | À arbitrer sur les pages HTML. |
+| Storable and Cacheable Content | Information | Les fichiers statiques sont cachables, c’est voulu. |
+
+### Quatre défauts que seul le scan de production a vus
+
+Le premier passage, à 20 h 25, donnait **9 avertissements pour 58 règles
+passées**. Quatre étaient des défauts réels, tous invisibles en local.
+
+| Défaut | Où | Cause |
+| --- | --- | --- |
+| `X-Content-Type-Options` absent | `/assets/*.js`, `/assets/*.css`, `/icons/*.svg` | Bloc des fichiers statiques |
+| `Strict-Transport-Security` absent | mêmes URL | Bloc des fichiers statiques |
+| `Permissions-Policy` absent | mêmes URL | Bloc des fichiers statiques |
+| Version du serveur annoncée | toutes les réponses | `server_tokens build` |
+
+Les trois premiers ont une cause unique, et c’est **le piège que le fichier de
+configuration documente lui-même quinze lignes plus haut** : nginx n’hérite les
+`add_header` du niveau supérieur que si le bloc courant n’en déclare aucun. Le
+bloc des fichiers statiques déclarait un `add_header Cache-Control` — et les
+huit en-têtes de sécurité disparaissaient en silence de tous les scripts,
+feuilles de style et images du site. La page `/` les portait tous, `/assets/…`
+aucun.
+
+Correction posée sur le serveur le 14 août à 20 h 41, par insertion dans la
+configuration en place, sauvegarde et `nginx -t` avant rechargement : les huit
+en-têtes redéclarés dans le bloc, et `server_tokens off` dans `nginx.conf`.
+Vérifié par relevé direct, puis par un second scan — 9 avertissements → 5,
+58 règles passées → 62.
+
+**Pourquoi le scan local ne pouvait pas le voir.** Il visait
+`scripts/serve-audit.mjs`, qui rejoue les en-têtes du niveau `server` de
+`deploy/nginx.conf` mais ne reproduit pas ses blocs `location`. Le défaut
+n’existait que dans un bloc. Un scan mené sur une imitation ne teste que la
+fidélité de l’imitation.
+
+### Scan local — 14 août 2026, pour mémoire
+
+Contre le build servi par `scripts/serve-audit.mjs` avec les en-têtes du niveau
+`server` de `deploy/nginx.conf` : **0 échec, 63 règles passées,
+4 avertissements** — les quatre du tableau ci-dessus moins
+`Re-examine Cache-control`. Deux avertissements d’un passage antérieur avaient
+été corrigés dans la foulée : `Cross-Origin-Opener-Policy` et
+`Cross-Origin-Resource-Policy` sont désormais posés par nginx.
 
 ```bash
 npm run build
@@ -275,20 +344,6 @@ docker run --rm -v "$(pwd)/zap-out:/zap/wrk/:rw" -t \
   ghcr.io/zaproxy/zaproxy:stable \
   zap-baseline.py -t http://host.docker.internal:4180 -r zap-report.html -I
 ```
-
-**Résultat : 0 échec, 63 règles passées, 4 avertissements.**
-
-| Avertissement | Risque | Lecture |
-| --- | --- | --- |
-| CSP : `style-src 'unsafe-inline'` | Moyen | Réel et connu. Nécessaire tant que des styles sont posés en ligne (jauge de score, largeur des barres de progression). Le reste de la politique est strict. |
-| Cross-Origin-Embedder-Policy absent | Faible | **Volontaire.** `require-corp` bloquerait la vidéo hébergée sur webissimo.developpement-durable.gouv.fr, qui n’envoie pas d’en-tête CORP. |
-| Modern Web Application | Information | Détection d’une application monopage, pas un défaut. |
-| Storable and Cacheable Content | Information | Les fichiers statiques sont cachables, c’est voulu. |
-
-Deux avertissements du premier passage ont été corrigés dans la foulée :
-`Cross-Origin-Opener-Policy` et `Cross-Origin-Resource-Policy` sont désormais
-posés par nginx. `Cross-Origin-Embedder-Policy` ne l’est pas, et ne le sera
-pas tant que la capsule vidéo pointera vers un site tiers.
 
 ### Deux pièges de méthode, pour qui rejouera le scan
 

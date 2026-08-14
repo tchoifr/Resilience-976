@@ -88,10 +88,35 @@ profil, 81 Mo pour la campagne complète. `lighthouse-report/` est dans
 `.gitignore` ; c'est là que la dernière campagne a été déposée, un fichier
 `mobile-<page>.report.html` et `desktop-<page>.report.html` par route.
 
-## Trois pièges de mesure, tous rencontrés
+## Quatre pièges de mesure, tous rencontrés
 
 Ils sont consignés parce qu'aucun ne se voit dans les scores : à chaque fois,
 Lighthouse rend un chiffre parfaitement plausible et parfaitement faux.
+
+**Une requête dont le corps n'est jamais lu.** Les six points d'envoi vers le
+collecteur postaient sans lire la réponse. Or une requête dont le corps n'est
+pas consommé reste ouverte du point de vue de Chrome : `loadingFinished` n'est
+jamais émis. Le navigateur s'en accommode, mais tout ce qui attend un réseau au
+repos attend pour rien — Lighthouse patientait jusqu'à son plafond de 45 s puis
+rendait ses mesures avec **« The page loaded too slowly to finish within the
+time limit. Results may be incomplete. »**, sur les 62 rapports sans exception.
+
+Les données de trace disaient pourtant l'inverse : page peinte en 225 ms,
+aucune tâche de plus de 50 ms, 133 ms de calcul cumulé — et une trace de
+45 017 ms. Une seule requête sur dix était marquée `finished: false`. Une sonde
+sur quatre variantes du même appel a isolé la cause : c'est la lecture du
+corps qui compte, pas `keepalive`, conservé pour que l'envoi survive à la
+navigation sortante.
+
+| | avant | après |
+| --- | ---: | ---: |
+| Avertissements | 1 par rapport | **aucun** |
+| Durée de la mesure | 53 078 ms | **6 388 ms** |
+| Fin de trace | 45 017 ms | **2 547 ms** |
+| Requêtes non closes | 1 | **aucune** |
+
+Les scores, eux, n'ont pas bougé — ce qui est le plus instructif : un rapport
+peut annoncer 97 en performance et se déclarer incomplet dans la même page.
 
 **Sans backend derrière `/api`.** Les appels échouent, la console enregistre
 des erreurs, et « Bonnes pratiques » plafonne à 96 pour une raison qui n'existe
