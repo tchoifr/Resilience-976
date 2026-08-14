@@ -1,4 +1,12 @@
 /* global console, URL */
+// A UTILISER POUR ZAP, PAS POUR LIGHTHOUSE.
+//
+// Ce serveur ne compresse pas : un fragment de 386 Ko part tel quel la ou
+// nginx et `vite preview` l'envoient gzippe autour de 100 Ko. Mesurer la
+// performance ici fait chuter le LCP et donne des scores faux — 83 au lieu
+// de 95 sur les memes pages, constate le 14 aout 2026. Pour Lighthouse,
+// utiliser `npm run preview`, qui compresse et proxifie /api.
+
 // Sert le build de production et proxifie /api vers le collecteur, comme le
 // nginx du VPS. Contrairement a `vite preview`, ce serveur ne filtre pas
 // l'en-tete Host : un scanner qui vise host.docker.internal n'est pas rejete

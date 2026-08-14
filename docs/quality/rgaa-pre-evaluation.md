@@ -88,8 +88,15 @@ du shimaoré.
 
 **Correction** : traduire les 89 chaînes — la liste est prête dans
 `docs/product/i18n-shimaore-a-traduire.md`, générée par `npm run i18n:check`.
-Tant qu'elles ne le sont pas, le repli devrait porter un `lang="fr"`, ce qui
-lèverait le critère sans rien traduire.
+
+Marquer les replis d'un `lang="fr"` paraît plus rapide, mais ne l'est pas :
+`translate()` renvoie une chaîne insérée en texte échappé, il n'existe aucun
+point central où poser l'attribut, et les vues comptent **729 appels à `t()`**.
+Il faudrait reprendre chaque appel susceptible d'afficher un repli.
+
+La troisième voie est de retirer le shimaoré du sélecteur de langue tant que la
+traduction n'est pas complète : le site n'aurait plus qu'une langue, et le
+critère deviendrait sans objet. C'est un arbitrage produit, pas technique.
 
 ## Le critère non évalué
 

@@ -20,7 +20,7 @@ VPS, derriere nginx en reverse proxy. Fichiers prets dans `deploy/` :
 | `deploy/nginx.conf` | Sert `dist/` et proxifie `/api/*` vers le backend en local (`127.0.0.1:8787`) |
 | `deploy/resilience-976-analytics.service` | Service systemd du backend (`server/analytics-server.mjs`), redemarrage auto |
 | `deploy/analytics.env.example` | Modele de variables pour le service (a copier vers `/etc/resilience-976/analytics.env`) |
-| `deploy/deploy.sh` | `git pull` + `npm ci` + `npm run build` + redemarrage service/nginx |
+| `deploy/deploy.sh` | `git pull` + `npm ci` + `npm run build` + redemarrage service/nginx. Le fichier n'a pas le bit d'execution : le lancer par `bash deploy/deploy.sh` |
 
 Etapes d'installation initiale sur le VPS :
 
@@ -35,7 +35,25 @@ Etapes d'installation initiale sur le VPS :
    bloc HTTPS + redirection automatiquement).
 6. `npm ci && npm run build` (utilise `.env.production`, deja versionne : les
    endpoints `/api/*` pointent en meme-origine, plus besoin d'URL externe).
-7. Pour les mises a jour ensuite : `./deploy/deploy.sh`.
+7. Renseigner `ANALYTICS_READ_TOKEN` dans `/etc/resilience-976/analytics.env`
+   (`openssl rand -hex 32`) et creer le fichier de mots de passe :
+   `htpasswd -c /etc/nginx/.htpasswd-resilience <utilisateur>`
+   (paquet `apache2-utils`). Sans ces deux elements, le tableau de bord, le
+   graphe des visiteurs et leurs profils repondent **sans authentification**.
+8. Pour les mises a jour ensuite : `bash deploy/deploy.sh`.
+
+### La configuration nginx du serveur diverge du depot, volontairement
+
+Une fois `certbot` passe, la configuration active porte le bloc TLS et la
+redirection HTTP vers HTTPS, absents de `deploy/nginx.conf`. **La remplacer
+par celle du depot casserait le HTTPS.** Les evolutions du depot doivent y
+etre reportees a la main : blocs `auth_basic`, en-tetes `Cross-Origin-*`,
+directive `Strict-Transport-Security`. Toujours sauvegarder avant, valider
+par `nginx -t`, et ne recharger qu'ensuite.
+
+Rappel nginx : un bloc `location` qui declare un seul `add_header` perd tous
+ceux du niveau superieur. Les blocs proteges redeclarent donc l'ensemble des
+en-tetes de securite.
 
 Comme le front et le backend sont sur le meme domaine, `VITE_ANALYTICS_ENABLED`
 et les `VITE_*_ENDPOINT` n'ont plus besoin d'etre reconfigures a chaque

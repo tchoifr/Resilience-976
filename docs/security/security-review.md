@@ -89,10 +89,10 @@ développement ; le serveur avertit alors à chaque démarrage :
 et statistiques repondent sans authentification.
 ```
 
-### État de la production au 14 août 2026
+### Mise en production, 14 août 2026
 
-Le correctif vit dans la branche, **il n’est pas déployé**. Sondes contre
-`https://resilience-976.fr`, le jour même :
+Le correctif a été déployé et vérifié le jour même. Avant, sondes contre
+`https://resilience-976.fr` :
 
 ```
 200  /api/visitors/graph      42 identifiants de visiteurs exposés
@@ -101,12 +101,38 @@ Le correctif vit dans la branche, **il n’est pas déployé**. Sondes contre
 404  /api/public-counters     backend antérieur au correctif
 ```
 
-Les en-têtes `Cross-Origin-Opener-Policy`, `Cross-Origin-Resource-Policy` et
-`Strict-Transport-Security` sont également absents du déploiement actuel.
+Après :
 
-Autrement dit : la faille décrite plus haut est **active sur le site public**
-tant que la branche n’est pas fusionnée et déployée, et tant que le fichier
-`htpasswd` et `ANALYTICS_READ_TOKEN` ne sont pas en place sur le VPS.
+```
+sans identifiants
+  200  /                        page publique
+  200  /diagnostic              page publique
+  200  /api/public-counters     visites 303, engagés 12
+  401  /api/dashboard
+  401  /api/visitors/graph
+  401  /tableau-de-bord
+
+avec les identifiants
+  200  /tableau-de-bord
+  200  /api/dashboard
+
+en-têtes : HSTS, COOP, CORP et CSP tous présents
+```
+
+Trois gestes ont été nécessaires, dans cet ordre : jeton généré par
+`openssl rand -hex 32` et écrit dans `/etc/resilience-976/analytics.env`
+(fichier repassé en `600`, sauvegarde horodatée) ; `deploy/deploy.sh` pour
+aligner le front sur le backend ; puis l’authentification nginx.
+
+**La configuration nginx du serveur n’est pas celle du dépôt, et ne doit pas
+l’être.** Celle du serveur porte en plus le bloc TLS écrit par certbot :
+l’écraser avec `deploy/nginx.conf` casserait le HTTPS. Les blocs `auth_basic`,
+les en-têtes COOP/CORP et HSTS y ont donc été **insérés**, après sauvegarde
+horodatée, avec validation `nginx -t` et retour arrière prévu en cas d’échec.
+
+Reste à faire sur le serveur : renseigner `HF_TOKEN`, absent, ce qui fait
+répondre 503 à l’assistant de liens ; et changer le mot de passe `admin`, qui
+a circulé en clair lors de la mise en place.
 
 ### Ce qui reste
 
