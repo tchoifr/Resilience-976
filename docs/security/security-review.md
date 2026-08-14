@@ -191,21 +191,54 @@ l'avait signalé à tort comme telle. Le client reçoit désormais
 Conforme. Le seul appel sortant vise une URL fixe (`router.huggingface.co`).
 L'utilisateur ne contrôle que le contenu de la question, jamais la destination.
 
-## Ce qui n'a pas pu être fait
+## Scan OWASP ZAP
 
-Un scan **OWASP ZAP** était prévu : Docker est installé sur la machine
-(version 25.0.3) mais son démon n'était pas démarré. Le scan reste à lancer,
-une fois Docker Desktop actif, contre le site servi :
+Scan de référence (`zap-baseline`, image `ghcr.io/zaproxy/zaproxy:stable`)
+contre le build de production servi avec les en-têtes de `deploy/nginx.conf` :
 
 ```bash
-docker run --rm -t ghcr.io/zaproxy/zaproxy:stable \
-  zap-baseline.py -t http://host.docker.internal:4174 -r zap-report.html
+npm run build
+npm run analytics:server
+npm run audit:serve -- 4180 dist 8787
+
+docker run --rm -v "$(pwd)/zap-out:/zap/wrk/:rw" -t \
+  ghcr.io/zaproxy/zaproxy:stable \
+  zap-baseline.py -t http://host.docker.internal:4180 -r zap-report.html -I
 ```
 
-Un scan de référence ZAP est surtout un contrôle passif d'en-têtes et de motifs
-connus ; les constats ci-dessus, obtenus par sonde ciblée sur les 17 routes,
-couvrent une surface qu'un tel scan ne voit pas.
+**Résultat : 0 échec, 63 règles passées, 4 avertissements.**
 
+| Avertissement | Risque | Lecture |
+| --- | --- | --- |
+| CSP : `style-src 'unsafe-inline'` | Moyen | Réel et connu. Nécessaire tant que des styles sont posés en ligne (jauge de score, largeur des barres de progression). Le reste de la politique est strict. |
+| Cross-Origin-Embedder-Policy absent | Faible | **Volontaire.** `require-corp` bloquerait la vidéo hébergée sur webissimo.developpement-durable.gouv.fr, qui n’envoie pas d’en-tête CORP. |
+| Modern Web Application | Information | Détection d’une application monopage, pas un défaut. |
+| Storable and Cacheable Content | Information | Les fichiers statiques sont cachables, c’est voulu. |
+
+Deux avertissements du premier passage ont été corrigés dans la foulée :
+`Cross-Origin-Opener-Policy` et `Cross-Origin-Resource-Policy` sont désormais
+posés par nginx. `Cross-Origin-Embedder-Policy` ne l’est pas, et ne le sera
+pas tant que la capsule vidéo pointera vers un site tiers.
+
+### Deux pièges de méthode, pour qui rejouera le scan
+
+**Le premier scan n’a rien testé.** Lancé contre `vite preview`, il a reçu
+**403 sur toutes les requêtes** : Vite refuse celles dont l’en-tête `Host`
+ne figure pas dans sa liste, et ZAP vise `host.docker.internal`. Le rapport
+annonçait pourtant « 66 règles passées » — pour un scan qui n’avait jamais vu
+une page. D’où `scripts/serve-audit.mjs`, qui sert `dist/` sans contrôle
+d’hôte et proxifie `/api` comme nginx.
+
+**Un scan sans les en-têtes de production ment aussi.** Le deuxième passage,
+sur un serveur statique nu, signalait l’absence de CSP, de `nosniff` et de
+`Permissions-Policy` — toutes posées par nginx. Le serveur d’audit reproduit
+donc les en-têtes du fichier de déploiement : sans cela, on corrige des
+défauts qui n’existent pas et on passe à côté de ceux qui existent.
+
+Enfin, un scan de référence reste un contrôle passif d’en-têtes et de motifs
+connus. Les constats des sections précédentes, obtenus par sonde ciblée sur
+les 17 routes, portent sur une surface qu’il ne voit pas — à commencer par
+A01, qu’il n’a pas signalé.
 ## Priorités
 
 1. **Authentifier les routes d'exploitation** (A01) — seule défaillance
@@ -216,7 +249,7 @@ couvrent une surface qu'un tel scan ne voit pas.
    sans changement de code.
 2. Décommenter `Strict-Transport-Security` après le passage de certbot (A02).
 3. Journaliser les accès aux routes d'exploitation (A09).
-4. Lancer le scan ZAP, une fois Docker Desktop démarré.
+4. Rejouer le scan ZAP après toute évolution du serveur ou des en-têtes.
 
 Corrigés dans cette passe : A06 (dépendance vulnérable), A08 (mention
 trompeuse), A09 (message d'erreur), et la documentation de l'héritage des
