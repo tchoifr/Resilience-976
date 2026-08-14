@@ -210,6 +210,26 @@ plus dès lors que la base contient des profils individuels.
 - **CSP.** `style-src 'self' 'unsafe-inline'` reste nécessaire tant que des
   styles en ligne sont générés ; le reste est strict (`default-src 'self'`,
   `object-src 'none'`, `frame-ancestors 'none'`).
+- **Une violation de CSP en production, corrigée sans assouplir la politique.**
+  La campagne Lighthouse du 14 août sur le site réel a relevé un incident sur
+  48 des 62 mesures. Récupéré par CDP :
+
+  ```txt
+  ContentSecurityPolicyIssue  violatedDirective: script-src  type: kEvalViolation
+  ```
+
+  zod 4.4.3 compile ses validateurs quand il le peut, et teste cette capacité
+  par un `new Function("")` sous `try`/`catch`. `script-src 'self'` interdit
+  eval : la sonde échouait proprement et zod basculait sur son chemin sans
+  compilation. **Rien n'était cassé**, mais Chrome journalisait une violation
+  sur chaque page. Corrigé par `z.config({ jitless: true })`, qui supprime la
+  sonde. La tentation aurait été d'ajouter `'unsafe-eval'` à la politique pour
+  faire taire l'alerte : c'eût été échanger une ligne de journal contre une
+  vraie faiblesse.
+- **Compression.** Réglée au niveau `http` dans `/etc/nginx/nginx.conf`, hors
+  du fichier du site : `gzip_types` était resté commenté, donc seul le HTML
+  était compressé. Sans effet de sécurité, mais c'est un réglage que le dépôt
+  ne peut pas montrer — voir `docs/technical/deployment.md`.
 - **Écoute locale.** Le backend écoute sur `127.0.0.1`, il n'est joignable que
   par nginx.
 

@@ -53,7 +53,49 @@ par `nginx -t`, et ne recharger qu'ensuite.
 
 Rappel nginx : un bloc `location` qui declare un seul `add_header` perd tous
 ceux du niveau superieur. Les blocs proteges redeclarent donc l'ensemble des
-en-tetes de securite.
+en-tetes de securite. Le 14 aout, le bloc des fichiers statiques est tombe dans
+ce piege : son seul `add_header Cache-Control` effacait les huit en-tetes de
+securite de `/assets/*.js`, `/assets/*.css` et `/icons/*.svg`. Trouve par le
+scan ZAP sur la production, invisible en local.
+
+### Deux reglages qui ne sont pas dans `deploy/nginx.conf`
+
+Ils vivent dans `/etc/nginx/nginx.conf`, au niveau `http`. Le depot ne peut donc
+pas dire s'ils sont poses : il faut aller voir sur le serveur.
+
+**Compression.** `gzip on;` seul ne suffit pas — le defaut de nginx est
+`text/html`, donc le JavaScript et les feuilles de style partent en clair. Sur
+la production, le bundle faisait **181 915 octets** au lieu de 66 361, ce qui
+coutait 12 points de performance mobile. Verifier :
+
+```bash
+grep -E '^\s*gzip' /etc/nginx/nginx.conf
+curl -sI -H 'Accept-Encoding: gzip' https://resilience-976.fr/assets/<bundle>.js \
+  | grep -i content-encoding
+```
+
+Attendu : `gzip_types` decommente, avec `image/svg+xml` ajoute a la liste livree
+par Ubuntu, qui l'omet.
+
+**Version du serveur.** `server_tokens build` annonce `nginx/1.28.3 (Ubuntu)`
+sur chaque reponse, y compris les pages d'erreur. Passe a `off`.
+
+### Ne jamais lancer git en root dans `/var/www/resilience-976`
+
+Le depot appartient a l'utilisateur `resilience`, et `deploy.sh` travaille sous
+son identite via `sudo -u`. Une seule commande git lancee en root laisse des
+objets inaccessibles, et le deploiement suivant echoue :
+
+```txt
+error: insufficient permission for adding an object to repository database
+```
+
+Arrive le 14 aout : 633 fichiers dans `.git` et 148 dans l'arbre de travail
+appartenaient a root. Reparation :
+
+```bash
+sudo chown -R resilience:resilience /var/www/resilience-976
+```
 
 Comme le front et le backend sont sur le meme domaine, `VITE_ANALYTICS_ENABLED`
 et les `VITE_*_ENDPOINT` n'ont plus besoin d'etre reconfigures a chaque

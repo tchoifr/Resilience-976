@@ -12,6 +12,7 @@ test-results/
 
 # Rapports Lighthouse bruts (environ 700 Ko par page et par profil)
 lighthouse-report/
+lighthouse-report-prod/
 
 # Local analytics data
 server/data/
