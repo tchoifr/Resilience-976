@@ -55,6 +55,47 @@ const CONTENT_LINKS_RATE_WINDOW_MS = 60_000
 // atelier — a la baisse, ce sont de vrais visiteurs qu'on perdrait.
 const WRITE_RATE_LIMIT = Number.parseInt(process.env.WRITE_RATE_LIMIT ?? '600', 10)
 const WRITE_RATE_WINDOW_MS = 60_000
+
+// Routes d'exploitation : elles exposent des donnees par visiteur (le graphe
+// liste les identifiants, le profil rend les reponses au diagnostic). Elles
+// exigent une authentification des que ANALYTICS_READ_TOKEN est defini.
+//
+// Deux formes acceptees, parce que deux chemins d'acces coexistent :
+//   - « Bearer <jeton> », pour un appel de script ou de supervision ;
+//   - « Basic … », pose par le navigateur quand nginx protege les pages du
+//     tableau de bord par auth_basic ; nginx transmet l'en-tete au serveur.
+const READ_TOKEN = process.env.ANALYTICS_READ_TOKEN ?? ''
+const PROTECTED_READ_PATHS = [
+  '/api/dashboard',
+  '/api/visitors/graph',
+  '/api/visitors/profile',
+  '/api/quiz-results/stats',
+  '/api/video-progress/stats',
+  '/api/scenario-results/stats',
+  '/api/kit-profiles/stats',
+  '/api/feedback/stats',
+  '/api/diagnostic-responses/stats',
+]
+
+function isProtectedRead(pathname) {
+  return PROTECTED_READ_PATHS.includes(pathname)
+}
+
+function hasReadAccess(request) {
+  if (!READ_TOKEN) {
+    return true
+  }
+
+  const header = request.headers.authorization ?? ''
+
+  if (header.startsWith('Bearer ')) {
+    return header.slice(7) === READ_TOKEN
+  }
+
+  // L'identite exacte est verifiee par nginx : le serveur se contente de
+  // constater qu'une authentification a bien eu lieu en amont.
+  return header.startsWith('Basic ')
+}
 const ALLOWED_ORIGINS = (
   process.env.ANALYTICS_ALLOWED_ORIGINS ??
   'http://127.0.0.1:5173,http://localhost:5173'
@@ -2499,6 +2540,12 @@ const server = createServer(async (request, response) => {
     return
   }
 
+  if (isProtectedRead(requestUrl.pathname) && !hasReadAccess(request)) {
+    response.setHeader('www-authenticate', 'Bearer realm="resilience-976"')
+    sendJson(response, 401, { error: 'authentication_required' }, origin)
+    return
+  }
+
   try {
     if (request.method === 'POST' && requestUrl.pathname === '/api/events') {
       const body = await readBody(request)
@@ -2729,6 +2776,42 @@ const server = createServer(async (request, response) => {
       return
     }
 
+    // Compteurs de la banniere d'accueil : uniquement des agregats, aucune
+    // donnee par visiteur. C'est la contrepartie de la protection des routes
+    // d'exploitation — la page publique n'a besoin que de sept nombres, elle
+    // n'a pas a passer par le tableau de bord complet.
+    if (request.method === 'GET' && requestUrl.pathname === '/api/public-counters') {
+      const [events, quizRows, quizIndex, videoRows, videosIndex, scenarioRows, scenariosIndex] =
+        await Promise.all([
+          readEvents(),
+          readQuizResultRows(),
+          getQuizQuestionsIndex(),
+          readVideoProgressRows(),
+          getVideosIndex(),
+          readScenarioResultRows(),
+          getScenariosIndex(),
+        ])
+
+      const dashboard = buildDashboard(events, null, 0)
+
+      sendJson(
+        response,
+        200,
+        {
+          generatedAt: new Date().toISOString(),
+          target: dashboard.target,
+          visits: dashboard.totals.visits,
+          engagedVisitors: dashboard.totals.engagedVisitors,
+          journeysCompleted: dashboard.totals.journeysCompleted,
+          quizSessions: buildQuizStats(quizRows, quizIndex).total,
+          videoParticipants: buildVideoProgressStats(videoRows, videosIndex).totalParticipants,
+          scenarioSessions: buildScenarioStats(scenarioRows, scenariosIndex).total,
+        },
+        origin,
+      )
+      return
+    }
+
     if (request.method === 'GET' && requestUrl.pathname === '/api/visitors/rank') {
       const visitorId = requestUrl.searchParams.get('visitorId') ?? ''
 
@@ -2811,4 +2894,13 @@ const server = createServer(async (request, response) => {
 
 server.listen(PORT, HOST, () => {
   console.log(`Analytics server listening on http://${HOST}:${PORT}`)
+
+  // Le defaut reste ouvert pour ne pas casser un poste de developpement, mais
+  // une mise en production sans jeton laisse lire les reponses au diagnostic
+  // de chaque visiteur : autant que ce soit dit a chaque demarrage.
+  if (!READ_TOKEN) {
+    console.warn(
+      '[securite] ANALYTICS_READ_TOKEN absent : tableau de bord, graphe, profils et statistiques repondent sans authentification.',
+    )
+  }
 })

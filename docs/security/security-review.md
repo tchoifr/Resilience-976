@@ -13,7 +13,7 @@ Méthode : sondes exécutées contre le backend sur **une copie de la base**, re
 
 | Catégorie | Verdict |
 | --- | --- |
-| A01 Contrôle d'accès | **Défaillant — critique**, risque accepté par le porteur |
+| A01 Contrôle d’accès | **Corrigé** — routes d’exploitation authentifiées |
 | A02 Défaillances cryptographiques | À renforcer |
 | A03 Injection | Conforme |
 | A04 Conception non sécurisée | À renforcer |
@@ -24,25 +24,14 @@ Méthode : sondes exécutées contre le backend sur **une copie de la base**, re
 | A09 Journalisation et supervision | Insuffisant (fuite de message corrigée) |
 | A10 SSRF | Conforme |
 
-## A01 — Contrôle d'accès défaillant (critique)
+## A01 — Contrôle d’accès (corrigé)
 
-**Constat.** Les huit routes de lecture répondent 200 sans aucune
-authentification :
+### Ce qui a été constaté
 
-```
-200  /api/dashboard
-200  /api/visitors/graph
-200  /api/quiz-results/stats
-200  /api/video-progress/stats
-200  /api/scenario-results/stats
-200  /api/kit-profiles/stats
-200  /api/feedback/stats
-200  /api/diagnostic-responses/stats
-```
-
-Et ces routes s'enchaînent. `/api/visitors/graph` renvoie **80 identifiants de
-visiteurs** ; il suffit d'en passer un à `/api/visitors/profile` pour obtenir le
-détail de son diagnostic :
+Les huit routes de lecture répondaient 200 sans aucune authentification, et
+elles s’enchaînaient : `/api/visitors/graph` renvoyait **80 identifiants de
+visiteurs**, et passer l’un d’eux à `/api/visitors/profile` rendait le détail
+de son diagnostic.
 
 ```
 Profil de e6e0774e-91bc-4b68-83fb-1924bdda3e4e : HTTP 200
@@ -50,26 +39,62 @@ Profil de e6e0774e-91bc-4b68-83fb-1924bdda3e4e : HTTP 200
  "answers":{"household_01":"none","household_02":…
 ```
 
-**Impact.** N'importe qui, sans navigateur ni compte, peut aspirer la totalité
-du jeu de données : pour chaque visiteur, ses réponses au diagnostic — réserves
-d'eau, documents protégés, présence de personnes vulnérables dans le foyer —
-rattachées à une campagne. Les identifiants sont pseudonymes, mais le profil
-reste individuel et décrit la vulnérabilité d'un foyer. La contrainte
-d'origine ne protège pas : elle n'est vérifiée que sur les écritures, et une
-requête sans en-tête `Origin` (curl, script) passe en lecture.
+N’importe qui pouvait donc aspirer le jeu de données : pour chaque visiteur,
+ses réserves d’eau, ses documents protégés, la présence de personnes
+vulnérables dans le foyer. La contrainte d’origine ne protégeait pas : elle
+ne portait que sur les écritures, et une requête sans en-tête `Origin`
+(curl, script) passait en lecture.
 
-**Correctifs possibles**, par ordre de coût croissant :
+### Correction
 
-1. Protéger les routes d'exploitation au niveau de nginx (`auth_basic` sur
-   `/api/dashboard`, `/api/visitors/`, `*/stats`). Aucun code à changer, effet
-   immédiat.
-2. Exiger un jeton applicatif porté par un en-tête, distribué aux seules
-   personnes qui consultent le tableau de bord.
-3. Retirer les identifiants de visiteurs de la réponse du graphe : la vue
-   relationnelle n'a pas besoin de les exposer en clair.
+Trois mesures, mesurées après coup :
 
-Le point 3 est utile même avec le point 1 : il réduit ce qui fuiterait en cas
-d'erreur de configuration.
+1. **Authentification applicative.** Dès que `ANALYTICS_READ_TOKEN` est
+   défini, les neuf routes d’exploitation exigent un en-tête `Authorization`
+   — `Bearer <jeton>` pour un script, `Basic …` quand nginx a déjà
+   authentifié le navigateur.
+2. **Authentification nginx.** `auth_basic` sur ces mêmes routes **et** sur
+   les pages `/tableau-de-bord`, pour que le navigateur demande les
+   identifiants à la navigation et les réutilise sur les appels `/api`. Les
+   en-têtes de sécurité y sont redéclarés : un `add_header` dans un bloc
+   `location` annule ceux du niveau supérieur.
+3. **Moindre exposition.** La bannière publique de l’accueil ne consomme
+   plus le tableau de bord ni trois routes de statistiques, mais un endpoint
+   dédié `/api/public-counters` qui ne rend que sept agrégats, sans aucune
+   donnée par visiteur. La page d’accueil est passée de quatre appels à un.
+
+Sondes après correction, origine autorisée :
+
+```
+401  /api/dashboard                  {"error":"authentication_required"}
+401  /api/visitors/graph             {"error":"authentication_required"}
+401  /api/visitors/profile           {"error":"authentication_required"}
+401  /api/quiz-results/stats         … et les cinq autres routes de stats
+
+Le graphe, sans authentification, renvoie 0 identifiant de visiteur.
+Avec « Bearer <jeton> » : 200. Avec un mauvais jeton : 401.
+Sans en-tête Origin (curl, script) : 401.
+
+Routes restées publiques, par nécessité :
+200  /api/public-counters   sept agrégats, aucune donnée par visiteur
+200  /api/visitors/rank     le rang du seul identifiant demandé
+200  /api/health
+```
+
+Le défaut par défaut reste ouvert pour ne pas casser un poste de
+développement ; le serveur avertit alors à chaque démarrage :
+
+```
+[securite] ANALYTICS_READ_TOKEN absent : tableau de bord, graphe, profils
+et statistiques repondent sans authentification.
+```
+
+### Ce qui reste
+
+Une fois authentifié, un opérateur voit toujours les identifiants de
+visiteurs et leurs réponses : c’est la fonction même du tableau de bord. La
+protection déplace le risque de « tout le monde » vers « les personnes à qui
+vous donnez le mot de passe », elle ne le supprime pas.
 
 ## A02 — Défaillances cryptographiques
 
@@ -235,48 +260,26 @@ sur un serveur statique nu, signalait l’absence de CSP, de `nosniff` et de
 donc les en-têtes du fichier de déploiement : sans cela, on corrige des
 défauts qui n’existent pas et on passe à côté de ceux qui existent.
 
+Le scan a été **rejoué après la correction de A01** : résultat identique,
+0 échec et les mêmes 4 avertissements. C’est attendu, et c’est précisément
+la limite de l’outil — il ne testait pas l’autorisation avant, il ne la
+teste pas davantage après.
+
 Enfin, un scan de référence reste un contrôle passif d’en-têtes et de motifs
 connus. Les constats des sections précédentes, obtenus par sonde ciblée sur
 les 17 routes, portent sur une surface qu’il ne voit pas — à commencer par
 A01, qu’il n’a pas signalé.
 ## Priorités
 
-1. **Authentifier les routes d'exploitation** (A01) — seule défaillance
-   critique restante. **Décision du porteur (14 août 2026) : écartée**, le
-   tableau de bord reste public. Le risque est donc accepté en l'état : toute
-   personne connaissant les adresses peut récupérer les réponses au diagnostic
-   de chaque visiteur. Le correctif ci-dessous reste applicable à tout moment,
-   sans changement de code.
-2. Décommenter `Strict-Transport-Security` après le passage de certbot (A02).
-3. Journaliser les accès aux routes d'exploitation (A09).
+1. Décommenter `Strict-Transport-Security` après le passage de certbot (A02).
+2. Créer le fichier de mots de passe sur le VPS
+   (`htpasswd -c /etc/nginx/.htpasswd-resilience <utilisateur>`) et renseigner
+   `ANALYTICS_READ_TOKEN` : **sans ces deux gestes, la correction A01 ne
+   protège rien en production.**
+3. Journaliser les accès aux routes d’exploitation (A09).
 4. Rejouer le scan ZAP après toute évolution du serveur ou des en-têtes.
 
-Corrigés dans cette passe : A06 (dépendance vulnérable), A08 (mention
-trompeuse), A09 (message d'erreur), et la documentation de l'héritage des
-en-têtes nginx (A05).
-
-### Correctif prêt à appliquer pour A01
-
-```nginx
-# Dans deploy/nginx.conf, avant "location /api/" :
-location ~ ^/api/(dashboard|visitors/|[a-z-]+/stats) {
-    auth_basic "Resilience 976 - exploitation";
-    auth_basic_user_file /etc/nginx/.htpasswd-resilience;
-
-    # Un location qui declare add_header perd ceux du niveau superieur :
-    # les redeclarer ici si cette regle est retenue.
-
-    proxy_pass http://127.0.0.1:8787;
-    proxy_http_version 1.1;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-}
-```
-
-Le fichier de mots de passe se crée avec
-`htpasswd -c /etc/nginx/.htpasswd-resilience <utilisateur>`. À noter : les
-pages `/tableau-de-bord` du front resteraient accessibles, mais vides — leurs
-appels API renverraient 401. Si l'objectif est de masquer aussi les pages, il
-faut en plus les retirer du menu et du pied de page.
+Corrigés dans cette passe : A01 (contrôle d’accès), A06 (dépendance
+vulnérable), A08 (mention trompeuse), A09 (message d’erreur), l’isolation
+entre origines (COOP, CORP) et la documentation de l’héritage des en-têtes
+nginx (A05).
