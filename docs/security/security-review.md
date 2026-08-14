@@ -89,6 +89,25 @@ développement ; le serveur avertit alors à chaque démarrage :
 et statistiques repondent sans authentification.
 ```
 
+### État de la production au 14 août 2026
+
+Le correctif vit dans la branche, **il n’est pas déployé**. Sondes contre
+`https://resilience-976.fr`, le jour même :
+
+```
+200  /api/visitors/graph      42 identifiants de visiteurs exposés
+200  /api/visitors/profile    ouvert, sans authentification
+200  /api/dashboard           303 visites enregistrées
+404  /api/public-counters     backend antérieur au correctif
+```
+
+Les en-têtes `Cross-Origin-Opener-Policy`, `Cross-Origin-Resource-Policy` et
+`Strict-Transport-Security` sont également absents du déploiement actuel.
+
+Autrement dit : la faille décrite plus haut est **active sur le site public**
+tant que la branche n’est pas fusionnée et déployée, et tant que le fichier
+`htpasswd` et `ANALYTICS_READ_TOKEN` ne sont pas en place sur le VPS.
+
 ### Ce qui reste
 
 Une fois authentifié, un opérateur voit toujours les identifiants de

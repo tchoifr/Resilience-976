@@ -1,58 +1,47 @@
-# Rapport d'audit accessibilite
+# Rapport d'audit accessibilité — archivé
 
-> Ce document couvre les controles automatises et manuels du projet.
-> L'evaluation par critere RGAA vit desormais dans
-> `docs/quality/rgaa-pre-evaluation.md` (14 aout 2026, taux de conformite
-> 91,3 %).
+> **Document historique, conservé pour mémoire. Ne pas l'utiliser comme
+> rapport d'accessibilité.**
+>
+> Le rapport de référence est
+> [`docs/quality/rgaa-pre-evaluation.md`](./rgaa-pre-evaluation.md) :
+> pré-évaluation RGAA 4.1.2 du 14 août 2026, sur un échantillon de 18 pages,
+> 73 critères conformes sur 74 applicables et évalués.
+>
+> Ce qui suit décrit l'état des vérifications au 7 août 2026, avant la refonte
+> de l'interface et avant la pré-évaluation par critère. Plusieurs de ses
+> constats sont périmés : les contrôles qu'il annonçait « à faire » ont depuis
+> été menés, et les défauts qu'il ne voyait pas — lien d'évitement menant à une
+> zone vide, `aria-label` invalides, page de mise en situation sans `<h1>` —
+> ont été trouvés et corrigés depuis.
 
-Date: 4 aout 2026  
-Derniere mise a jour: 7 aout 2026  
-Statut: audit automatique OK, controles manuels simulables ajoutes, audit lecteur d'ecran/appareils reels a finaliser
+Date : 4 août 2026<br>
+Dernière mise à jour : 7 août 2026<br>
+Statut : **archivé le 14 août 2026**
 
-## Automatique
+## Ce que ce document apportait
 
-| Controle                                 | Resultat |
-| ---------------------------------------- | -------- |
-| Axe WCAG accueil desktop                 | OK       |
-| Axe WCAG diagnostic desktop              | OK       |
-| Axe WCAG ressources desktop              | OK       |
-| Axe WCAG mentions legales desktop        | OK       |
-| Axe WCAG accueil mobile                  | OK       |
-| Axe WCAG diagnostic mobile               | OK       |
-| Axe WCAG ressources mobile               | OK       |
-| Axe WCAG mentions legales mobile         | OK       |
-| Responsive 360 px sans scroll horizontal | OK       |
+Une liste de contrôles automatisés (axe sur quatre pages, en desktop et en
+mobile) et une liste de contrôles manuels à réaliser avant publication. Il ne
+comportait pas de grille par critère, ni de taux de conformité, ni d'échantillon
+de pages arrêté — trois éléments qu'un rapport RGAA doit porter.
 
-## Manuel a realiser avant publication
+## Contrôles automatisés d'alors
 
-| Controle                           | Statut       | Notes                                      |
-| ---------------------------------- | ------------ | ------------------------------------------ |
-| Navigation complete au clavier     | Automatise   | Accueil vers diagnostic, radio, CTA        |
-| Focus visible sur toutes les pages | Partiel OK   | Couvert par parcours clavier; revue visuelle finale conseillee |
-| Zoom 200%                          | Automatise   | Accueil, diagnostic, ressources, mentions legales |
-| Lecteur d'ecran                    | A faire      | NVDA ou VoiceOver sur appareil reel        |
-| Images desactivees                 | Automatise   | Accueil comprehensible sans assets image   |
-| Impression checklist               | Automatise   | Mode print sans debordement horizontal     |
-| PDF mobile                         | A faire      | Android et iPhone reels                    |
+| Contrôle | Résultat |
+| --- | --- |
+| Axe WCAG accueil, diagnostic, ressources, mentions légales (desktop) | OK |
+| Axe WCAG mêmes pages (mobile) | OK |
+| Responsive 360 px sans défilement horizontal | OK |
 
-## Controles ajoutes le 7 aout 2026
+La pré-évaluation du 14 août a étendu ce périmètre à 18 pages, en desktop et en
+mobile, sans violation axe — et a surtout ajouté ce qu'axe ne couvre pas :
+validité du code, navigation clavier relevée tabulation par tabulation,
+espacement du texte, reflow à 320 × 256 px, contraste des composants
+d'interface, transcription et sous-titres des médias.
 
-Les controles suivants sont couverts par `tests/e2e/accessibility.spec.ts`:
+## Anomalie corrigée à l'époque, toujours valable
 
-- navigation clavier du parcours principal avec lien d'evitement, entree diagnostic, choix radio et bouton continuer;
-- zoom 200% sur les pages publiques critiques sans debordement horizontal;
-- accueil comprehensible lorsque les images ne chargent pas;
-- checklist consultable en media print sans debordement horizontal.
-
-## Limites restantes
-
-Les tests automatises ne remplacent pas une revue RGAA humaine. Avant publication officielle, il faut encore verifier:
-
-- annonce des titres, formulaires, radios, alertes et changements d'etape avec NVDA ou VoiceOver;
-- PDF genere sur Android et iPhone reels;
-- lisibilite et ordre de lecture des PDF exportes;
-- coherence des libelles traduits avec un relecteur local.
-
-## Anomalie corrigee
-
-- Contraste du bouton danger: le rouge charte `#E63946` avec texte blanc ne passait pas WCAG AA pour du texte 16 px. Une variante `--color-danger-strong: #B4232E` est utilisee pour les boutons destructifs.
+Contraste du bouton danger : le rouge charte `#E63946` avec texte blanc ne
+passait pas WCAG AA pour du texte de 16 px. La variante
+`--color-danger-strong: #B4232E` est utilisée pour les boutons destructifs.

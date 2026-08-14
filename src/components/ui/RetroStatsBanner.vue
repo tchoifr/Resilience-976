@@ -373,7 +373,9 @@ onMounted(async () => {
 
 .retro-ticker__control {
   min-height: 32px;
-  border: 1px solid var(--color-teal);
+  /* currentColor plutot que le turquoise : sur le fond turquoise du theme
+     clair, la bordure tombait a 1,53:1 (critere 3.3, seuil 3:1). */
+  border: 1px solid currentColor;
   border-radius: 999px;
   background: transparent;
   color: var(--retro-highlight);

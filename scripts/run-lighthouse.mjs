@@ -16,16 +16,17 @@ import { spawn } from 'node:child_process'
 import { mkdir, readFile } from 'node:fs/promises'
 import path from 'node:path'
 
-const BASE_URL = process.argv[2] ?? 'http://127.0.0.1:4174'
-const OUTPUT_DIR = path.resolve(process.argv[3] ?? './lighthouse-report')
+import { getPublicRoutes, getSampleRoutes } from './public-routes.mjs'
 
-const PAGES = [
-  { name: 'accueil', path: '/' },
-  { name: 'diagnostic', path: '/diagnostic' },
-  { name: 'ressources', path: '/ressources' },
-  { name: 'tableau-de-bord', path: '/tableau-de-bord' },
-  { name: 'experimentation', path: '/experimentation-utilisateurs' },
-]
+const positional = process.argv.slice(2).filter((arg) => !arg.startsWith('--'))
+const BASE_URL = positional[0] ?? 'http://127.0.0.1:4174'
+const OUTPUT_DIR = path.resolve(positional[1] ?? './lighthouse-report')
+
+// Par defaut, toutes les routes publiques — c'est ce que le bordereau doit
+// pouvoir affirmer. `--sample` limite a un ecran par famille, pour une passe
+// rapide pendant le developpement.
+const useSample = process.argv.includes('--sample')
+const PAGES = useSample ? getSampleRoutes() : getPublicRoutes()
 
 const FORM_FACTORS = [
   { id: 'mobile', args: [] },
