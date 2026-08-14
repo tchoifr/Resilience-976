@@ -159,6 +159,24 @@ Exemple:
 }
 ```
 
+### `GET /api/public-counters`
+
+Compteurs de la banniere d'accueil. **Route publique**, et la seule que la
+page d'accueil consomme : uniquement des agregats, aucune donnee par
+visiteur.
+
+```json
+{
+  "target": 5000,
+  "visits": 303,
+  "engagedVisitors": 12,
+  "journeysCompleted": 8,
+  "quizSessions": 9,
+  "videoParticipants": 7,
+  "scenarioSessions": 17
+}
+```
+
 ### `GET /api/visitors/rank?visitorId=<uuid>`
 
 Ordre d'arrivee d'un visiteur, calcule sur son tout premier evenement.
@@ -177,6 +195,46 @@ d'appel au modele. La cle elle-meme n'est jamais renvoyee.
 ```json
 { "configured": true, "model": "Qwen/Qwen2.5-7B-Instruct" }
 ```
+
+## Routes protegees
+
+Neuf routes exposent des donnees d'exploitation, dont des donnees par
+visiteur : le graphe liste les identifiants, le profil rend les reponses au
+diagnostic. Elles exigent une authentification des que la variable
+`ANALYTICS_READ_TOKEN` est definie.
+
+```txt
+/api/dashboard
+/api/visitors/graph
+/api/visitors/profile
+/api/quiz-results/stats
+/api/video-progress/stats
+/api/scenario-results/stats
+/api/kit-profiles/stats
+/api/feedback/stats
+/api/diagnostic-responses/stats
+```
+
+Deux formes d'en-tete `Authorization` sont acceptees :
+
+| Forme | Usage |
+| --- | --- |
+| `Bearer <jeton>` | script, supervision, appel en ligne de commande |
+| `Basic …` | navigateur, apres authentification par `auth_basic` cote nginx |
+
+Sans en-tete valable : `401 authentication_required`.
+
+**Le defaut reste ouvert** pour ne pas casser un poste de developpement. Le
+serveur l'annonce alors a chaque demarrage :
+
+```txt
+[securite] ANALYTICS_READ_TOKEN absent : tableau de bord, graphe, profils
+et statistiques repondent sans authentification.
+```
+
+En production, la protection tient a trois elements : la variable, le fichier
+`/etc/nginx/.htpasswd-resilience`, et les blocs `auth_basic` de la
+configuration nginx. Deux sur trois ne protegent rien.
 
 ## Stockage
 
@@ -250,6 +308,8 @@ PORT=8787
 ANALYTICS_DATA_FILE=server/data/events.jsonl
 RESILIENCE_DATABASE_FILE=server/data/resilience.sqlite
 ANALYTICS_ALLOWED_ORIGINS=https://domaine-final.fr
+# Vide = routes d exploitation ouvertes. A remplir en production.
+ANALYTICS_READ_TOKEN=
 ```
 
 ## Variables front
@@ -259,6 +319,7 @@ VITE_ANALYTICS_ENABLED=true
 VITE_ANALYTICS_ENDPOINT=/api/events
 VITE_DASHBOARD_ENDPOINT=/api/dashboard
 VITE_VISITOR_RANK_ENDPOINT=/api/visitors/rank
+VITE_PUBLIC_COUNTERS_ENDPOINT=/api/public-counters
 VITE_FEEDBACK_DATABASE_ENABLED=true
 VITE_FEEDBACK_ENDPOINT=/api/feedback
 VITE_GOOGLE_ANALYTICS_ENABLED=false

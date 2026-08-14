@@ -1,3 +1,5 @@
+import { postBeacon } from './beacon.service'
+
 export type AnalyticsEventName =
   | 'page_view'
   | 'action_plan_opened'
@@ -129,14 +131,7 @@ export function trackEvent(name: AnalyticsEventName): void {
     new CustomEvent('resilience976:analytics', { detail: event }),
   )
 
-  void fetch(analyticsEndpoint, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-    keepalive: true,
-    body: JSON.stringify(event),
-  }).catch(() => undefined)
+  postBeacon(analyticsEndpoint, event)
 
   forwardToGoogleAnalytics(event)
 }

@@ -1,8 +1,8 @@
-/* global fetch */
 import {
   getCampaignId,
   getVisitorId,
 } from '@/shared/analytics/analytics.service'
+import { postBeacon } from '@/shared/analytics/beacon.service'
 
 const diagnosticSyncEnabled = import.meta.env.DEV
   ? import.meta.env.VITE_ANALYTICS_ENABLED !== 'false'
@@ -26,12 +26,5 @@ export function syncDiagnosticResponses(answers: Record<string, string>): void {
     answers,
   }
 
-  void fetch(diagnosticSyncEndpoint, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-    keepalive: true,
-    body: JSON.stringify(payload),
-  }).catch(() => undefined)
+  postBeacon(diagnosticSyncEndpoint, payload)
 }

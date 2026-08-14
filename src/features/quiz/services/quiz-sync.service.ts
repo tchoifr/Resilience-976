@@ -1,5 +1,5 @@
-/* global fetch */
 import { getCampaignId, getVisitorId } from '@/shared/analytics/analytics.service'
+import { postBeacon } from '@/shared/analytics/beacon.service'
 
 const quizSyncEnabled = import.meta.env.DEV
   ? import.meta.env.VITE_ANALYTICS_ENABLED !== 'false'
@@ -34,12 +34,5 @@ export function syncQuizResult(input: QuizResultInput): void {
     answers: input.answers,
   }
 
-  void fetch(quizSyncEndpoint, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-    keepalive: true,
-    body: JSON.stringify(payload),
-  }).catch(() => undefined)
+  postBeacon(quizSyncEndpoint, payload)
 }
