@@ -2065,6 +2065,14 @@ textarea:focus-visible {
   color: var(--color-text-strong);
 }
 
+.site-map-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .danger-zone {
   margin-top: var(--space-4);
   padding-top: var(--space-3);

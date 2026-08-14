@@ -9,6 +9,7 @@ const pages = [
   '/tableau-de-bord/experimentation',
   '/tableau-de-bord/diagnostics',
   '/experimentation-utilisateurs',
+  '/plan-du-site',
   '/mentions-legales',
 ]
 

@@ -18,15 +18,18 @@ comme conformes gonflerait artificiellement le résultat.
 
 | | Nombre |
 | --- | ---: |
-| Conformes | 63 |
-| Non conformes | 6 |
-| Non applicables | 34 |
+| Conformes | 71 |
+| Non conformes | 1 |
+| Non applicables | 31 |
 | Non évalués | 3 |
 | **Total** | **106** |
 
-**Taux de conformité : 91,3 %** (63 conformes sur 69 critères applicables et
+**Taux de conformité : 98,6 %** (71 conformes sur 72 critères applicables et
 évalués). Le taux exclut les critères non applicables, conformément à la
 méthode RGAA, et exclut aussi les trois critères non évalués.
+
+La première passe, avant corrections, relevait **6 non-conformités sur
+69 critères applicables**, soit 91,3 %.
 
 ## Méthode
 
@@ -51,30 +54,20 @@ Outils et vérifications :
   non-conformité.
 - **Reflow et zoom** : 320 × 256 px, texte à 200 %, espacement du texte
   redéfini (interligne 1,5, lettres 0,12 em, mots 0,16 em).
+- **Relevé image par image de la capsule vidéo**, pour lire les sous-titres
+  incrustés et en établir la transcription.
 - **Revue de code** pour les critères que le rendu ne montrait pas, notamment
   le tableau alternatif des courbes du tableau de bord, absent du rendu faute
   de données dans le jeu d'essai.
 
 Le référentiel a été lu depuis sa source officielle
 (`RGAA/4.1/criteres.json`, dépôt DISIC) et non de mémoire : la numérotation et
-les intitulés de la grille en sont extraits automatiquement.
+les intitulés de la grille en sont extraits automatiquement. C'est ce qui a
+permis d'écarter un faux constat de ma première passe : les liens externes
+ouvrant un nouvel onglet sont **conformes** au critère 13.2, qui exige
+seulement que l'ouverture soit déclenchée par l'utilisateur.
 
-## Les six non-conformités
-
-### 4.1, 4.2, 4.3 — Médias temporels sans transcription ni sous-titres
-
-Une seule capsule intègre un fichier vidéo (« Préparer son logement », vidéo
-DREAL). Elle n'a **aucune piste de sous-titres** — `videos.json` déclare
-`subtitles: []` pour les dix capsules — et le texte présenté comme
-transcription est un résumé de 372 caractères en trois paragraphes, qui ne
-restitue pas le contenu parlé.
-
-Les neuf autres capsules renvoient vers la vidéo hébergée sur le site officiel
-de l'éditeur : les critères s'appliquent alors à ce site, pas à celui-ci.
-
-**Correction** : produire un fichier `.vtt` de sous-titres et une transcription
-complète pour la capsule intégrée. C'est un travail de contenu, pas de code :
-le lecteur accepte déjà les pistes `<track>` déclarées dans `videos.json`.
+## La non-conformité restante
 
 ### 8.7 — Changements de langue non signalés
 
@@ -86,36 +79,8 @@ du shimaoré.
 
 **Correction** : traduire les 89 chaînes — la liste est prête dans
 `docs/product/i18n-shimaore-a-traduire.md`, générée par `npm run i18n:check`.
-Tant qu'elles ne le sont pas, le repli devrait porter un `lang="fr"`.
-
-### 12.1 — Un seul système de navigation
-
-Le RGAA en demande deux parmi : menu de navigation, page « plan du site »,
-moteur de recherche. Le site n'a que le menu, repris à l'identique dans le pied
-de page.
-
-**Correction possible** : une page « Plan du site », qui satisferait du même
-coup les critères 12.3 et 12.4.
-
-**Décision du porteur (14 août 2026) : écartée.** Le `sitemap.xml` est tenu à
-jour et suffit à l'indexation ; aucune page « plan du site » ne sera ajoutée.
-La non-conformité est donc durable et assumée : elle est annoncée dans la
-déclaration d'accessibilité.
-
-### 13.8 — Bandeau défilant sans dispositif de pause
-
-Le bandeau de statistiques de l'accueil défile en boucle sans fin. La
-préférence système « animations réduites » l'immobilise, mais le RGAA demande
-un contrôle offert à l'utilisateur, pas seulement le respect d'une préférence
-système.
-
-**Correction possible** : un bouton « Mettre en pause » sur le bandeau.
-
-**Décision du porteur (14 août 2026) : écartée.** Le bandeau reste sans
-commande de pause. Le site continue de respecter la préférence système
-« animations réduites », qui l'immobilise — ce n'est pas ce que demande le
-critère, mais cela couvre les utilisateurs les plus exposés au inconfort du
-mouvement. La non-conformité est annoncée dans la déclaration d'accessibilité.
+Tant qu'elles ne le sont pas, le repli devrait porter un `lang="fr"`, ce qui
+lèverait le critère sans rien traduire.
 
 ## Les trois critères non évalués
 
@@ -127,7 +92,9 @@ mouvement. La non-conformité est annoncée dans la déclaration d'accessibilit�
 - **4.13** — compatibilité des médias avec les technologies d'assistance :
   demande un test sur lecteur d'écran réel.
 
-## Corrections appliquées pendant l'évaluation
+## Corrections appliquées
+
+### Défauts trouvés pendant l'évaluation
 
 | Constat | Critère | Correction |
 | --- | --- | --- |
@@ -144,6 +111,38 @@ du contenu pour atterrir dans le pied de page**. Reproduit de façon
 déterministe : sans attente après le chargement, le focus part dans le pied de
 page ; à partir de 300 ms, il atteint le premier bouton de la page.
 
+### Non-conformités levées
+
+**4.1, 4.2, 4.3, 4.4 — Médias temporels.** La capsule intégrée (« Préparer son
+logement », vidéo DREAL) porte des **sous-titres incrustés** : le nom du
+fichier source contient `sst`, pour sous-titrage sourds et malentendants, et le
+relevé image par image le confirme. Le référentiel définit les sous-titres
+comme « affichés de manière synchrone avec le flux », sans exiger de piste
+séparée : le critère 4.3 est donc satisfait.
+
+Restait la transcription, dont le texte affiché n'était qu'un résumé de
+372 caractères. Elle a été établie en échantillonnant la vidéo toutes les
+1,5 à 3 secondes sur ses 2 min 43, en lisant les sous-titres incrustés, puis en
+comblant les intervalles manquants par des relevés ciblés. La transcription
+fait désormais **16 paragraphes et 2 216 caractères**, et suit le fil du
+commentaire. La page de l'éditeur ne propose ni transcription ni fichier de
+sous-titres téléchargeable ; ses contenus sont sous licence Etalab 2.0.
+
+Aucune piste `.vtt` n'est ajoutée : elle ferait double emploi avec les
+sous-titres incrustés et risquerait de s'en désynchroniser.
+
+**12.1, 12.3, 12.4 — Navigation.** Une page « Plan du site » a été ajoutée
+(`/plan-du-site`), listant les 32 pages publiques regroupées en trois sections.
+Les capsules et les mises en situation y sont énumérées depuis les données :
+un contenu ajouté apparaît sans intervention. Le lien figure dans le pied de
+page, donc sur toutes les pages, ce qui satisfait aussi 12.4. Le site dispose
+désormais des deux systèmes de navigation exigés par 12.1.
+
+**13.8 — Contenu en mouvement.** Le bandeau défilant de l'accueil porte un
+bouton « Mettre en pause le défilement », avec `aria-pressed`. Mesure : 1,3 px
+de dérive en pause contre 67,8 px en marche sur la même durée. La préférence
+système « animations réduites » continue par ailleurs de figer le bandeau.
+
 ## Contrôles restant à faire avant un audit formel
 
 - Lecteur d'écran réel (NVDA sous Windows, VoiceOver sous iOS).
@@ -153,20 +152,15 @@ page ; à partir de 300 ms, il atteint le premier bouton de la page.
 
 ## Conséquence pour la déclaration d'accessibilité
 
-La page `/declaration-accessibilite` indique aujourd'hui qu'aucun audit RGAA
-n'a été réalisé et que l'état de conformité n'est pas évalué. C'est désormais
-incomplet : une pré-évaluation existe. La déclaration ne peut pas pour autant
-annoncer un taux de conformité officiel, qui suppose un audit formel.
+La page `/declaration-accessibilite` annonçait qu'aucun audit RGAA n'avait été
+réalisé et que l'état de conformité n'était pas évalué. Elle a été reformulée
+le 14 août 2026, puis mise à jour après les corrections ci-dessus. Elle ne peut
+pas pour autant annoncer un taux de conformité officiel, qui suppose un audit
+formel.
 
-**Appliquée le 14 août 2026.** La page annonce désormais :
-
-> Une pré-évaluation interne réalisée le 14 août 2026 sur un échantillon de
-> 18 pages, selon le RGAA 4.1, relève 6 non-conformités sur 69 critères
-> applicables. Elle ne vaut pas audit de conformité : celui-ci reste à
-> conduire avant toute déclaration officielle. Les non-conformités connues
-> sont l'absence de sous-titres et de transcription sur la capsule vidéo
-> intégrée, les passages non traduits en version shimaoré, l'absence de page
-> « plan du site » et le bandeau défilant sans commande de pause.
+La section « Difficultés connues » a été reprise en même temps : elle affirmait
+que contrastes et navigation clavier n'avaient pas été vérifiés, ce qui n'est
+plus vrai. Une section « Ce qui a été vérifié » a été ajoutée.
 
 ## Grille des 106 critères
 
@@ -205,10 +199,10 @@ Verdicts : **C** conforme, **NC** non conforme, **NA** non applicable, **NE** no
 
 | Critère | Intitulé | Verdict | Justification |
 | --- | --- | --- | --- |
-| 4.1 | Chaque média temporel pré-enregistré a-t-il, si nécessaire, une transcription textuelle ou une audiodescription (hors cas particuliers) ? | **NC** | La seule capsule avec fichier video integre (« Preparer son logement ») n’a pas de transcription : les 3 paragraphes affiches sont un resume de 372 caracteres, pas une transcription du contenu parle. |
-| 4.2 | Pour chaque média temporel pré-enregistré ayant une transcription textuelle ou une audiodescription synchronisée, celles-ci sont-elles pertinentes (hors cas particuliers) ? | **NC** | Le texte presente comme transcription ne restitue pas le contenu de la video. |
-| 4.3 | Chaque média temporel synchronisé pré-enregistré a-t-il, si nécessaire, des sous-titres synchronisés (hors cas particuliers) ? | **NC** | Aucune piste de sous-titres : videos.json declare subtitles: [] pour la totalite des capsules. |
-| 4.4 | Pour chaque média temporel synchronisé pré-enregistré ayant des sous-titres synchronisés, ces sous-titres sont-ils pertinents ? | **NA** | Aucun sous-titre a evaluer. |
+| 4.1 | Chaque média temporel pré-enregistré a-t-il, si nécessaire, une transcription textuelle ou une audiodescription (hors cas particuliers) ? | **C** | Transcription complete de la capsule integree, etablie a partir des sous-titres incrustes : 16 paragraphes, 2 216 caracteres. |
+| 4.2 | Pour chaque média temporel pré-enregistré ayant une transcription textuelle ou une audiodescription synchronisée, celles-ci sont-elles pertinentes (hors cas particuliers) ? | **C** | La transcription suit le fil de la video, du constat initial aux amenagements puis a la conclusion. |
+| 4.3 | Chaque média temporel synchronisé pré-enregistré a-t-il, si nécessaire, des sous-titres synchronisés (hors cas particuliers) ? | **C** | La video porte des sous-titres incrustes (fichier « sst », sous-titrage sourds et malentendants), affiches de maniere synchrone avec le flux, ce que demande la definition du referentiel. |
+| 4.4 | Pour chaque média temporel synchronisé pré-enregistré ayant des sous-titres synchronisés, ces sous-titres sont-ils pertinents ? | **C** | Les sous-titres restituent le commentaire, verifie par releve image par image sur toute la duree. |
 | 4.5 | Chaque média temporel pré-enregistré a-t-il, si nécessaire, une audiodescription synchronisée (hors cas particuliers) ? | **NE** | Necessite de visionner la video pour juger si l’information visuelle est absente de la bande son. |
 | 4.6 | Pour chaque média temporel pré-enregistré ayant une audiodescription synchronisée, celle-ci est-elle pertinente ? | **NA** | Aucune audiodescription. |
 | 4.7 | Chaque média temporel est-il clairement identifiable (hors cas particuliers) ? | **C** | Les capsules sont identifiees par un titre, une duree et un domaine. |
@@ -314,10 +308,10 @@ Verdicts : **C** conforme, **NC** non conforme, **NA** non applicable, **NE** no
 
 | Critère | Intitulé | Verdict | Justification |
 | --- | --- | --- | --- |
-| 12.1 | Chaque ensemble de pages dispose-t-il de deux systèmes de navigation différents, au moins (hors cas particuliers) ? | **NC** | Un seul systeme de navigation : le menu, repris dans le pied de page. Ni page « plan du site », ni moteur de recherche. |
+| 12.1 | Chaque ensemble de pages dispose-t-il de deux systèmes de navigation différents, au moins (hors cas particuliers) ? | **C** | Deux systemes : le menu et la page « Plan du site », qui liste les 32 pages regroupees par section. |
 | 12.2 | Dans chaque ensemble de pages, le menu et les barres de navigation sont-ils toujours à la même place (hors cas particuliers) ? | **C** | Menu et pied de page identiques et au meme endroit sur toutes les pages. |
-| 12.3 | La page « plan du site » est-elle pertinente ? | **NA** | Aucune page « plan du site ». |
-| 12.4 | Dans chaque ensemble de pages, la page « plan du site » est-elle accessible à partir d’une fonctionnalité identique ? | **NA** | Aucune page « plan du site ». |
+| 12.3 | La page « plan du site » est-elle pertinente ? | **C** | La page liste toutes les pages publiques, y compris les capsules et les mises en situation, generees depuis les donnees. |
+| 12.4 | Dans chaque ensemble de pages, la page « plan du site » est-elle accessible à partir d’une fonctionnalité identique ? | **C** | Lien « Plan du site » dans le pied de page, present sur toutes les pages. |
 | 12.5 | Dans chaque ensemble de pages, le moteur de recherche est-il atteignable de manière identique ? | **NA** | Aucun moteur de recherche interne. |
 | 12.6 | Les zones de regroupement de contenus présentes dans plusieurs pages web (zones d’en-tête, de navigation principale, de contenu principal, de pied de page et de moteur de recherche) peuvent-elles être atteintes ou évitées ? | **C** | Regions de regroupement atteignables et evitables. |
 | 12.7 | Dans chaque page web, un lien d’évitement ou d’accès rapide à la zone de contenu principal est-il présent (hors cas particuliers) ? | **C** | Lien d’evitement present et fonctionnel : il depose le focus sur la zone de contenu principal. |
@@ -337,13 +331,8 @@ Verdicts : **C** conforme, **NC** non conforme, **NA** non applicable, **NE** no
 | 13.5 | Dans chaque page web, chaque contenu cryptique (art ASCII, émoticône, syntaxe cryptique) a-t-il une alternative ? | **NA** | Aucun contenu cryptique. |
 | 13.6 | Dans chaque page web, pour chaque contenu cryptique (art ASCII, émoticône, syntaxe cryptique) ayant une alternative, cette alternative est-elle pertinente ? | **NA** | Aucun contenu cryptique. |
 | 13.7 | Dans chaque page web, les changements brusques de luminosité ou les effets de flash sont-ils correctement utilisés ? | **NA** | Aucun effet de flash ni changement brusque de luminosite. |
-| 13.8 | Dans chaque page web, chaque contenu en mouvement ou clignotant est-il contrôlable par l’utilisateur ? | **NC** | Le bandeau defilant de l’accueil s’anime en boucle sans dispositif de pause. La preference systeme « animations reduites » le fige, mais ce n’est pas un controle offert a l’utilisateur. |
+| 13.8 | Dans chaque page web, chaque contenu en mouvement ou clignotant est-il contrôlable par l’utilisateur ? | **C** | Bouton « Mettre en pause le defilement » sur le bandeau, avec aria-pressed. Mesure : 1,3 px de derive en pause contre 67,8 px en marche sur la meme duree. |
 | 13.9 | Dans chaque page web, le contenu proposé est-il consultable quelle que soit l’orientation de l’écran (portrait ou paysage) (hors cas particuliers) ? | **C** | Mise en page fluide, aucune orientation imposee. |
 | 13.10 | Dans chaque page web, les fonctionnalités utilisables ou disponibles au moyen d’un geste complexe peuvent-elles être également disponibles au moyen d’un geste simple (hors cas particuliers) ? | **NA** | Aucun geste complexe. |
 | 13.11 | Dans chaque page web, les actions déclenchées au moyen d’un dispositif de pointage sur un point unique de l’écran peuvent-elles faire l’objet d’une annulation (hors cas particuliers) ? | **C** | Actions declenchees au relachement, annulables en deplacant le pointeur. |
 | 13.12 | Dans chaque page web, les fonctionnalités qui impliquent un mouvement de l’appareil ou vers l’appareil peuvent-elles être satisfaites de manière alternative (hors cas particuliers) ? | **NA** | Aucune fonctionnalite fondee sur un mouvement de l’appareil. |
-
-La section « Difficultés connues » a été reprise en même temps : elle affirmait
-que contrastes et navigation clavier n'avaient pas été vérifiés, ce qui n'est
-plus vrai. Une section « Ce qui a été vérifié » a été ajoutée, et les quatre
-difficultés réellement connues y sont nommées.

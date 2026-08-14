@@ -169,6 +169,13 @@ const router = createRouter({
       },
     },
     {
+      path: '/plan-du-site',
+      component: () => import('@/views/SiteMapView.vue'),
+      meta: {
+        seoKey: 'siteMap',
+      },
+    },
+    {
       path: '/mentions-legales',
       component: () => import('@/views/LegalView.vue'),
       meta: {

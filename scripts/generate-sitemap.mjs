@@ -32,6 +32,7 @@ const routes = [
   '/politique-de-confidentialite',
   '/declaration-accessibilite',
   '/support',
+  '/plan-du-site',
 ]
 
 const duplicates = routes.filter((route, index) => routes.indexOf(route) !== index)

@@ -24,6 +24,7 @@ const aboutLinks = [
   { to: '/politique-de-confidentialite', labelKey: 'footer.privacy' },
   { to: '/declaration-accessibilite', labelKey: 'footer.accessibility' },
   { to: '/support', labelKey: 'footer.support' },
+  { to: '/plan-du-site', labelKey: 'siteMap.title' },
   { to: '/tableau-de-bord', labelKey: 'footer.stats' },
   { to: '/experimentation-utilisateurs', labelKey: 'footer.giveFeedback' },
 ]
