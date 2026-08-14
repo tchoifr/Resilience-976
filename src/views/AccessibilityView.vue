@@ -24,6 +24,11 @@ const { t } = useI18n()
       </section>
 
       <section class="panel stack">
+        <h2 class="section-title">{{ t('accessibility.verifiedTitle') }}</h2>
+        <p>{{ t('accessibility.verified') }}</p>
+      </section>
+
+      <section class="panel stack">
         <h2 class="section-title">{{ t('accessibility.contactTitle') }}</h2>
         <p>
           {{ t('accessibility.contact') }}

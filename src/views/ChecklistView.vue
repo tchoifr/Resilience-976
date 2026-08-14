@@ -203,7 +203,7 @@ function customCountLabel(count: number): string {
           </strong>
         </div>
 
-        <div class="custom-examples" :aria-label="t('checklist.examplesAria')">
+        <div class="custom-examples" role="group" :aria-label="t('checklist.examplesAria')">
           <button
             v-for="example in customExamples"
             :key="example"

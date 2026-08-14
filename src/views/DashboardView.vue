@@ -186,9 +186,20 @@ onMounted(async () => {
         <SourceLink :source="populationSource" />
       </p>
 
-      <section v-if="stats" class="panel dashboard-panel">
+      <!-- Panneau rendu des le depart, meme sans donnees : conditionner la
+           section entiere la faisait apparaitre apres la reponse du
+           collecteur et repoussait tout le tableau de bord (CLS 0,272 mesure
+           par Lighthouse en desktop, seuil 0,1). -->
+      <section class="panel dashboard-panel">
         <h2>Estimation d’atteinte de l’objectif</h2>
-        <p v-if="!stats.projection" class="muted">
+        <p v-if="!stats" class="muted">
+          {{
+            isLoading
+              ? 'Chargement des données du collecteur…'
+              : 'Données du collecteur indisponibles : estimation impossible.'
+          }}
+        </p>
+        <p v-else-if="!stats.projection" class="muted">
           Pas encore assez d’activité enregistrée pour estimer une date.
         </p>
         <p v-else-if="stats.projection.targetReached" class="muted">

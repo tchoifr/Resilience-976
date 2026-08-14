@@ -62,6 +62,7 @@ const engagedDigits = computed(() => String(engagedVisitors.value).padStart(6, '
 // a lire ou a recopier.
 const visitorId = formatVisitorIdForDisplay(getVisitorId())
 const copied = ref(false)
+const isTickerPaused = ref(false)
 const arrivalRank = ref<number | null>(null)
 
 // « 1er » puis « 2e » : la forme francaise change au premier rang seulement.
@@ -193,12 +194,29 @@ onMounted(async () => {
       </span>
     </div>
 
-    <div class="retro-ticker" role="img" :aria-label="tickerSummary">
-      <div class="retro-ticker__track" aria-hidden="true">
-        <span v-for="(item, index) in [...tickerItems, ...tickerItems]" :key="index">
-          ★ {{ item }}
-        </span>
+    <!-- Le bandeau defile en boucle : le RGAA (critere 13.8) demande une
+         commande de pause offerte a l'utilisateur, la seule preference
+         systeme « animations reduites » ne suffisant pas. -->
+    <div class="retro-ticker-zone">
+      <div class="retro-ticker" role="img" :aria-label="tickerSummary">
+        <div
+          class="retro-ticker__track"
+          :class="{ 'retro-ticker__track--paused': isTickerPaused }"
+          aria-hidden="true"
+        >
+          <span v-for="(item, index) in [...tickerItems, ...tickerItems]" :key="index">
+            ★ {{ item }}
+          </span>
+        </div>
       </div>
+      <button
+        type="button"
+        class="retro-ticker__control"
+        :aria-pressed="isTickerPaused"
+        @click="isTickerPaused = !isTickerPaused"
+      >
+        {{ isTickerPaused ? t('retroStats.tickerResume') : t('retroStats.tickerPause') }}
+      </button>
     </div>
   </div>
 </template>
@@ -362,12 +380,43 @@ onMounted(async () => {
   padding: 10px 0;
 }
 
+.retro-ticker-zone {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.retro-ticker__control {
+  min-height: 32px;
+  border: 1px solid var(--color-teal);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--retro-highlight);
+  padding: 4px 14px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.retro-ticker__control:hover,
+.retro-ticker__control:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+}
+
 .retro-ticker__track {
   display: flex;
   width: max-content;
   gap: 40px;
   animation: retro-ticker-scroll 18s linear infinite;
   white-space: nowrap;
+}
+
+/* Apres la regle ci-dessus, et non avant : la forme courte `animation`
+   reinitialise `animation-play-state`, ce qui annulait la pause. */
+.retro-ticker__track--paused {
+  animation-play-state: paused;
 }
 
 .retro-ticker__track span {
@@ -397,7 +446,12 @@ onMounted(async () => {
    mal du fond de page (#060f18) : elle perd le relief qu'elle a en theme
    clair. Une bordure turquoise lui redonne son contour sans changer sa
    couleur de fond, deja porteuse de l'identite du bloc. */
-:global(:root[data-theme="dark"]) .retro-banner {
+/* Sans `:global()`. Ecrit `:global(:root[data-theme="dark"]) .retro-banner`,
+   le compilateur de styles scopes appliquait la declaration a `:root` et
+   perdait la fin du selecteur : le liseré turquoise entourait tout l'ecran,
+   sur chaque page, en theme sombre. Un selecteur d'ancetre n'a pas besoin
+   d'etre globalise, seul le dernier element recoit l'attribut de portee. */
+:root[data-theme="dark"] .retro-banner {
   border: 1px solid var(--color-teal);
 }
 </style>

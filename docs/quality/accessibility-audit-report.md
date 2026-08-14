@@ -1,5 +1,10 @@
 # Rapport d'audit accessibilite
 
+> Ce document couvre les controles automatises et manuels du projet.
+> L'evaluation par critere RGAA vit desormais dans
+> `docs/quality/rgaa-pre-evaluation.md` (14 aout 2026, taux de conformite
+> 91,3 %).
+
 Date: 4 aout 2026  
 Derniere mise a jour: 7 aout 2026  
 Statut: audit automatique OK, controles manuels simulables ajoutes, audit lecteur d'ecran/appareils reels a finaliser

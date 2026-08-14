@@ -57,6 +57,7 @@ export const frMessages = {
   },
   common: {
     progress: 'Progression',
+    loading: 'Chargement…',
     important: 'Important',
     sources: 'Sources',
     sourceToValidate: 'Source à valider',
@@ -213,6 +214,11 @@ export const frMessages = {
       description:
         'Classement combiné des points les plus faibles du diagnostic, du quiz, des formations et des mises en situation.',
     },
+    siteMap: {
+      title: 'Plan du site - Resilience 976',
+      description:
+        'Toutes les pages du site, regroupées par section : le parcours, se former, à propos.',
+    },
     legal: {
       title: 'Mentions légales - Resilience 976',
       description:
@@ -255,6 +261,8 @@ export const frMessages = {
     engagedLabel: 'VISITEURS ENGAGÉS',
     engagedAria: '{engaged} visiteurs engagés, objectif JNR 2026 : {target}',
     goalLine: 'OBJECTIF JNR 2026 : {target}',
+    tickerPause: 'Mettre en pause le défilement',
+    tickerResume: 'Reprendre le défilement',
     ticker: {
       diagnostics: '{count} diagnostics complétés',
       quiz: '{count} quiz joués',
@@ -435,6 +443,11 @@ export const frMessages = {
       'Vous pouvez effacer à tout moment les données conservées sur cet appareil depuis les résultats ou les mentions légales.',
     contactNote: 'Pour toute question sur ces données, consultez la page support.',
   },
+  siteMap: {
+    eyebrow: 'Navigation',
+    title: 'Plan du site',
+    intro: 'Les {count} pages du site, regroupées par section.',
+  },
   accessibility: {
     eyebrow: 'Déclaration d’accessibilité',
     title: 'État d’accessibilité de Resilience 976',
@@ -442,10 +455,13 @@ export const frMessages = {
       'Resilience 976 est un service en cours de développement. Cette déclaration reflète l’état réel du site, sans anticiper un audit qui n’a pas encore eu lieu.',
     statusTitle: 'État de conformité',
     status:
-      'Aucun audit formel selon le référentiel général d’amélioration de l’accessibilité (RGAA) n’a été réalisé à ce stade. L’état de conformité n’est donc pas encore évalué. Une démarche de mise en accessibilité est prévue avant une diffusion officielle plus large.',
+      'Une pré-évaluation interne réalisée le 14 août 2026 sur un échantillon de 18 pages, selon le RGAA 4.1, relève 1 non-conformité sur 72 critères applicables. Elle ne vaut pas audit de conformité : celui-ci reste à conduire avant toute déclaration officielle.',
     knownIssuesTitle: 'Difficultés connues',
     knownIssues:
-      'Certains contenus (transcriptions de vidéos, contrastes, navigation au clavier) n’ont pas encore fait l’objet d’une vérification systématique. Cette liste sera complétée au fil des vérifications.',
+      'En version shimaoré, certains libellés restent affichés en français : un lecteur d’écran les prononce alors avec les règles du shimaoré. C’est la seule non-conformité connue à ce jour.',
+    verifiedTitle: 'Ce qui a été vérifié',
+    verified:
+      'Contrastes de texte, alternatives des images, étiquettes des formulaires, structure des titres et validité du code : aucun défaut relevé sur les 18 pages testées. La navigation au clavier a été parcourue tabulation par tabulation, l’affichage vérifié jusqu’à 320 pixels de large et avec un texte agrandi à 200 %. La capsule vidéo est sous-titrée et accompagnée de sa transcription, et le bandeau défilant de l’accueil peut être mis en pause.',
     contactTitle: 'Signaler un problème d’accessibilité',
     contact:
       'Si vous rencontrez un obstacle pour accéder à un contenu ou une fonctionnalité, vous pouvez le signaler via le canal de contact indiqué sur la page support.',
@@ -1005,6 +1021,7 @@ export const frMessages = {
     relatedCapsule: 'Capsule liée',
   },
   scenarioPlay: {
+    eyebrow: 'Mise en situation',
     backToList: 'Retour aux mises en situation',
     stepCount: 'Étape {current} sur {total}',
     confirm: 'Confirmer ce choix',

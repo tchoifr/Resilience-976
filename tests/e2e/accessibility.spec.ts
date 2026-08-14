@@ -9,6 +9,7 @@ const pages = [
   '/tableau-de-bord/experimentation',
   '/tableau-de-bord/diagnostics',
   '/experimentation-utilisateurs',
+  '/plan-du-site',
   '/mentions-legales',
 ]
 
@@ -51,11 +52,18 @@ test('navigation clavier du parcours principal desktop', async ({
   await expect(page).toHaveURL(/\/diagnostic/)
   await expect(page.getByRole('heading', { name: 'Diagnostic' })).toBeVisible()
 
-  await page.locator('.question-card input[type="radio"]').first().focus()
-  await page.keyboard.press('Space')
-  await expect(
-    page.locator('.question-card input[type="radio"]').first(),
-  ).toBeChecked()
+  // Chaque ecran presente les quatre questions d'un theme, et « Continuer »
+  // reste desactive tant qu'elles ne sont pas toutes repondues : le clavier
+  // doit donc pouvoir cocher les quatre avant d'atteindre le bouton.
+  const cards = page.locator('.question-card')
+  await expect(cards).toHaveCount(4)
+
+  for (let index = 0; index < 4; index += 1) {
+    const firstOption = cards.nth(index).locator('input[type="radio"]').first()
+    await firstOption.focus()
+    await page.keyboard.press('Space')
+    await expect(firstOption).toBeChecked()
+  }
 
   await page.getByRole('button', { name: 'Continuer' }).focus()
   await expect(page.getByRole('button', { name: 'Continuer' })).toBeFocused()
@@ -103,7 +111,9 @@ test('contenu comprehensible lorsque les images ne chargent pas', async ({
   await expect(
     page.getByRole('link', { name: 'Commencer le diagnostic' }),
   ).toBeVisible()
-  await expect(page.getByText('Confidentialité')).toBeVisible()
+  // Titre de l'encart de l'accueil, et non le lien « Politique de
+  // confidentialite » du pied de page, qui contient le meme mot.
+  await expect(page.getByText('Confidentialité', { exact: true })).toBeVisible()
 })
 
 test('checklist imprimable en mode print', async ({ page }) => {
