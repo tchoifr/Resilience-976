@@ -1,5 +1,5 @@
-/* global fetch */
 import { getCampaignId, getVisitorId } from '@/shared/analytics/analytics.service'
+import { postBeacon } from '@/shared/analytics/beacon.service'
 
 import type { Household } from '../types/kit'
 
@@ -28,12 +28,5 @@ export function syncKitProfile(household: Household): void {
     specialNeeds: household.specialNeeds,
   }
 
-  void fetch(kitSyncEndpoint, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-    keepalive: true,
-    body: JSON.stringify(payload),
-  }).catch(() => undefined)
+  postBeacon(kitSyncEndpoint, payload)
 }

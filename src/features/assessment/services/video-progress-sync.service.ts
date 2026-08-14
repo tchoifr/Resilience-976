@@ -1,5 +1,5 @@
-/* global fetch */
 import { getCampaignId, getVisitorId } from '@/shared/analytics/analytics.service'
+import { postBeacon } from '@/shared/analytics/beacon.service'
 
 import type { VideoProgressStatus } from '../types/video'
 
@@ -29,12 +29,5 @@ export function syncVideoProgress(
     quizAnsweredCorrectly,
   }
 
-  void fetch(videoProgressSyncEndpoint, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-    keepalive: true,
-    body: JSON.stringify(payload),
-  }).catch(() => undefined)
+  postBeacon(videoProgressSyncEndpoint, payload)
 }

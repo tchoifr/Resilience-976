@@ -1,5 +1,5 @@
-/* global fetch */
 import { getCampaignId, getVisitorId } from '@/shared/analytics/analytics.service'
+import { postBeacon } from '@/shared/analytics/beacon.service'
 
 const scenarioSyncEnabled = import.meta.env.DEV
   ? import.meta.env.VITE_ANALYTICS_ENABLED !== 'false'
@@ -31,12 +31,5 @@ export function syncScenarioResult(input: ScenarioResultInput): void {
     choices: input.choices,
   }
 
-  void fetch(scenarioSyncEndpoint, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-    keepalive: true,
-    body: JSON.stringify(payload),
-  }).catch(() => undefined)
+  postBeacon(scenarioSyncEndpoint, payload)
 }
