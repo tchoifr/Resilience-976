@@ -1,5 +1,17 @@
 import { z } from 'zod'
 
+// zod compile ses validateurs quand il le peut, et teste cette capacite par un
+// `new Function("")` sous try/catch. Notre CSP de production interdit eval :
+// la sonde echoue proprement, zod bascule sur son chemin sans compilation, et
+// rien ne casse — mais Chrome journalise une violation de CSP sur chaque page,
+// ce qui a fait tomber « bonnes pratiques » a 96 sur 24 des 31 pages lors de
+// la campagne Lighthouse du 14 aout sur la production.
+//
+// Le declarer explicitement supprime la sonde, donc la violation. Le cout est
+// nul en pratique : les schemas ne valident que le contenu embarque, une fois
+// au chargement.
+z.config({ jitless: true })
+
 const validationStatusSchema = z.enum(['draft', 'to_validate', 'validated'])
 
 export const answerOptionSchema = z.object({
