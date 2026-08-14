@@ -29,6 +29,7 @@
   --color-muted: #edf8fa;
   --color-border: #dce8ee;
   --color-border-strong: #b9cad2;
+  --color-control-border: #7d8c99;
   --color-text: #26384d;
   --color-text-strong: #10233f;
   --color-text-muted: #52616b;
@@ -85,6 +86,7 @@
   --color-muted: #1b3145;
   --color-border: #2c4a63;
   --color-border-strong: #3c5d78;
+  --color-control-border: #5b7c96;
   --color-text: #cfe1ec;
   --color-text-strong: #f4fafd;
   --color-text-muted: #93aabb;
@@ -1090,7 +1092,7 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-control-border);
   border-radius: var(--radius-sm);
   padding: var(--space-3);
   cursor: pointer;
@@ -1305,7 +1307,9 @@ textarea:focus-visible {
 .number-input {
   min-height: 44px;
   width: 100%;
-  border: 1px solid var(--color-border);
+  /* Bordure de controle : seul indice visuel delimitant le champ, elle doit
+     atteindre 3:1 (critere 3.3). Le jeton general tombait a 1,25:1. */
+  border: 1px solid var(--color-control-border);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
   background: var(--color-surface);

@@ -8,13 +8,17 @@ import { useI18n } from '@/shared/i18n/i18n.service'
 
 const { t } = useI18n()
 
-interface DashboardStats {
+// La banniere ne consomme plus le tableau de bord complet ni les routes de
+// statistiques, desormais protegees : un endpoint public dedie ne rend que ces
+// sept agregats, sans aucune donnee par visiteur.
+interface PublicCounters {
   target: number
-  totals: {
-    visits: number
-    engagedVisitors: number
-    journeysCompleted: number
-  }
+  visits: number
+  engagedVisitors: number
+  journeysCompleted: number
+  quizSessions: number
+  videoParticipants: number
+  scenarioSessions: number
 }
 
 const statsEnabled = import.meta.env.DEV
@@ -28,22 +32,13 @@ function endpoint(devPath: string, envOverride: string | undefined): string {
   return envOverride ?? defaultEndpoint
 }
 
-const dashboardEndpoint = endpoint('/api/dashboard', import.meta.env.VITE_DASHBOARD_ENDPOINT)
+const countersEndpoint = endpoint(
+  '/api/public-counters',
+  import.meta.env.VITE_PUBLIC_COUNTERS_ENDPOINT,
+)
 const visitorRankEndpoint = endpoint(
   '/api/visitors/rank',
   import.meta.env.VITE_VISITOR_RANK_ENDPOINT,
-)
-const quizStatsEndpoint = endpoint(
-  '/api/quiz-results/stats',
-  import.meta.env.VITE_QUIZ_STATS_ENDPOINT,
-)
-const videoStatsEndpoint = endpoint(
-  '/api/video-progress/stats',
-  import.meta.env.VITE_VIDEO_STATS_ENDPOINT,
-)
-const scenarioStatsEndpoint = endpoint(
-  '/api/scenario-results/stats',
-  import.meta.env.VITE_SCENARIO_STATS_ENDPOINT,
 )
 
 const visits = ref(0)
@@ -111,11 +106,8 @@ onMounted(async () => {
     return
   }
 
-  const [dashboard, quiz, video, scenario, arrival] = await Promise.all([
-    fetchJson<DashboardStats>(dashboardEndpoint),
-    fetchJson<{ total: number }>(quizStatsEndpoint),
-    fetchJson<{ totalParticipants: number }>(videoStatsEndpoint),
-    fetchJson<{ total: number }>(scenarioStatsEndpoint),
+  const [counters, arrival] = await Promise.all([
+    fetchJson<PublicCounters>(countersEndpoint),
     // Le rang n'existe qu'a partir du premier evenement enregistre : a la
     // toute premiere visite, le serveur repond `rank: null` et la ligne reste
     // masquee plutot que d'annoncer un rang faux.
@@ -124,23 +116,14 @@ onMounted(async () => {
     ),
   ])
 
-  if (dashboard) {
-    visits.value = dashboard.totals.visits
-    engagedVisitors.value = dashboard.totals.engagedVisitors
-    target.value = dashboard.target
-    journeysCompleted.value = dashboard.totals.journeysCompleted
-  }
-
-  if (quiz) {
-    quizSessions.value = quiz.total
-  }
-
-  if (video) {
-    videoParticipants.value = video.totalParticipants
-  }
-
-  if (scenario) {
-    scenarioSessions.value = scenario.total
+  if (counters) {
+    visits.value = counters.visits
+    engagedVisitors.value = counters.engagedVisitors
+    target.value = counters.target
+    journeysCompleted.value = counters.journeysCompleted
+    quizSessions.value = counters.quizSessions
+    videoParticipants.value = counters.videoParticipants
+    scenarioSessions.value = counters.scenarioSessions
   }
 
   if (arrival) {
@@ -390,7 +373,9 @@ onMounted(async () => {
 
 .retro-ticker__control {
   min-height: 32px;
-  border: 1px solid var(--color-teal);
+  /* currentColor plutot que le turquoise : sur le fond turquoise du theme
+     clair, la bordure tombait a 1,53:1 (critere 3.3, seuil 3:1). */
+  border: 1px solid currentColor;
   border-radius: 999px;
   background: transparent;
   color: var(--retro-highlight);

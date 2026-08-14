@@ -1,32 +1,34 @@
-# Pré-évaluation RGAA 4.1
+# Pré-évaluation RGAA 4.1.2
 
 Date : 14 août 2026<br>
-Référentiel : RGAA 4.1, 106 critères répartis en 13 thématiques<br>
+Référentiel : RGAA 4.1.2, 106 critères répartis en 13 thématiques<br>
 Portée : pré-évaluation interne, **ce n'est pas un audit de conformité formel**
 
 ## Ce que ce document est, et ce qu'il n'est pas
 
 Une pré-évaluation mesure l'état d'accessibilité pour piloter les corrections.
-Elle ne remplace pas l'audit formel exigé pour publier une déclaration de
-conformité : celui-ci suppose un évaluateur externe, un échantillon arrêté avec
-le porteur du service et des tests sur lecteur d'écran réel.
+Elle ne remplace pas l'audit de conformité exigé pour publier une déclaration
+de conformité : celui-ci suppose un échantillon arrêté avec le porteur du
+service, la totalité des tests de chaque critère et des essais sur lecteur
+d'écran réel. Il peut être mené **en interne** aussi bien que par un
+prestataire : le référentiel ne l'impose pas.
 
-Trois critères sont marqués « non évalués » plutôt que devinés — les compter
-comme conformes gonflerait artificiellement le résultat.
+Un critère reste marqué « non évalué » plutôt que deviné — le compter comme
+conforme gonflerait artificiellement le résultat.
 
 ## Résultat
 
 | | Nombre |
 | --- | ---: |
-| Conformes | 71 |
+| Conformes | 73 |
 | Non conformes | 1 |
 | Non applicables | 31 |
-| Non évalués | 3 |
+| Non évalués | 1 |
 | **Total** | **106** |
 
-**Taux de conformité : 98,6 %** (71 conformes sur 72 critères applicables et
+**Taux de conformité : 98,6 %** (73 conformes sur 74 critères applicables et
 évalués). Le taux exclut les critères non applicables, conformément à la
-méthode RGAA, et exclut aussi les trois critères non évalués.
+méthode RGAA, et exclut aussi le critère non évalué.
 
 La première passe, avant corrections, relevait **6 non-conformités sur
 69 critères applicables**, soit 91,3 %.
@@ -67,6 +69,13 @@ permis d'écarter un faux constat de ma première passe : les liens externes
 ouvrant un nouvel onglet sont **conformes** au critère 13.2, qui exige
 seulement que l'ouverture soit déclenchée par l'utilisateur.
 
+La grille est construite sur `criteres.json` du dépôt DISIC, publié pour la
+version 4.1. La version en vigueur, **4.1.2**, regroupe deux errata qui ne
+touchent ni au nombre de critères, ni à leur numérotation, ni à leurs
+intitulés : ils portent sur les tests, la méthodologie et le glossaire, et
+n'invalident pas les audits déjà réalisés. Les verdicts ci-dessous valent
+donc pour 4.1.2.
+
 ## La non-conformité restante
 
 ### 8.7 — Changements de langue non signalés
@@ -82,15 +91,25 @@ du shimaoré.
 Tant qu'elles ne le sont pas, le repli devrait porter un `lang="fr"`, ce qui
 lèverait le critère sans rien traduire.
 
-## Les trois critères non évalués
+## Le critère non évalué
 
-- **3.3** — contraste des composants d'interface (bordures de champs, segments
-  de progression). Les contrastes de texte sont vérifiés, ceux des éléments
-  graphiques ne l'ont pas été systématiquement.
-- **4.5** — nécessité d'une audiodescription : suppose de visionner la vidéo
-  pour juger si l'information visuelle est absente de la bande son.
 - **4.13** — compatibilité des médias avec les technologies d'assistance :
-  demande un test sur lecteur d'écran réel.
+  demande un essai sur lecteur d'écran réel, qui reste à faire.
+
+Les deux autres critères laissés en suspens lors de la première passe ont été
+tranchés depuis :
+
+- **3.3** — mesuré. Les bordures de champs de saisie et d'options de réponse
+  étaient à 1,25:1 en thème clair, très en dessous du seuil de 3:1 : un jeton
+  dédié aux contrôles les porte à 3,45:1 en clair et 3,41:1 en sombre. La
+  bordure du bouton de pause du bandeau, turquoise sur fond turquoise, était à
+  1,53:1 : elle suit désormais la couleur du texte, à 4,79:1. Pour les segments
+  de progression, la distinction qui porte l'information — thème fait contre
+  thème à faire — va de 3,13:1 à 4,71:1 selon la position dans le dégradé.
+- **4.5** — tranché grâce au relevé image par image : les textes à l'écran
+  reprennent le commentaire, l'animation illustre sans rien ajouter. Aucune
+  information n'est portée par la seule image, une audiodescription n'est donc
+  pas nécessaire.
 
 ## Corrections appliquées
 
@@ -162,6 +181,7 @@ La section « Difficultés connues » a été reprise en même temps : elle affi
 que contrastes et navigation clavier n'avaient pas été vérifiés, ce qui n'est
 plus vrai. Une section « Ce qui a été vérifié » a été ajoutée.
 
+
 ## Grille des 106 critères
 
 Verdicts : **C** conforme, **NC** non conforme, **NA** non applicable, **NE** non évalué.
@@ -193,7 +213,7 @@ Verdicts : **C** conforme, **NC** non conforme, **NA** non applicable, **NE** no
 | --- | --- | --- | --- |
 | 3.1 | Dans chaque page web, l’information ne doit pas être donnée uniquement par la couleur. Cette règle est-elle respectée ? | **C** | Les verdicts sont doubles d’un libelle : « Bon reflexe / A revoir » sur le debrief, coche sur les themes termines, texte d’etat sur l’assistant de liens. |
 | 3.2 | Dans chaque page web, le contraste entre la couleur du texte et la couleur de son arrière-plan est-il suffisamment élevé (hors cas particuliers) ? | **C** | axe-core : aucune violation de contraste sur 18 pages en desktop et en mobile. Contrastes de la banniere mesures a la main (4,56:1 au plus bas). |
-| 3.3 | Dans chaque page web, les couleurs utilisées dans les composants d’interface ou les éléments graphiques porteurs d’informations sont-elles suffisamment contrastées (hors cas particuliers) ? | **NE** | Contraste des composants d’interface (bordures de champs, segments de progression) non mesure systematiquement. |
+| 3.3 | Dans chaque page web, les couleurs utilisées dans les composants d’interface ou les éléments graphiques porteurs d’informations sont-elles suffisamment contrastées (hors cas particuliers) ? | **C** | Mesure apres correction : bordures de champs et d’options de reponse a 3,45:1 en clair et 3,41:1 en sombre (jeton dedie, le jeton general tombait a 1,25:1) ; bouton de pause du bandeau a 4,79:1 ; segments de progression, la distinction porteuse d’information (fait contre a faire) va de 3,13:1 a 4,71:1 selon la position dans le degrade. |
 
 ### 4. Multimédia
 
@@ -203,7 +223,7 @@ Verdicts : **C** conforme, **NC** non conforme, **NA** non applicable, **NE** no
 | 4.2 | Pour chaque média temporel pré-enregistré ayant une transcription textuelle ou une audiodescription synchronisée, celles-ci sont-elles pertinentes (hors cas particuliers) ? | **C** | La transcription suit le fil de la video, du constat initial aux amenagements puis a la conclusion. |
 | 4.3 | Chaque média temporel synchronisé pré-enregistré a-t-il, si nécessaire, des sous-titres synchronisés (hors cas particuliers) ? | **C** | La video porte des sous-titres incrustes (fichier « sst », sous-titrage sourds et malentendants), affiches de maniere synchrone avec le flux, ce que demande la definition du referentiel. |
 | 4.4 | Pour chaque média temporel synchronisé pré-enregistré ayant des sous-titres synchronisés, ces sous-titres sont-ils pertinents ? | **C** | Les sous-titres restituent le commentaire, verifie par releve image par image sur toute la duree. |
-| 4.5 | Chaque média temporel pré-enregistré a-t-il, si nécessaire, une audiodescription synchronisée (hors cas particuliers) ? | **NE** | Necessite de visionner la video pour juger si l’information visuelle est absente de la bande son. |
+| 4.5 | Chaque média temporel pré-enregistré a-t-il, si nécessaire, une audiodescription synchronisée (hors cas particuliers) ? | **C** | Releve image par image : les textes a l’ecran (« TYPE DE LOGEMENT », « BUDGET », « LES PISCINES ») reprennent le commentaire, l’animation illustre sans rien ajouter. Aucune information n’est portee par la seule image, une audiodescription n’est donc pas necessaire. |
 | 4.6 | Pour chaque média temporel pré-enregistré ayant une audiodescription synchronisée, celle-ci est-elle pertinente ? | **NA** | Aucune audiodescription. |
 | 4.7 | Chaque média temporel est-il clairement identifiable (hors cas particuliers) ? | **C** | Les capsules sont identifiees par un titre, une duree et un domaine. |
 | 4.8 | Chaque média non temporel a-t-il, si nécessaire, une alternative (hors cas particuliers) ? | **NA** | Aucun media non temporel. |
