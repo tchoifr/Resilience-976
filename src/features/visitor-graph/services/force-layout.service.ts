@@ -13,6 +13,28 @@ const DAMPING = 0.85
 const CAMPAIGN_BASE_RADIUS = 14
 const VISITOR_RADIUS = 4
 
+// La repulsion varie en 1/d² : sans plancher, deux noeuds presque confondus
+// produisent une force arbitrairement grande, que l'amortissement n'absorbe
+// pas. Le cas se presente des qu'une campagne concentre beaucoup de visiteurs
+// — 78 sur un meme noeud dans les donnees du 15 aout : les ressorts les
+// tassent au meme endroit, la repulsion explose, et l'energie du systeme part
+// a l'infini au lieu de decroitre. Le graphe ne se stabilise alors jamais et
+// s'agite tant que la page reste ouverte.
+//
+// Mesure sur ces donnees : sans plancher, l'energie passe de 5×10⁴ a 7×10¹⁴ en
+// 3 600 ticks. Avec, elle descend sous 1 des le tick 295, soit environ cinq
+// secondes.
+const REPULSION_MIN_DISTANCE = 12
+const REPULSION_MIN_DISTANCE_SQUARED = REPULSION_MIN_DISTANCE * REPULSION_MIN_DISTANCE
+
+// Seconde barriere, independante de la premiere : aucun noeud ne peut traverser
+// l'ecran en une image, quelle que soit la configuration.
+const MAX_SPEED = 12
+
+// En dessous de ce seuil d'energie cinetique totale, la mise en page ne bouge
+// plus a l'oeil nu. L'appelant peut alors arreter la boucle d'animation.
+export const SETTLED_ENERGY = 1
+
 export function createSimulationNodes(
   nodes: VisitorGraphNodeData[],
   width: number,
@@ -47,12 +69,15 @@ function idealEdgeLength(source: SimulationNode, target: SimulationNode): number
 // pour quelques centaines de noeuds a l'echelle d'un tableau de bord admin,
 // mais deviendrait couteux au-dela (il faudrait alors un quadtree type
 // Barnes-Hut plutot que cette version naive).
+//
+// Renvoie l'energie cinetique totale, pour que l'appelant sache quand la mise
+// en page a converge et puisse cesser d'animer.
 export function stepSimulation(
   nodes: SimulationNode[],
   edges: VisitorGraphEdgeData[],
   width: number,
   height: number,
-): void {
+): number {
   const byId = new Map(nodes.map((node) => [node.id, node]))
   const centerX = width / 2
   const centerY = height / 2
@@ -81,7 +106,8 @@ export function stepSimulation(
       }
 
       const distance = Math.sqrt(distanceSquared)
-      const force = REPULSION_STRENGTH / distanceSquared
+      const force =
+        REPULSION_STRENGTH / Math.max(distanceSquared, REPULSION_MIN_DISTANCE_SQUARED)
       const fx = (dx / distance) * force
       const fy = (dy / distance) * force
 
@@ -114,6 +140,8 @@ export function stepSimulation(
     target.vy -= fy
   }
 
+  let energy = 0
+
   for (const node of nodes) {
     node.vx += (centerX - node.x) * CENTERING_STRENGTH
     node.vy += (centerY - node.y) * CENTERING_STRENGTH
@@ -121,10 +149,21 @@ export function stepSimulation(
     node.vx *= DAMPING
     node.vy *= DAMPING
 
+    const speed = Math.hypot(node.vx, node.vy)
+
+    if (speed > MAX_SPEED) {
+      node.vx = (node.vx / speed) * MAX_SPEED
+      node.vy = (node.vy / speed) * MAX_SPEED
+    }
+
     node.x += node.vx
     node.y += node.vy
 
     node.x = Math.min(width - node.radius, Math.max(node.radius, node.x))
     node.y = Math.min(height - node.radius, Math.max(node.radius, node.y))
+
+    energy += node.vx * node.vx + node.vy * node.vy
   }
+
+  return energy
 }

@@ -1,0 +1,1044 @@
+{
+  "nodes": [
+    {
+      "id": "campaign:DIRECT",
+      "type": "campaign",
+      "campaignId": "DIRECT",
+      "visitorCount": 78
+    },
+    {
+      "id": "campaign:MPR976-PARTENAIRE-NOMDUPARTENAIRE",
+      "type": "campaign",
+      "campaignId": "MPR976-PARTENAIRE-NOMDUPARTENAIRE",
+      "visitorCount": 1
+    },
+    {
+      "id": "campaign:MPG9865LKUNUM",
+      "type": "campaign",
+      "campaignId": "MPG9865LKUNUM",
+      "visitorCount": 1
+    },
+    {
+      "id": "visitor:000",
+      "type": "visitor",
+      "status": "completed"
+    },
+    {
+      "id": "visitor:001",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:002",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:003",
+      "type": "visitor",
+      "status": "engaged"
+    },
+    {
+      "id": "visitor:004",
+      "type": "visitor",
+      "status": "actioned"
+    },
+    {
+      "id": "visitor:005",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:006",
+      "type": "visitor",
+      "status": "completed"
+    },
+    {
+      "id": "visitor:007",
+      "type": "visitor",
+      "status": "completed"
+    },
+    {
+      "id": "visitor:008",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:009",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:010",
+      "type": "visitor",
+      "status": "completed"
+    },
+    {
+      "id": "visitor:011",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:012",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:013",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:014",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:015",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:016",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:017",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:018",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:019",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:020",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:021",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:022",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:023",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:024",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:025",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:026",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:027",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:028",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:029",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:030",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:031",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:032",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:033",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:034",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:035",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:036",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:037",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:038",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:039",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:040",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:041",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:042",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:043",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:044",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:045",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:046",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:047",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:048",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:049",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:050",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:051",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:052",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:053",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:054",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:055",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:056",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:057",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:058",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:059",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:060",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:061",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:062",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:063",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:064",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:065",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:066",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:067",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:068",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:069",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:070",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:071",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:072",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:073",
+      "type": "visitor",
+      "status": "engaged"
+    },
+    {
+      "id": "visitor:074",
+      "type": "visitor",
+      "status": "engaged"
+    },
+    {
+      "id": "visitor:075",
+      "type": "visitor",
+      "status": "visited"
+    },
+    {
+      "id": "visitor:076",
+      "type": "visitor",
+      "status": "completed"
+    },
+    {
+      "id": "visitor:077",
+      "type": "visitor",
+      "status": "completed"
+    },
+    {
+      "id": "visitor:078",
+      "type": "visitor",
+      "status": "completed"
+    },
+    {
+      "id": "visitor:079",
+      "type": "visitor",
+      "status": "completed"
+    },
+    {
+      "id": "risk:household",
+      "type": "risk",
+      "visitorCount": 4,
+      "domain": "household"
+    },
+    {
+      "id": "risk:energy_communication",
+      "type": "risk",
+      "visitorCount": 4,
+      "domain": "energy_communication"
+    },
+    {
+      "id": "strength:behaviors",
+      "type": "strength",
+      "visitorCount": 4,
+      "domain": "behaviors"
+    },
+    {
+      "id": "strength:water_food",
+      "type": "strength",
+      "visitorCount": 4,
+      "domain": "water_food"
+    },
+    {
+      "id": "scenario_weak:scenario_coupure_eau",
+      "type": "scenario_weak",
+      "visitorCount": 1,
+      "label": "Une coupure d’eau survient"
+    },
+    {
+      "id": "scenario_weak:scenario_cyclone",
+      "type": "scenario_weak",
+      "visitorCount": 6,
+      "label": "Une alerte cyclone est déclenchée"
+    },
+    {
+      "id": "scenario_weak:scenario_aide_vulnerable",
+      "type": "scenario_weak",
+      "visitorCount": 1,
+      "label": "Aider une personne vulnérable de son entourage"
+    },
+    {
+      "id": "scenario_strong:scenario_coupure_eau",
+      "type": "scenario_strong",
+      "visitorCount": 1,
+      "label": "Une coupure d’eau survient"
+    },
+    {
+      "id": "scenario_strong:scenario_coupure_electricite",
+      "type": "scenario_strong",
+      "visitorCount": 2,
+      "label": "Une coupure d’électricité s’installe"
+    },
+    {
+      "id": "scenario_strong:scenario_cyclone",
+      "type": "scenario_strong",
+      "visitorCount": 5,
+      "label": "Une alerte cyclone est déclenchée"
+    }
+  ],
+  "edges": [
+    {
+      "source": "visitor:000",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:001",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:002",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:003",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:004",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:005",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:006",
+      "target": "campaign:MPR976-PARTENAIRE-NOMDUPARTENAIRE",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:007",
+      "target": "campaign:MPG9865LKUNUM",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:008",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:009",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:010",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:011",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:012",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:013",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:014",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:015",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:016",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:017",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:018",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:019",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:020",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:021",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:022",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:023",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:024",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:025",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:026",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:027",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:028",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:029",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:030",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:031",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:032",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:033",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:034",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:035",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:036",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:037",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:038",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:039",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:040",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:041",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:042",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:043",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:044",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:045",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:046",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:047",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:048",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:049",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:050",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:051",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:052",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:053",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:054",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:055",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:056",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:057",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:058",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:059",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:060",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:061",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:062",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:063",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:064",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:065",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:066",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:067",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:068",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:069",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:070",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:071",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:072",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:073",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:074",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:075",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:076",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:077",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:078",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:079",
+      "target": "campaign:DIRECT",
+      "type": "campaign"
+    },
+    {
+      "source": "visitor:000",
+      "target": "risk:household",
+      "type": "risk"
+    },
+    {
+      "source": "visitor:006",
+      "target": "risk:household",
+      "type": "risk"
+    },
+    {
+      "source": "visitor:007",
+      "target": "risk:household",
+      "type": "risk"
+    },
+    {
+      "source": "visitor:010",
+      "target": "risk:household",
+      "type": "risk"
+    },
+    {
+      "source": "visitor:076",
+      "target": "risk:energy_communication",
+      "type": "risk"
+    },
+    {
+      "source": "visitor:077",
+      "target": "risk:energy_communication",
+      "type": "risk"
+    },
+    {
+      "source": "visitor:078",
+      "target": "risk:energy_communication",
+      "type": "risk"
+    },
+    {
+      "source": "visitor:079",
+      "target": "risk:energy_communication",
+      "type": "risk"
+    },
+    {
+      "source": "visitor:000",
+      "target": "strength:behaviors",
+      "type": "strength"
+    },
+    {
+      "source": "visitor:006",
+      "target": "strength:behaviors",
+      "type": "strength"
+    },
+    {
+      "source": "visitor:007",
+      "target": "strength:behaviors",
+      "type": "strength"
+    },
+    {
+      "source": "visitor:010",
+      "target": "strength:behaviors",
+      "type": "strength"
+    },
+    {
+      "source": "visitor:076",
+      "target": "strength:water_food",
+      "type": "strength"
+    },
+    {
+      "source": "visitor:077",
+      "target": "strength:water_food",
+      "type": "strength"
+    },
+    {
+      "source": "visitor:078",
+      "target": "strength:water_food",
+      "type": "strength"
+    },
+    {
+      "source": "visitor:079",
+      "target": "strength:water_food",
+      "type": "strength"
+    },
+    {
+      "source": "visitor:000",
+      "target": "scenario_weak:scenario_coupure_eau",
+      "type": "scenario_weak"
+    },
+    {
+      "source": "visitor:007",
+      "target": "scenario_weak:scenario_cyclone",
+      "type": "scenario_weak"
+    },
+    {
+      "source": "visitor:010",
+      "target": "scenario_weak:scenario_aide_vulnerable",
+      "type": "scenario_weak"
+    },
+    {
+      "source": "visitor:073",
+      "target": "scenario_weak:scenario_cyclone",
+      "type": "scenario_weak"
+    },
+    {
+      "source": "visitor:076",
+      "target": "scenario_weak:scenario_cyclone",
+      "type": "scenario_weak"
+    },
+    {
+      "source": "visitor:077",
+      "target": "scenario_weak:scenario_cyclone",
+      "type": "scenario_weak"
+    },
+    {
+      "source": "visitor:078",
+      "target": "scenario_weak:scenario_cyclone",
+      "type": "scenario_weak"
+    },
+    {
+      "source": "visitor:079",
+      "target": "scenario_weak:scenario_cyclone",
+      "type": "scenario_weak"
+    },
+    {
+      "source": "visitor:000",
+      "target": "scenario_strong:scenario_coupure_eau",
+      "type": "scenario_strong"
+    },
+    {
+      "source": "visitor:007",
+      "target": "scenario_strong:scenario_coupure_electricite",
+      "type": "scenario_strong"
+    },
+    {
+      "source": "visitor:010",
+      "target": "scenario_strong:scenario_coupure_electricite",
+      "type": "scenario_strong"
+    },
+    {
+      "source": "visitor:073",
+      "target": "scenario_strong:scenario_cyclone",
+      "type": "scenario_strong"
+    },
+    {
+      "source": "visitor:076",
+      "target": "scenario_strong:scenario_cyclone",
+      "type": "scenario_strong"
+    },
+    {
+      "source": "visitor:077",
+      "target": "scenario_strong:scenario_cyclone",
+      "type": "scenario_strong"
+    },
+    {
+      "source": "visitor:078",
+      "target": "scenario_strong:scenario_cyclone",
+      "type": "scenario_strong"
+    },
+    {
+      "source": "visitor:079",
+      "target": "scenario_strong:scenario_cyclone",
+      "type": "scenario_strong"
+    }
+  ]
+}

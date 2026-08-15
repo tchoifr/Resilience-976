@@ -5,6 +5,7 @@ import { RouterLink, useRouter } from 'vue-router'
 
 import {
   createSimulationNodes,
+  SETTLED_ENERGY,
   stepSimulation,
 } from '@/features/visitor-graph/services/force-layout.service'
 import type {
@@ -255,12 +256,24 @@ function draw() {
   }
 }
 
+// La boucle s'arrete quand la mise en page a converge. Sans cela elle tournait
+// tant que la page restait ouverte : 4 278 paires de noeuds testees et un
+// canvas entierement redessine soixante fois par seconde, indefiniment, pour
+// une image qui ne bouge plus.
 function tick() {
   const canvas = canvasEl.value
 
-  if (canvas) {
-    stepSimulation(simulationNodes, edges, canvas.width, canvas.height)
-    draw()
+  if (!canvas) {
+    animationFrame = requestAnimationFrame(tick)
+    return
+  }
+
+  const energy = stepSimulation(simulationNodes, edges, canvas.width, canvas.height)
+  draw()
+
+  if (energy < SETTLED_ENERGY) {
+    animationFrame = null
+    return
   }
 
   animationFrame = requestAnimationFrame(tick)
@@ -312,6 +325,15 @@ watch(
     startSimulation()
   },
 )
+
+// Le contour de survol est dessine par draw(), qui n'etait appele que par la
+// boucle d'animation. Depuis qu'elle s'arrete a la convergence, le survol doit
+// demander lui-meme son rendu — sinon le graphe fige ne reagit plus au pointeur.
+watch(hoveredNode, () => {
+  if (animationFrame === null) {
+    draw()
+  }
+})
 
 // Visitors are checked before hubs: their radius is much smaller, so a
 // visitor sitting near a hub's edge would otherwise always lose to the hub.
